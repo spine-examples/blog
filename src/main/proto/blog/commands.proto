@@ -17,23 +17,25 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
+
 syntax = "proto3";
 
-package blog;
+package spine.examples.blog;
 
 import "spine/options.proto";
 
-option (type_url_prefix) = "type.spine.io";
-option java_package = "io.spine.examples.blog";
-option java_outer_classname = "BlogProto";
+option (type_url_prefix) = "type.spine.examples.blog";
+option java_package = "io.spine.examples.blog.commands";
+option java_outer_classname = "CommandsProto";
 option java_multiple_files = true;
+option java_generate_equals_and_hash = true;
 
-import "spine/core/user_id.proto";
+import "blog/identifiers.proto";
 
-message BlogId {
-    string value = 1 [(required) = true];
-}
+// A command to create a new Blog.
+//
+message CreateBlog {
+    BlogId blog_id = 1;
 
-message Blog {
-    BlogId id = 1 [(required) = true];
+    string name = 2 [(required) = true];
 }

@@ -18,23 +18,22 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-configurations {
-    // Avoid collisions of Java classes defined both in `protobuf-lite` and `protobuf-java`
-    runtime.exclude group: "com.google.protobuf", module: "protobuf-lite"
-    testRuntime.exclude group: "com.google.protobuf", module: "protobuf-lite"
-}
+syntax = "proto3";
 
-apply plugin: spineProtobufPluginId
+package spine.examples.blog;
 
-dependencies {
-    implementation deps.build.guava
-    implementation group: 'io.spine', name: 'spine-server', version: spineCoreVersion
+import "spine/options.proto";
 
-    testImplementation group: 'io.spine', name: 'spine-testutil-server', version: spineCoreVersion
+option (type_url_prefix) = "type.spine.examples.blog";
+option java_package = "io.spine.examples.blog";
+option java_outer_classname = "ModelsProto";
+option java_multiple_files = true;
+option java_generate_equals_and_hash = true;
 
-    testRuntime deps.test.junit5Runner
-}
+import "blog/identifiers.proto";
 
-modelCompiler {
-    generateValidatingBuilders = true
+message Blog {
+    BlogId id = 1 [(required) = true];
+
+    string name = 2;
 }
