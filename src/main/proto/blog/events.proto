@@ -32,10 +32,31 @@ option java_generate_equals_and_hash = true;
 
 import "blog/identifiers.proto";
 
-// An event emitted when a new Blog is created.
+// An event is emitted when a new Blog is created.
 //
 message BlogCreated {
     BlogId blog_id = 1 [(required) = true];
 
     string name = 2 [(required) = true];
+}
+
+// An event is emitted when a new Post is created.
+//
+message PostCreated {
+    PostId post_id = 1 [(required) = true];
+
+    BlogId blog_id = 2 [(required) = true];
+
+    string title = 3 [(required) = true];
+
+    string body = 4;
+}
+
+// An event is emitted when a new Post is added to a Blog.
+//
+message PostAdded {
+
+    BlogId blog_id = 1 [(required) = true];
+
+    PostId post_id = 2 [(required) = true];
 }

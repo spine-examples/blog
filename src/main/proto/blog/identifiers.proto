@@ -33,3 +33,7 @@ option java_generate_equals_and_hash = true;
 message BlogId {
     string value = 1 [(required) = true];
 }
+
+message PostId {
+    string value = 1 [(required) = true];
+}

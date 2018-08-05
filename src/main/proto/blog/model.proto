@@ -36,4 +36,22 @@ message Blog {
     BlogId id = 1 [(required) = true];
 
     string name = 2;
+
+    repeated PostId posts = 3;
+}
+
+message Post {
+    PostId id = 1 [(required) = true];
+
+    string title = 2;
+
+    string body = 3;
+
+    enum Status {
+        DRAFT = 0;
+        PUBLISHED = 1;
+        DELETED = 2;
+    }
+
+    Status status = 4;
 }
