@@ -26,54 +26,42 @@ import java.util.List;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.protobuf.Message;
 
-import io.spine.core.React;
-import io.spine.examples.blog.commands.CreateBlog;
-import io.spine.examples.blog.events.BlogCreated;
-import io.spine.examples.blog.events.PostAdded;
+import io.spine.examples.blog.commands.CreatePost;
 import io.spine.examples.blog.events.PostCreated;
 import io.spine.server.aggregate.Aggregate;
 import io.spine.server.aggregate.Apply;
 import io.spine.server.command.Assign;
 
 /**
- * An aggregate that manages state of the {@link Blog} model.
+ * An aggregate that manages state of the {@link Post} model.
  *
  * @author Anton Nikulin
  */
-public class BlogAggregate extends Aggregate<BlogId, Blog, BlogVBuilder> {
+public class PostAggregate extends Aggregate<PostId, Post, PostVBuilder> {
 
     @VisibleForTesting
-    protected BlogAggregate(BlogId id) {
+    protected PostAggregate(PostId id) {
         super(id);
     }
 
     @Assign
-    List<? extends Message> handle(CreateBlog cmd) {
-        final BlogCreated result = BlogCreated.newBuilder()
+    List<? extends Message> handle(CreatePost cmd) {
+        final PostCreated result = PostCreated.newBuilder()
+                .setPostId(cmd.getPostId())
                 .setBlogId(cmd.getBlogId())
-                .setName(cmd.getName())
+                .setTitle(cmd.getTitle())
+                .setBody(cmd.getBody())
                 .build();
         return Collections.singletonList(result);
     }
 
-    @React
-    PostAdded on(PostCreated event) {
-        return PostAdded.newBuilder()
-                .setBlogId(event.getBlogId())
-                .setPostId(event.getPostId())
-                .build();
+    @Apply
+    void postCreated(PostCreated event) {
+        getBuilder()
+                .setId(event.getPostId())
+                .setTitle(event.getTitle())
+                .setBody(event.getBody())
+                .setStatus(Post.Status.DRAFT);
     }
 
-    @Apply
-    void blogCreated(BlogCreated event) {
-        getBuilder()
-                .setId(event.getBlogId())
-                .setName(event.getName());
-    }
-
-    @Apply
-    void postAdded(PostAdded event) {
-        getBuilder()
-                .addPosts(event.getPostId());
-    }
 }
