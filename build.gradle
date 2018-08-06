@@ -31,6 +31,8 @@ dependencies {
     implementation group: 'io.spine', name: 'spine-server', version: spineCoreVersion
 
     testImplementation group: 'io.spine', name: 'spine-testutil-server', version: spineCoreVersion
+    // TODO: remove dependency when KanbanClient class is generalizes and extracted to a common place
+    testImplementation project(':kanban-board').sourceSets.test.output
 
     testRuntime deps.test.junit5Runner
 }

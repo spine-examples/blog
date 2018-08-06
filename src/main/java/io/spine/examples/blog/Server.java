@@ -56,10 +56,15 @@ public class Server {
         final BoundedContextName name = BoundedContextName.newBuilder()
                 .setValue(BOUNDED_CONTEXT_NAME)
                 .build();
-        return BoundedContext.newBuilder()
+        BoundedContext context = BoundedContext.newBuilder()
                 .setName(name)
                 .setStorageFactorySupplier(() -> InMemoryStorageFactory.newInstance(name, false))
                 .build();
+
+        context.register(new BlogAggregateRepository());
+        context.register(new PostAggregateRepository());
+
+        return context;
     }
 
     private GrpcContainer createGrpcContainer(BoundedContext boundedContext) {
