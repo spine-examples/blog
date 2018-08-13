@@ -21,8 +21,8 @@
 package io.spine.examples.blog;
 
 import com.google.protobuf.Message;
-import io.spine.examples.blog.commands.CreatePost;
-import io.spine.examples.blog.events.PostCreated;
+import io.spine.examples.blog.commands.CreateBlogPost;
+import io.spine.examples.blog.events.BlogPostCreated;
 import io.spine.server.entity.Repository;
 import io.spine.testing.server.aggregate.AggregateCommandTest;
 import org.junit.jupiter.api.Test;
@@ -32,36 +32,36 @@ import java.util.List;
 import static io.spine.base.Identifier.newUuid;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CreatePostCommandTest extends AggregateCommandTest<PostId, CreatePost, Post, PostAggregate> {
+public class CreatePostCommandTest extends AggregateCommandTest<BlogPostId, CreateBlogPost, BlogPost, BlogPostAggregate> {
 
     private final BlogId blogId = BlogId.newBuilder().setValue(newUuid()).build();
 
     @Override
-    protected PostId newId() {
-        return PostId.newBuilder().setValue(newUuid()).build();
+    protected BlogPostId newId() {
+        return BlogPostId.newBuilder().setValue(newUuid()).build();
     }
 
     @Override
-    protected CreatePost createMessage() {
-        return CreatePost.newBuilder()
-                .setPostId(id())
+    protected CreateBlogPost createMessage() {
+        return CreateBlogPost.newBuilder()
+                .setBlogPostId(id())
                 .setBlogId(blogId)
                 .setTitle("Test Post in a Test Blog")
                 .build();
     }
 
     @Override
-    protected Repository<PostId, PostAggregate> createEntityRepository() {
-        return new PostAggregateRepository();
+    protected Repository<BlogPostId, BlogPostAggregate> createEntityRepository() {
+        return new BlogPostAggregateRepository();
     }
 
     @Test
     void testCreatePostShouldProduceEvent() {
-        final PostAggregate postAggregate = new PostAggregate(id());
+        final BlogPostAggregate blogPostAggregate = new BlogPostAggregate(id());
 
-        this.expectThat(postAggregate)
-                .producesEvent(PostCreated.class, created -> {
-                    assertEquals(id(), created.getPostId());
+        this.expectThat(blogPostAggregate)
+                .producesEvent(BlogPostCreated.class, created -> {
+                    assertEquals(id(), created.getBlogPostId());
                     assertEquals(blogId, created.getBlogId());
                     assertEquals(message().getTitle(), created.getTitle());
                 });
@@ -69,12 +69,12 @@ public class CreatePostCommandTest extends AggregateCommandTest<PostId, CreatePo
 
     @Test
     void testCreatePostShouldChangePostState() {
-        final PostAggregate postAggregate = new PostAggregate(id());
-        final List<? extends Message> messages = dispatchTo(postAggregate);
+        final BlogPostAggregate blogPostAggregate = new BlogPostAggregate(id());
+        final List<? extends Message> messages = dispatchTo(blogPostAggregate);
 
-        final Post aggregateState = postAggregate.getState();
+        final BlogPost aggregateState = blogPostAggregate.getState();
         assertEquals(id(), aggregateState.getId());
         assertEquals(message().getTitle(), aggregateState.getTitle());
-        assertEquals(Post.Status.DRAFT, aggregateState.getStatus());
+        assertEquals(BlogPost.Status.DRAFT, aggregateState.getStatus());
     }
 }

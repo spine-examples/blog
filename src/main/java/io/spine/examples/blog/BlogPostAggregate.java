@@ -20,48 +20,42 @@
 
 package io.spine.examples.blog;
 
-import java.util.Collections;
-import java.util.List;
-
 import com.google.common.annotations.VisibleForTesting;
-import com.google.protobuf.Message;
-
-import io.spine.examples.blog.commands.CreatePost;
-import io.spine.examples.blog.events.PostCreated;
+import io.spine.examples.blog.commands.CreateBlogPost;
+import io.spine.examples.blog.events.BlogPostCreated;
 import io.spine.server.aggregate.Aggregate;
 import io.spine.server.aggregate.Apply;
 import io.spine.server.command.Assign;
 
 /**
- * An aggregate that manages state of the {@link Post} model.
+ * An aggregate that manages state of the {@link BlogPost} model.
  *
  * @author Anton Nikulin
  */
-public class PostAggregate extends Aggregate<PostId, Post, PostVBuilder> {
+public class BlogPostAggregate extends Aggregate<BlogPostId, BlogPost, BlogPostVBuilder> {
 
     @VisibleForTesting
-    protected PostAggregate(PostId id) {
+    protected BlogPostAggregate(BlogPostId id) {
         super(id);
     }
 
     @Assign
-    List<? extends Message> handle(CreatePost cmd) {
-        final PostCreated result = PostCreated.newBuilder()
-                .setPostId(cmd.getPostId())
+    BlogPostCreated handle(CreateBlogPost cmd) {
+        return BlogPostCreated.newBuilder()
+                .setBlogPostId(cmd.getBlogPostId())
                 .setBlogId(cmd.getBlogId())
                 .setTitle(cmd.getTitle())
                 .setBody(cmd.getBody())
                 .build();
-        return Collections.singletonList(result);
     }
 
     @Apply
-    void postCreated(PostCreated event) {
+    void blogPostCreated(BlogPostCreated event) {
         getBuilder()
-                .setId(event.getPostId())
+                .setId(event.getBlogPostId())
                 .setTitle(event.getTitle())
                 .setBody(event.getBody())
-                .setStatus(Post.Status.DRAFT);
+                .setStatus(BlogPost.Status.DRAFT);
     }
 
 }

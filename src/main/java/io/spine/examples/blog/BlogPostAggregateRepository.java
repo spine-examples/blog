@@ -23,9 +23,9 @@ package io.spine.examples.blog;
 import io.spine.server.aggregate.AggregateRepository;
 
 /**
- * A repository for {@link PostAggregate}.
+ * A repository for {@link BlogPostAggregate}.
  *
  * @author Anton Nikulin
  */
-public class PostAggregateRepository extends AggregateRepository<PostId, PostAggregate> {
+public class BlogPostAggregateRepository extends AggregateRepository<BlogPostId, BlogPostAggregate> {
 }

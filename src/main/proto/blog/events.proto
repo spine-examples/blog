@@ -40,10 +40,10 @@ message BlogCreated {
     string name = 2 [(required) = true];
 }
 
-// An event is emitted when a new Post is created.
+// An event is emitted when a new BlogPost is created.
 //
-message PostCreated {
-    PostId post_id = 1 [(required) = true];
+message BlogPostCreated {
+    BlogPostId blog_post_id = 1 [(required) = true];
 
     BlogId blog_id = 2 [(required) = true];
 
@@ -52,11 +52,11 @@ message PostCreated {
     string body = 4;
 }
 
-// An event is emitted when a new Post is added to a Blog.
+// An event is emitted when a new BlogPost is added to a Blog.
 //
-message PostAdded {
+message BlogPostAdded {
 
     BlogId blog_id = 1 [(required) = true];
 
-    PostId post_id = 2 [(required) = true];
+    BlogPostId blog_post_id = 2 [(required) = true];
 }

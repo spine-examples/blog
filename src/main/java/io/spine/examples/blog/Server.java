@@ -40,7 +40,7 @@ import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
  */
 public class Server {
 
-    private static final String BOUNDED_CONTEXT_NAME = "BlogPostBoundedContext";
+    private static final String BOUNDED_CONTEXT_NAME = "BlogBoundedContext";
 
     private final int port;
     private final GrpcContainer grpcContainer;
@@ -62,7 +62,7 @@ public class Server {
                 .build();
 
         context.register(new BlogAggregateRepository());
-        context.register(new PostAggregateRepository());
+        context.register(new BlogPostAggregateRepository());
 
         return context;
     }

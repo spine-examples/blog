@@ -20,17 +20,12 @@
 
 package io.spine.examples.blog;
 
-import java.util.Collections;
-import java.util.List;
-
 import com.google.common.annotations.VisibleForTesting;
-import com.google.protobuf.Message;
-
 import io.spine.core.React;
 import io.spine.examples.blog.commands.CreateBlog;
 import io.spine.examples.blog.events.BlogCreated;
-import io.spine.examples.blog.events.PostAdded;
-import io.spine.examples.blog.events.PostCreated;
+import io.spine.examples.blog.events.BlogPostAdded;
+import io.spine.examples.blog.events.BlogPostCreated;
 import io.spine.server.aggregate.Aggregate;
 import io.spine.server.aggregate.Apply;
 import io.spine.server.command.Assign;
@@ -48,19 +43,18 @@ public class BlogAggregate extends Aggregate<BlogId, Blog, BlogVBuilder> {
     }
 
     @Assign
-    List<? extends Message> handle(CreateBlog cmd) {
-        final BlogCreated result = BlogCreated.newBuilder()
+    BlogCreated handle(CreateBlog cmd) {
+        return BlogCreated.newBuilder()
                 .setBlogId(cmd.getBlogId())
                 .setName(cmd.getName())
                 .build();
-        return Collections.singletonList(result);
     }
 
     @React
-    PostAdded on(PostCreated event) {
-        return PostAdded.newBuilder()
+    BlogPostAdded on(BlogPostCreated event) {
+        return BlogPostAdded.newBuilder()
                 .setBlogId(event.getBlogId())
-                .setPostId(event.getPostId())
+                .setBlogPostId(event.getBlogPostId())
                 .build();
     }
 
@@ -72,8 +66,8 @@ public class BlogAggregate extends Aggregate<BlogId, Blog, BlogVBuilder> {
     }
 
     @Apply
-    void postAdded(PostAdded event) {
+    void blogPostAdded(BlogPostAdded event) {
         getBuilder()
-                .addPosts(event.getPostId());
+                .addPosts(event.getBlogPostId());
     }
 }

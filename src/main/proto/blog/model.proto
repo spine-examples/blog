@@ -32,16 +32,20 @@ option java_generate_equals_and_hash = true;
 
 import "blog/identifiers.proto";
 
+// A Blog that contains a list of BlogPosts.
+//
 message Blog {
     BlogId id = 1 [(required) = true];
 
     string name = 2;
 
-    repeated PostId posts = 3;
+    repeated BlogPostId posts = 3;
 }
 
-message Post {
-    PostId id = 1 [(required) = true];
+// A BlogPost attached to a certain Blog.
+//
+message BlogPost {
+    BlogPostId id = 1 [(required) = true];
 
     string title = 2;
 

@@ -2,7 +2,7 @@ package io.spine.examples.blog;
 
 import io.spine.client.QueryResponse;
 import io.spine.examples.blog.commands.CreateBlog;
-import io.spine.examples.blog.commands.CreatePost;
+import io.spine.examples.blog.commands.CreateBlogPost;
 import io.spine.examples.kanban.given.KanbanClient;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,28 +51,28 @@ public class ServerTest {
                 .build();
         client.post(createBlogCommand);
 
-        final PostId postId = PostId.newBuilder()
+        final BlogPostId blogPostId = BlogPostId.newBuilder()
                 .setValue(newUuid())
                 .build();
-        final CreatePost createPostCommand = CreatePost.newBuilder()
-                .setPostId(postId)
+        final CreateBlogPost createBlogPostCommand = CreateBlogPost.newBuilder()
+                .setBlogPostId(blogPostId)
                 .setBlogId(blogId)
                 .setTitle("Test Blog Post")
                 .build();
-        client.post(createPostCommand);
+        client.post(createBlogPostCommand);
 
         QueryResponse blogResponse = client.queryAll(Blog.class);
         assertEquals(1, blogResponse.getMessagesCount());
         Blog blog = unpack(blogResponse.getMessages(0));
         assertEquals(blogId, blog.getId());
         assertEquals(createBlogCommand.getName(), blog.getName());
-        assertTrue(blog.getPostsList().contains(postId));
+        assertTrue(blog.getPostsList().contains(blogPostId));
 
-        QueryResponse postResponse = client.queryAll(Post.class);
+        QueryResponse postResponse = client.queryAll(BlogPost.class);
         assertEquals(1, postResponse.getMessagesCount());
-        Post post = unpack(postResponse.getMessages(0));
-        assertEquals(postId, post.getId());
-        assertEquals(createPostCommand.getTitle(), post.getTitle());
-        assertEquals(Post.Status.DRAFT, post.getStatus());
+        BlogPost blogPost = unpack(postResponse.getMessages(0));
+        assertEquals(blogPostId, blogPost.getId());
+        assertEquals(createBlogPostCommand.getTitle(), blogPost.getTitle());
+        assertEquals(BlogPost.Status.DRAFT, blogPost.getStatus());
     }
 }
