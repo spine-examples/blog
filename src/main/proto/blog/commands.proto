@@ -63,3 +63,10 @@ message CreateBlogPost {
     //
     string body = 4;
 }
+
+// A command to publish an BlogPost draft and make it visible in a certain Blog.
+message PublishBlogPost {
+    // An ID for the BlogPost to publish.
+    //
+    BlogPostId blog_post_id = 1;
+}

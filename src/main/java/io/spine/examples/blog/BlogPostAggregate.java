@@ -22,7 +22,10 @@ package io.spine.examples.blog;
 
 import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.blog.commands.CreateBlogPost;
+import io.spine.examples.blog.commands.PublishBlogPost;
 import io.spine.examples.blog.events.BlogPostCreated;
+import io.spine.examples.blog.events.BlogPostPublished;
+import io.spine.examples.blog.rejections.CannotPublishBlogPost;
 import io.spine.server.aggregate.Aggregate;
 import io.spine.server.aggregate.Apply;
 import io.spine.server.command.Assign;
@@ -49,6 +52,16 @@ public class BlogPostAggregate extends Aggregate<BlogPostId, BlogPost, BlogPostV
                 .build();
     }
 
+    @Assign
+    BlogPostPublished handle(PublishBlogPost cmd) throws CannotPublishBlogPost {
+        if (getState().getStatus() != BlogPost.Status.DRAFT) {
+            throw new CannotPublishBlogPost(cmd.getBlogPostId());
+        }
+        return BlogPostPublished.newBuilder()
+                .setBlogPostId(cmd.getBlogPostId())
+                .build();
+    }
+
     @Apply
     void blogPostCreated(BlogPostCreated event) {
         getBuilder()
@@ -58,4 +71,10 @@ public class BlogPostAggregate extends Aggregate<BlogPostId, BlogPost, BlogPostV
                 .setStatus(BlogPost.Status.DRAFT);
     }
 
+    @Apply
+    void blogPostPublished(BlogPostPublished event) {
+        getBuilder()
+                .setId(event.getBlogPostId())
+                .setStatus(BlogPost.Status.PUBLISHED);
+    }
 }

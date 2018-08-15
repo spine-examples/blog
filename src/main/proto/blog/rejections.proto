@@ -25,45 +25,14 @@ package spine.examples.blog;
 import "spine/options.proto";
 
 option (type_url_prefix) = "type.spine.examples.blog";
-option java_package = "io.spine.examples.blog.events";
-option java_outer_classname = "EventsProto";
-option java_multiple_files = true;
+option java_package = "io.spine.examples.blog.rejections";
+option java_multiple_files = false;
 option java_generate_equals_and_hash = true;
 
 import "blog/identifiers.proto";
 
-// An event is emitted when a new Blog is created.
+// A rejection to publish the BlogPost. It is thrown when the non-draft BlogPost is attempted to be published.
 //
-message BlogCreated {
-    BlogId blog_id = 1 [(required) = true];
-
-    string name = 2 [(required) = true];
-}
-
-// An event is emitted when a new BlogPost is created.
-//
-message BlogPostCreated {
-    BlogPostId blog_post_id = 1 [(required) = true];
-
-    BlogId blog_id = 2 [(required) = true];
-
-    string title = 3 [(required) = true];
-
-    string body = 4;
-}
-
-// An event is emitted when a new BlogPost is added to the Blog.
-//
-message BlogPostAdded {
-
-    BlogId blog_id = 1 [(required) = true];
-
-    BlogPostId blog_post_id = 2 [(required) = true];
-}
-
-// An event is emitted when the BlogPost is published to the Blog.
-//
-message BlogPostPublished {
-
+message CannotPublishBlogPost {
     BlogPostId blog_post_id = 1 [(required) = true];
 }
