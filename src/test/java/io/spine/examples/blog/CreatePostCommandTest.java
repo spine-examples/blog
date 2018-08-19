@@ -29,16 +29,17 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static io.spine.base.Identifier.newUuid;
+import static io.spine.examples.blog.given.TestIdentifiers.newBlogId;
+import static io.spine.examples.blog.given.TestIdentifiers.newBlogPostId;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CreatePostCommandTest extends AggregateCommandTest<BlogPostId, CreateBlogPost, BlogPost, BlogPostAggregate> {
 
-    private final BlogId blogId = BlogId.newBuilder().setValue(newUuid()).build();
+    private final BlogId blogId = newBlogId();
 
     @Override
     protected BlogPostId newId() {
-        return BlogPostId.newBuilder().setValue(newUuid()).build();
+        return newBlogPostId();
     }
 
     @Override

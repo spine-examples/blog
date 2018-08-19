@@ -25,19 +25,18 @@ import io.spine.examples.blog.commands.CreateBlog;
 import io.spine.examples.blog.events.BlogCreated;
 import io.spine.server.entity.Repository;
 import io.spine.testing.server.aggregate.AggregateCommandTest;
-
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static io.spine.base.Identifier.newUuid;
+import static io.spine.examples.blog.given.TestIdentifiers.newBlogId;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CreateBlogCommandTest extends AggregateCommandTest<BlogId, CreateBlog, Blog, BlogAggregate> {
 
     @Override
     protected BlogId newId() {
-        return BlogId.newBuilder().setValue(newUuid()).build();
+        return newBlogId();
     }
 
     @Override

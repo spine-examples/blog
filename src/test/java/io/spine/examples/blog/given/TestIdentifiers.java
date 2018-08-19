@@ -1,0 +1,48 @@
+/*
+ * Copyright 2018, TeamDev. All rights reserved.
+ *
+ * Redistribution and use in source and/or binary forms, with or without
+ * modification, must retain the above copyright notice and the following
+ * disclaimer.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+package io.spine.examples.blog.given;
+
+import io.spine.examples.blog.BlogId;
+import io.spine.examples.blog.BlogPostId;
+
+import static io.spine.base.Identifier.newUuid;
+
+/**
+ * A helper class with static methods for creating entity identifiers.
+ *
+ * @author Anton Nikulin
+ */
+public class TestIdentifiers {
+    private TestIdentifiers() {
+    }
+
+    public static BlogId newBlogId() {
+        return BlogId.newBuilder()
+                .setValue(newUuid())
+                .build();
+    }
+
+    public static BlogPostId newBlogPostId() {
+        return BlogPostId.newBuilder()
+                .setValue(newUuid())
+                .build();
+    }
+}

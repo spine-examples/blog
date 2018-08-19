@@ -34,11 +34,11 @@ import java.io.IOException;
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 
 /**
- * A local gRPC {@link Server} with {@link InMemoryStorageFactory} running a Blog Bounded Context.
+ * A local gRPC {@link BlogServer} with {@link InMemoryStorageFactory} running a Blog Bounded Context.
  *
  * @author Anton Nikulin
  */
-public class Server {
+public class BlogServer {
 
     private static final String BOUNDED_CONTEXT_NAME = "BlogBoundedContext";
 
@@ -46,7 +46,7 @@ public class Server {
     private final GrpcContainer grpcContainer;
     private final BoundedContext boundedContext;
 
-    public Server(int port) {
+    public BlogServer(int port) {
         this.port = port;
         this.boundedContext = createBoundedContext();
         this.grpcContainer = createGrpcContainer(this.boundedContext);
@@ -101,14 +101,14 @@ public class Server {
 
     public static void main(String[] args) throws IOException {
         int port = Integer.parseInt(System.getProperty("port", String.valueOf(DEFAULT_CLIENT_SERVICE_PORT)));
-        Server server = new Server(port);
-        server.start();
+        BlogServer blogServer = new BlogServer(port);
+        blogServer.start();
     }
 
     private enum LogSingleton {
         INSTANCE;
         @SuppressWarnings("NonSerializableFieldInSerializableClass")
-        private final Logger value = LoggerFactory.getLogger(Server.class);
+        private final Logger value = LoggerFactory.getLogger(BlogServer.class);
     }
 
     private static Logger log() {

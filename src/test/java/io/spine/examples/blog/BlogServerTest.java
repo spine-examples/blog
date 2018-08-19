@@ -10,50 +10,51 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static io.spine.base.Identifier.newUuid;
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
+import static io.spine.examples.blog.given.TestIdentifiers.newBlogId;
+import static io.spine.examples.blog.given.TestIdentifiers.newBlogPostId;
 import static io.spine.protobuf.AnyPacker.unpack;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class ServerTest {
+public class BlogServerTest {
 
-    private Server server;
+    private BlogServer blogServer;
     private KanbanClient client;
 
     @BeforeEach
     void setup() {
         client = new KanbanClient("localhost", DEFAULT_CLIENT_SERVICE_PORT);
-        server = new Server(DEFAULT_CLIENT_SERVICE_PORT);
+        blogServer = new BlogServer(DEFAULT_CLIENT_SERVICE_PORT);
+        startServer();
+    }
+
+    private void startServer() {
         new Thread(() -> {
             try {
-                server.start();
+                this.blogServer.start();
             } catch (IOException e) {
-                e.printStackTrace();
+                fail(e);
             }
         }).start();
     }
 
+
     @AfterEach
     void tearDown() throws InterruptedException {
         client.shutdown();
-        server.shutdown();
+        blogServer.shutdown();
     }
 
     @Test
     void createBlogWithPost() {
-        final BlogId blogId = BlogId.newBuilder()
-                .setValue(newUuid())
-                .build();
+        final BlogId blogId = newBlogId();
         final CreateBlog createBlogCommand = CreateBlog.newBuilder()
                 .setBlogId(blogId)
                 .setName("Test Blog")
                 .build();
         client.post(createBlogCommand);
 
-        final BlogPostId blogPostId = BlogPostId.newBuilder()
-                .setValue(newUuid())
-                .build();
+        final BlogPostId blogPostId = newBlogPostId();
         final CreateBlogPost createBlogPostCommand = CreateBlogPost.newBuilder()
                 .setBlogPostId(blogPostId)
                 .setBlogId(blogId)
