@@ -24,12 +24,16 @@ import io.spine.core.BoundedContextName;
 import io.spine.server.BoundedContext;
 import io.spine.server.CommandService;
 import io.spine.server.QueryService;
+import io.spine.server.event.EventBus;
+import io.spine.server.event.EventEnricher;
+import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.memory.InMemoryStorageFactory;
 import io.spine.server.transport.GrpcContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 
@@ -53,18 +57,38 @@ public class BlogServer {
     }
 
     private BoundedContext createBoundedContext() {
+        final BlogPostAggregateRepository blogPostRepo = new BlogPostAggregateRepository();
+
         final BoundedContextName name = BoundedContextName.newBuilder()
                 .setValue(BOUNDED_CONTEXT_NAME)
                 .build();
-        BoundedContext context = BoundedContext.newBuilder()
-                .setName(name)
-                .setStorageFactorySupplier(() -> InMemoryStorageFactory.newInstance(name, false))
-                .build();
+        final StorageFactory storageFactory = InMemoryStorageFactory.newInstance(name, false);
 
+
+        final BoundedContext context = BoundedContext.newBuilder()
+                .setName(name)
+                .setEventBus(createEventBus(storageFactory, blogPostRepo))
+                .setStorageFactorySupplier(() -> storageFactory)
+                .build();
         context.register(new BlogAggregateRepository());
-        context.register(new BlogPostAggregateRepository());
+        context.register(blogPostRepo);
+        context.register(new BlogViewRepository());
 
         return context;
+    }
+
+    private static EventBus.Builder createEventBus(StorageFactory storageFactory,
+                                                   BlogPostAggregateRepository blogPostRepo) {
+        final EventEnricher enricher = EventEnricher.newBuilder()
+                .add(BlogPostId.class, BlogPost.class, blogPostId -> {
+                    final Optional<BlogPostAggregate> blogPostAggregate = blogPostRepo.find(blogPostId);
+                    return blogPostAggregate.isPresent() ? blogPostAggregate.get().getState() : BlogPost.getDefaultInstance();
+                })
+                .build();
+        final EventBus.Builder eventBus = EventBus.newBuilder()
+                .setEnricher(enricher)
+                .setStorageFactory(storageFactory);
+        return eventBus;
     }
 
     private GrpcContainer createGrpcContainer(BoundedContext boundedContext) {
@@ -91,8 +115,9 @@ public class BlogServer {
         grpcContainer.awaitTermination();
     }
 
-    public void shutdown() {
+    public void shutdown() throws Exception {
         grpcContainer.shutdown();
+        boundedContext.close();
     }
 
     private void execute() throws IOException {

@@ -66,6 +66,7 @@ public class BlogPostAggregate extends Aggregate<BlogPostId, BlogPost, BlogPostV
     void blogPostCreated(BlogPostCreated event) {
         getBuilder()
                 .setId(event.getBlogPostId())
+                .setBlogId(event.getBlogId())
                 .setTitle(event.getTitle())
                 .setBody(event.getBody())
                 .setStatus(BlogPost.Status.DRAFT);

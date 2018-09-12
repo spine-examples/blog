@@ -3,9 +3,11 @@ package io.spine.examples.blog;
 import io.spine.client.QueryResponse;
 import io.spine.examples.blog.commands.CreateBlog;
 import io.spine.examples.blog.commands.CreateBlogPost;
+import io.spine.examples.blog.commands.PublishBlogPost;
 import io.spine.examples.kanban.given.KanbanClient;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -40,7 +42,7 @@ public class BlogServerTest {
 
 
     @AfterEach
-    void tearDown() throws InterruptedException {
+    void tearDown() throws Exception {
         client.shutdown();
         blogServer.shutdown();
     }
@@ -75,5 +77,46 @@ public class BlogServerTest {
         assertEquals(blogPostId, blogPost.getId());
         assertEquals(createBlogPostCommand.getTitle(), blogPost.getTitle());
         assertEquals(BlogPost.Status.DRAFT, blogPost.getStatus());
+    }
+
+    @Test
+    @DisplayName("return published posts")
+    void queryBlogView() {
+        final BlogId blogId = newBlogId();
+        final CreateBlog createBlogCommand = CreateBlog.newBuilder()
+                .setBlogId(blogId)
+                .setName("Test Blog")
+                .build();
+        client.post(createBlogCommand);
+
+        final BlogPostId blogPostId = newBlogPostId();
+        final CreateBlogPost createBlogPostCommand = CreateBlogPost.newBuilder()
+                .setBlogPostId(blogPostId)
+                .setBlogId(blogId)
+                .setTitle("Test Blog Post")
+                .build();
+        client.post(createBlogPostCommand);
+
+        final BlogPostId blogPostId2 = newBlogPostId();
+        final CreateBlogPost createBlogPostCommand2 = CreateBlogPost.newBuilder()
+                .setBlogPostId(blogPostId2)
+                .setBlogId(blogId)
+                .setTitle("Test Blog Post 2")
+                .build();
+        client.post(createBlogPostCommand2);
+
+        final PublishBlogPost publishBlogPostCommand = PublishBlogPost.newBuilder()
+                .setBlogPostId(blogPostId2)
+                .build();
+        client.post(publishBlogPostCommand);
+
+        QueryResponse response = client.queryAll(BlogView.class);
+        assertEquals(1, response.getMessagesCount());
+
+        BlogView blogView = unpack(response.getMessages(0));
+
+        assertEquals(blogId, blogView.getBlogId());
+        assertEquals(1, blogView.getPostsCount());
+        assertEquals(blogPostId2, blogView.getPosts(0).getId());
     }
 }

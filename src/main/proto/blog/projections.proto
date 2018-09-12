@@ -26,38 +26,28 @@ import "spine/options.proto";
 
 option (type_url_prefix) = "type.spine.examples.blog";
 option java_package = "io.spine.examples.blog";
-option java_outer_classname = "ModelsProto";
+option java_outer_classname = "ProjectionsProto";
 option java_multiple_files = true;
 option java_generate_equals_and_hash = true;
 
 import "blog/identifiers.proto";
 
-// A Blog that contains a list of BlogPosts.
+// A projection with published posts. This view contains posts published to a certain blog.
 //
-message Blog {
-    BlogId id = 1 [(required) = true];
+message BlogView {
 
-    string name = 2;
+    BlogId blog_id = 1;
 
-    repeated BlogPostId posts = 3;
+    repeated BlogPostItem posts = 2;
 }
 
-// A BlogPost attached to a certain Blog.
+// A blog post item.
 //
-message BlogPost {
-    BlogPostId id = 1 [(required) = true];
+message BlogPostItem {
 
-    BlogId blog_id = 2;
+    BlogPostId id = 1;
 
-    string title = 3;
+    string title = 2;
 
-    string body = 4;
-
-    enum Status {
-        DRAFT = 0;
-        PUBLISHED = 1;
-        DELETED = 2;
-    }
-
-    Status status = 5;
+    string body = 3;
 }

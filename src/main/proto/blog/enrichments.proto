@@ -26,38 +26,17 @@ import "spine/options.proto";
 
 option (type_url_prefix) = "type.spine.examples.blog";
 option java_package = "io.spine.examples.blog";
-option java_outer_classname = "ModelsProto";
+option java_outer_classname = "EnrichmentsProto";
 option java_multiple_files = true;
 option java_generate_equals_and_hash = true;
 
-import "blog/identifiers.proto";
+import "blog/model.proto";
 
-// A Blog that contains a list of BlogPosts.
+// A BlodPost enrichment for BlogPostPublished event.
 //
-message Blog {
-    BlogId id = 1 [(required) = true];
+message BlogPostEnrichment {
+    option (enrichment_for) = "spine.examples.blog.BlogPostPublished";
 
-    string name = 2;
-
-    repeated BlogPostId posts = 3;
-}
-
-// A BlogPost attached to a certain Blog.
-//
-message BlogPost {
-    BlogPostId id = 1 [(required) = true];
-
-    BlogId blog_id = 2;
-
-    string title = 3;
-
-    string body = 4;
-
-    enum Status {
-        DRAFT = 0;
-        PUBLISHED = 1;
-        DELETED = 2;
-    }
-
-    Status status = 5;
+    // The state of the BlogPost which produced the `BlogPostPublished` event.
+    BlogPost blog_post = 1 [(by) = "blog_post_id"];
 }
