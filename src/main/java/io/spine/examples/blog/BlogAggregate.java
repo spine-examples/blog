@@ -38,7 +38,7 @@ import io.spine.server.command.Assign;
 public class BlogAggregate extends Aggregate<BlogId, Blog, BlogVBuilder> {
 
     @VisibleForTesting
-    protected BlogAggregate(BlogId id) {
+    BlogAggregate(BlogId id) {
         super(id);
     }
 
@@ -68,6 +68,7 @@ public class BlogAggregate extends Aggregate<BlogId, Blog, BlogVBuilder> {
     @Apply
     void blogPostAdded(BlogPostAdded event) {
         getBuilder()
+                .setId(event.getBlogId())
                 .addPosts(event.getBlogPostId());
     }
 }

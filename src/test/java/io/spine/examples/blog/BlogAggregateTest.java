@@ -33,6 +33,7 @@ import org.junit.jupiter.api.Test;
 import static io.spine.examples.blog.given.TestIdentifiers.newBlogId;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@SuppressWarnings("ClassCanBeStatic" /* JUnit nested classes cannot be static. */)
 public class BlogAggregateTest {
     @Nested
     class CreateBlogCommandTest extends BlogAggregateCommandTest<CreateBlog> {
@@ -64,6 +65,7 @@ public class BlogAggregateTest {
 
         BlogAggregate blogAggregate;
 
+        @Override
         @BeforeEach
         protected void setUp() {
             super.setUp();

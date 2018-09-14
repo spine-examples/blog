@@ -50,18 +50,11 @@ public class BlogServerTest {
     @Test
     void createBlogWithPost() {
         final BlogId blogId = newBlogId();
-        final CreateBlog createBlogCommand = CreateBlog.newBuilder()
-                .setBlogId(blogId)
-                .setName("Test Blog")
-                .build();
+        final CreateBlog createBlogCommand = createBlogCommand(blogId, "Test Blog");
         client.post(createBlogCommand);
 
         final BlogPostId blogPostId = newBlogPostId();
-        final CreateBlogPost createBlogPostCommand = CreateBlogPost.newBuilder()
-                .setBlogPostId(blogPostId)
-                .setBlogId(blogId)
-                .setTitle("Test Blog Post")
-                .build();
+        final CreateBlogPost createBlogPostCommand = createBlogPostCommand(blogPostId, blogId, "Test Blog Post");
         client.post(createBlogPostCommand);
 
         QueryResponse blogResponse = client.queryAll(Blog.class);
@@ -80,29 +73,18 @@ public class BlogServerTest {
     }
 
     @Test
-    @DisplayName("return published posts")
+    @DisplayName("BlogView should return a list of published BlogPosts")
     void queryBlogView() {
         final BlogId blogId = newBlogId();
-        final CreateBlog createBlogCommand = CreateBlog.newBuilder()
-                .setBlogId(blogId)
-                .setName("Test Blog")
-                .build();
+        final CreateBlog createBlogCommand = createBlogCommand(blogId, "Test Blog");
         client.post(createBlogCommand);
 
         final BlogPostId blogPostId = newBlogPostId();
-        final CreateBlogPost createBlogPostCommand = CreateBlogPost.newBuilder()
-                .setBlogPostId(blogPostId)
-                .setBlogId(blogId)
-                .setTitle("Test Blog Post")
-                .build();
+        final CreateBlogPost createBlogPostCommand = createBlogPostCommand(blogPostId, blogId, "Test Blog Post");
         client.post(createBlogPostCommand);
 
         final BlogPostId blogPostId2 = newBlogPostId();
-        final CreateBlogPost createBlogPostCommand2 = CreateBlogPost.newBuilder()
-                .setBlogPostId(blogPostId2)
-                .setBlogId(blogId)
-                .setTitle("Test Blog Post 2")
-                .build();
+        final CreateBlogPost createBlogPostCommand2 = createBlogPostCommand(blogPostId2, blogId, "Test Blog Post 2");
         client.post(createBlogPostCommand2);
 
         final PublishBlogPost publishBlogPostCommand = PublishBlogPost.newBuilder()
@@ -118,5 +100,20 @@ public class BlogServerTest {
         assertEquals(blogId, blogView.getBlogId());
         assertEquals(1, blogView.getPostsCount());
         assertEquals(blogPostId2, blogView.getPosts(0).getId());
+    }
+
+    private CreateBlog createBlogCommand(BlogId blogId, String name) {
+        return CreateBlog.newBuilder()
+                .setBlogId(blogId)
+                .setName(name)
+                .build();
+    }
+
+    private CreateBlogPost createBlogPostCommand(BlogPostId blogPostId, BlogId blogId, String title) {
+        return CreateBlogPost.newBuilder()
+                .setBlogPostId(blogPostId)
+                .setBlogId(blogId)
+                .setTitle(title)
+                .build();
     }
 }

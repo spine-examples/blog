@@ -36,17 +36,17 @@ import static io.spine.core.Enrichments.getEnrichment;
  */
 public class BlogViewProjection extends Projection<BlogId, BlogView, BlogViewVBuilder> {
 
-    protected BlogViewProjection(BlogId id) {
+    BlogViewProjection(BlogId id) {
         super(id);
     }
 
     @Subscribe
     public void on(BlogPostPublished event, EventContext context) {
-        final Optional<BlogPostEnrichment> enrichment = getEnrichment(BlogPostEnrichment.class, context);
-        enrichment.ifPresent((enr) -> {
-            final BlogPost blogPost = enr.getBlogPost();
-            final BlogPostItem item = BlogPostItem.newBuilder()
-                    .setId(blogPost.getId())
+        Optional<BlogPostEnrichment> enrOpt = getEnrichment(BlogPostEnrichment.class, context);
+        enrOpt.ifPresent((enr) -> {
+            BlogPost blogPost = enr.getBlogPost();
+            BlogPostItem item = BlogPostItem.newBuilder()
+                    .setId(event.getBlogPostId())
                     .setBody(blogPost.getBody())
                     .setTitle(blogPost.getTitle())
                     .build();

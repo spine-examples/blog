@@ -39,6 +39,7 @@ import static io.spine.examples.blog.given.TestIdentifiers.newBlogPostId;
 import static io.spine.testing.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@SuppressWarnings("ClassCanBeStatic" /* JUnit nested classes cannot be static. */)
 class BlogPostAggregateTest {
     @Nested
     class CreateBlogPostCommandTest extends BlogPostAggregateCommandTest<CreateBlogPost> {
@@ -104,9 +105,10 @@ class BlogPostAggregateTest {
     private static abstract class BlogPostAggregateCommandTest<C extends Message>
             extends AggregateCommandTest<BlogPostId, C, BlogPost, BlogPostAggregate> {
 
-        BlogId blogId = newBlogId();
+        final BlogId blogId = newBlogId();
         BlogPostAggregate blogPostAggregate;
 
+        @Override
         @BeforeEach
         protected void setUp() {
             super.setUp();

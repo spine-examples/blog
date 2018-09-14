@@ -25,7 +25,6 @@ import io.spine.server.BoundedContext;
 import io.spine.server.CommandService;
 import io.spine.server.QueryService;
 import io.spine.server.event.EventBus;
-import io.spine.server.event.EventEnricher;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.memory.InMemoryStorageFactory;
 import io.spine.server.transport.GrpcContainer;
@@ -33,7 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.Optional;
 
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 
@@ -79,16 +77,10 @@ public class BlogServer {
 
     private static EventBus.Builder createEventBus(StorageFactory storageFactory,
                                                    BlogPostAggregateRepository blogPostRepo) {
-        final EventEnricher enricher = EventEnricher.newBuilder()
-                .add(BlogPostId.class, BlogPost.class, blogPostId -> {
-                    final Optional<BlogPostAggregate> blogPostAggregate = blogPostRepo.find(blogPostId);
-                    return blogPostAggregate.isPresent() ? blogPostAggregate.get().getState() : BlogPost.getDefaultInstance();
-                })
-                .build();
-        final EventBus.Builder eventBus = EventBus.newBuilder()
-                .setEnricher(enricher)
+        BlogEnrichments blogEnrichments = BlogEnrichments.newBuilder().setBlogPostRepository(blogPostRepo).build();
+        return EventBus.newBuilder()
+                .setEnricher(blogEnrichments.createEventEnricher())
                 .setStorageFactory(storageFactory);
-        return eventBus;
     }
 
     private GrpcContainer createGrpcContainer(BoundedContext boundedContext) {
@@ -116,12 +108,9 @@ public class BlogServer {
     }
 
     public void shutdown() throws Exception {
+        log().info("Shutting down the server...");
         grpcContainer.shutdown();
         boundedContext.close();
-    }
-
-    private void execute() throws IOException {
-        start();
     }
 
     public static void main(String[] args) throws IOException {

@@ -29,17 +29,20 @@ import java.util.Optional;
 import static io.spine.core.Enrichments.getEnrichment;
 
 /**
- * The repository managing {@link BlogViewProjection}.
+ * A repository for {@link BlogViewProjection}.
  *
  * @author Anton Nikulin
  */
-class BlogViewRepository extends ProjectionRepository<BlogId, BlogViewProjection, BlogView> {
+public class BlogViewRepository extends ProjectionRepository<BlogId, BlogViewProjection, BlogView> {
 
-    BlogViewRepository() {
+    public BlogViewRepository() {
         super();
         getEventRouting().route(BlogPostPublished.class, (message, context) -> {
-            final Optional<BlogPostEnrichment> enrichment = getEnrichment(BlogPostEnrichment.class, context);
-            final BlogPost blogPost = enrichment.get().getBlogPost();
+            Optional<BlogPostEnrichment> enrOpt = getEnrichment(BlogPostEnrichment.class, context);
+            if (!enrOpt.isPresent()) {
+                return ImmutableSet.of();
+            }
+            BlogPost blogPost = enrOpt.get().getBlogPost();
             return ImmutableSet.of(blogPost.getBlogId());
         });
     }
