@@ -21,6 +21,7 @@
 package io.spine.examples.blog;
 
 import io.spine.core.BoundedContextName;
+import io.spine.logging.Logging;
 import io.spine.server.BoundedContext;
 import io.spine.server.CommandService;
 import io.spine.server.QueryService;
@@ -29,9 +30,9 @@ import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.memory.InMemoryStorageFactory;
 import io.spine.server.transport.GrpcContainer;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.function.Supplier;
 
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 
@@ -42,11 +43,12 @@ import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
  */
 public class BlogServer {
 
-    private static final String BOUNDED_CONTEXT_NAME = "BlogBoundedContext";
+    private static final String BOUNDED_CONTEXT_NAME = "Blog";
 
     private final int port;
     private final GrpcContainer grpcContainer;
     private final BoundedContext boundedContext;
+    private final Supplier<Logger> loggerSupplier = Logging.supplyFor(getClass());
 
     public BlogServer(int port) {
         this.port = port;
@@ -119,13 +121,7 @@ public class BlogServer {
         blogServer.start();
     }
 
-    private enum LogSingleton {
-        INSTANCE;
-        @SuppressWarnings("NonSerializableFieldInSerializableClass")
-        private final Logger value = LoggerFactory.getLogger(BlogServer.class);
-    }
-
-    private static Logger log() {
-        return LogSingleton.INSTANCE.value;
+    private Logger log() {
+        return loggerSupplier.get();
     }
 }
