@@ -18,7 +18,7 @@ import static io.spine.examples.blog.given.TestIdentifiers.newBlogPostId;
 import static io.spine.protobuf.AnyPacker.unpack;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class BlogServerTest {
+class BlogServerTest {
 
     private BlogServer blogServer;
     private KanbanClient client;
@@ -48,6 +48,7 @@ public class BlogServerTest {
     }
 
     @Test
+    @DisplayName("CreateBlog should create a Blog, and CreateBlog should create a BlogPost")
     void createBlogWithPost() {
         final BlogId blogId = newBlogId();
         final CreateBlog createBlogCommand = createBlogCommand(blogId, "Test Blog");
