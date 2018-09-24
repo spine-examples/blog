@@ -20,12 +20,10 @@
 
 package io.spine.examples.blog;
 
-import io.spine.core.BoundedContextName;
 import io.spine.logging.Logging;
 import io.spine.server.BoundedContext;
 import io.spine.server.CommandService;
 import io.spine.server.QueryService;
-import io.spine.server.storage.memory.InMemoryStorageFactory;
 import io.spine.server.transport.GrpcContainer;
 import org.slf4j.Logger;
 
@@ -35,13 +33,11 @@ import java.util.function.Supplier;
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 
 /**
- * A local gRPC {@link BlogServer} with {@link InMemoryStorageFactory} running a Blog Bounded Context.
+ * A local gRPC {@link BlogServer} running a {@link BlogBoundedContext}.
  *
  * @author Anton Nikulin
  */
 public class BlogServer {
-
-    private static final String BOUNDED_CONTEXT_NAME = "Blog";
 
     private final int port;
     private final GrpcContainer grpcContainer;
@@ -50,17 +46,14 @@ public class BlogServer {
 
     public BlogServer(int port) {
         this.port = port;
-        this.boundedContext = createBoundedContext();
+        this.boundedContext = BlogBoundedContext.getInstance();
         this.grpcContainer = createGrpcContainer(this.boundedContext);
     }
 
-    private BoundedContext createBoundedContext() {
-        final BoundedContextName name = BoundedContextName.newBuilder().setValue(BOUNDED_CONTEXT_NAME).build();
-        final BoundedContext context = BoundedContext.newBuilder().setName(name).build();
-        context.register(new BlogAggregateRepository());
-        context.register(new BlogPostAggregateRepository());
-        context.register(new BlogViewRepository());
-        return context;
+    public static void main(String[] args) throws IOException {
+        int port = Integer.parseInt(System.getProperty("port", String.valueOf(DEFAULT_CLIENT_SERVICE_PORT)));
+        BlogServer blogServer = new BlogServer(port);
+        blogServer.start();
     }
 
     private GrpcContainer createGrpcContainer(BoundedContext boundedContext) {
@@ -91,12 +84,6 @@ public class BlogServer {
         log().info("Shutting down the server...");
         grpcContainer.shutdown();
         boundedContext.close();
-    }
-
-    public static void main(String[] args) throws IOException {
-        int port = Integer.parseInt(System.getProperty("port", String.valueOf(DEFAULT_CLIENT_SERVICE_PORT)));
-        BlogServer blogServer = new BlogServer(port);
-        blogServer.start();
     }
 
     private Logger log() {
