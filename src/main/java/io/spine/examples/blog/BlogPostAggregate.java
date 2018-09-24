@@ -46,7 +46,6 @@ public class BlogPostAggregate extends Aggregate<BlogPostId, BlogPost, BlogPostV
     BlogPostCreated handle(CreateBlogPost cmd) {
         return BlogPostCreated.newBuilder()
                 .setBlogPostId(cmd.getBlogPostId())
-                .setBlogId(cmd.getBlogId())
                 .setTitle(cmd.getTitle())
                 .setBody(cmd.getBody())
                 .build();
@@ -59,6 +58,8 @@ public class BlogPostAggregate extends Aggregate<BlogPostId, BlogPost, BlogPostV
         }
         return BlogPostPublished.newBuilder()
                 .setBlogPostId(cmd.getBlogPostId())
+                .setTitle(getState().getTitle())
+                .setBody(getState().getBody())
                 .build();
     }
 
@@ -66,7 +67,6 @@ public class BlogPostAggregate extends Aggregate<BlogPostId, BlogPost, BlogPostV
     void blogPostCreated(BlogPostCreated event) {
         getBuilder()
                 .setId(event.getBlogPostId())
-                .setBlogId(event.getBlogId())
                 .setTitle(event.getTitle())
                 .setBody(event.getBody())
                 .setStatus(BlogPost.Status.DRAFT);

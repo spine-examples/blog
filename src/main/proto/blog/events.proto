@@ -35,6 +35,7 @@ import "blog/identifiers.proto";
 // An event is emitted when a new Blog is created.
 //
 message BlogCreated {
+
     BlogId blog_id = 1 [(required) = true];
 
     string name = 2 [(required) = true];
@@ -43,22 +44,19 @@ message BlogCreated {
 // An event is emitted when a new BlogPost is created.
 //
 message BlogPostCreated {
+
     BlogPostId blog_post_id = 1 [(required) = true];
 
-    BlogId blog_id = 2 [(required) = true];
+    string title = 2 [(required) = true];
 
-    string title = 3 [(required) = true];
-
-    string body = 4;
+    string body = 3;
 }
 
 // An event is emitted when a new BlogPost is added to the Blog.
 //
 message BlogPostAdded {
 
-    BlogId blog_id = 1 [(required) = true];
-
-    BlogPostId blog_post_id = 2 [(required) = true];
+    BlogPostId blog_post_id = 1 [(required) = true];
 }
 
 // An event is emitted when the BlogPost is published to the Blog.
@@ -66,4 +64,8 @@ message BlogPostAdded {
 message BlogPostPublished {
 
     BlogPostId blog_post_id = 1 [(required) = true];
+
+    string title = 2 [(required) = true];
+
+    string body = 3;
 }

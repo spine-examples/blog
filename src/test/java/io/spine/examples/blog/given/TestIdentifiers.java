@@ -36,13 +36,14 @@ public class TestIdentifiers {
 
     public static BlogId newBlogId() {
         return BlogId.newBuilder()
-                .setValue(newUuid())
+                .setUuid(newUuid())
                 .build();
     }
 
-    public static BlogPostId newBlogPostId() {
+    public static BlogPostId newBlogPostId(BlogId blogId) {
         return BlogPostId.newBuilder()
-                .setValue(newUuid())
+                .setUuid(newUuid())
+                .setBlogId(blogId)
                 .build();
     }
 }

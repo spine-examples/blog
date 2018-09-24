@@ -47,11 +47,9 @@ message Blog {
 message BlogPost {
     BlogPostId id = 1 [(required) = true];
 
-    BlogId blog_id = 2;
+    string title = 2;
 
-    string title = 3;
-
-    string body = 4;
+    string body = 3;
 
     enum Status {
         DRAFT = 0;
@@ -59,5 +57,5 @@ message BlogPost {
         DELETED = 2;
     }
 
-    Status status = 5;
+    Status status = 4;
 }

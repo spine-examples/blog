@@ -54,8 +54,8 @@ class BlogServerTest {
         final CreateBlog createBlogCommand = createBlogCommand(blogId, "Test Blog");
         client.post(createBlogCommand);
 
-        final BlogPostId blogPostId = newBlogPostId();
-        final CreateBlogPost createBlogPostCommand = createBlogPostCommand(blogPostId, blogId, "Test Blog Post");
+        final BlogPostId blogPostId = newBlogPostId(blogId);
+        final CreateBlogPost createBlogPostCommand = createBlogPostCommand(blogPostId, "Test Blog Post");
         client.post(createBlogPostCommand);
 
         QueryResponse blogResponse = client.queryAll(Blog.class);
@@ -80,12 +80,12 @@ class BlogServerTest {
         final CreateBlog createBlogCommand = createBlogCommand(blogId, "Test Blog");
         client.post(createBlogCommand);
 
-        final BlogPostId blogPostId = newBlogPostId();
-        final CreateBlogPost createBlogPostCommand = createBlogPostCommand(blogPostId, blogId, "Test Blog Post");
+        final BlogPostId blogPostId = newBlogPostId(blogId);
+        final CreateBlogPost createBlogPostCommand = createBlogPostCommand(blogPostId, "Test Blog Post");
         client.post(createBlogPostCommand);
 
-        final BlogPostId blogPostId2 = newBlogPostId();
-        final CreateBlogPost createBlogPostCommand2 = createBlogPostCommand(blogPostId2, blogId, "Test Blog Post 2");
+        final BlogPostId blogPostId2 = newBlogPostId(blogId);
+        final CreateBlogPost createBlogPostCommand2 = createBlogPostCommand(blogPostId2, "Test Blog Post 2");
         client.post(createBlogPostCommand2);
 
         final PublishBlogPost publishBlogPostCommand = PublishBlogPost.newBuilder()
@@ -110,10 +110,9 @@ class BlogServerTest {
                 .build();
     }
 
-    private CreateBlogPost createBlogPostCommand(BlogPostId blogPostId, BlogId blogId, String title) {
+    private CreateBlogPost createBlogPostCommand(BlogPostId blogPostId, String title) {
         return CreateBlogPost.newBuilder()
                 .setBlogPostId(blogPostId)
-                .setBlogId(blogId)
                 .setTitle(title)
                 .build();
     }

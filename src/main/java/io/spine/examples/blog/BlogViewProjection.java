@@ -20,14 +20,9 @@
 
 package io.spine.examples.blog;
 
-import io.spine.core.EventContext;
 import io.spine.core.Subscribe;
 import io.spine.examples.blog.events.BlogPostPublished;
 import io.spine.server.projection.Projection;
-
-import java.util.Optional;
-
-import static io.spine.core.Enrichments.getEnrichment;
 
 /**
  * A projection that represents the current state of a blog and contains published blog posts.
@@ -41,18 +36,14 @@ public class BlogViewProjection extends Projection<BlogId, BlogView, BlogViewVBu
     }
 
     @Subscribe
-    public void on(BlogPostPublished event, EventContext context) {
-        Optional<BlogPostEnrichment> enrOpt = getEnrichment(BlogPostEnrichment.class, context);
-        enrOpt.ifPresent((enr) -> {
-            BlogPost blogPost = enr.getBlogPost();
-            BlogPostItem item = BlogPostItem.newBuilder()
-                    .setId(event.getBlogPostId())
-                    .setBody(blogPost.getBody())
-                    .setTitle(blogPost.getTitle())
-                    .build();
-            getBuilder()
-                    .setBlogId(blogPost.getBlogId())
-                    .addPosts(item);
-        });
+    public void on(BlogPostPublished event) {
+        BlogPostItem item = BlogPostItem.newBuilder()
+                .setId(event.getBlogPostId())
+                .setBody(event.getBody())
+                .setTitle(event.getTitle())
+                .build();
+        getBuilder()
+                .setBlogId(event.getBlogPostId().getBlogId())
+                .addPosts(item);
     }
 }

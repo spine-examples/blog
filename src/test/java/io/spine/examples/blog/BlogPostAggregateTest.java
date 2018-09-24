@@ -28,6 +28,7 @@ import io.spine.examples.blog.events.BlogPostCreated;
 import io.spine.examples.blog.events.BlogPostPublished;
 import io.spine.examples.blog.rejections.Rejections;
 import io.spine.server.entity.Repository;
+import io.spine.testing.client.TestActorRequestFactory;
 import io.spine.testing.server.aggregate.AggregateCommandTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -48,7 +49,6 @@ class BlogPostAggregateTest {
         protected CreateBlogPost createMessage() {
             return CreateBlogPost.newBuilder()
                     .setBlogPostId(id())
-                    .setBlogId(blogId)
                     .setTitle("Test Post in a Test Blog")
                     .build();
         }
@@ -59,7 +59,7 @@ class BlogPostAggregateTest {
             this.expectThat(blogPostAggregate)
                     .producesEvent(BlogPostCreated.class, created -> {
                         assertEquals(id(), created.getBlogPostId());
-                        assertEquals(blogId, created.getBlogId());
+                        assertEquals(blogId, created.getBlogPostId().getBlogId());
                         assertEquals(message().getTitle(), created.getTitle());
                     });
 
@@ -72,6 +72,19 @@ class BlogPostAggregateTest {
 
     @Nested
     class PublishBlogPostCommandTest extends BlogPostAggregateCommandTest<PublishBlogPost> {
+
+        @Override
+        @BeforeEach
+        protected void setUp() {
+            super.setUp();
+            TestActorRequestFactory requestFactory =
+                    TestActorRequestFactory.newInstance(getClass());
+            CreateBlogPost createBlogPost = CreateBlogPost.newBuilder()
+                    .setBlogPostId(id())
+                    .setTitle("Test Blog Post")
+                    .build();
+            dispatchCommand(blogPostAggregate, CommandEnvelope.of(requestFactory.command().create(createBlogPost)));
+        }
 
         @Override
         protected PublishBlogPost createMessage() {
@@ -88,6 +101,7 @@ class BlogPostAggregateTest {
 
             final BlogPost aggregateState = blogPostAggregate.getState();
             assertEquals(id(), aggregateState.getId());
+            assertEquals("Test Blog Post", aggregateState.getTitle());
             assertEquals(BlogPost.Status.PUBLISHED, aggregateState.getStatus());
         }
 
@@ -117,7 +131,7 @@ class BlogPostAggregateTest {
 
         @Override
         protected BlogPostId newId() {
-            return newBlogPostId();
+            return newBlogPostId(blogId);
         }
 
         @Override

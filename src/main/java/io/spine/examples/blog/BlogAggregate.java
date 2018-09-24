@@ -53,7 +53,6 @@ public class BlogAggregate extends Aggregate<BlogId, Blog, BlogVBuilder> {
     @React
     BlogPostAdded on(BlogPostCreated event) {
         return BlogPostAdded.newBuilder()
-                .setBlogId(event.getBlogId())
                 .setBlogPostId(event.getBlogPostId())
                 .build();
     }
@@ -68,7 +67,7 @@ public class BlogAggregate extends Aggregate<BlogId, Blog, BlogVBuilder> {
     @Apply
     void blogPostAdded(BlogPostAdded event) {
         getBuilder()
-                .setId(event.getBlogId())
+                .setId(event.getBlogPostId().getBlogId())
                 .addPosts(event.getBlogPostId());
     }
 }

@@ -25,8 +25,6 @@ import io.spine.logging.Logging;
 import io.spine.server.BoundedContext;
 import io.spine.server.CommandService;
 import io.spine.server.QueryService;
-import io.spine.server.event.EventBus;
-import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.memory.InMemoryStorageFactory;
 import io.spine.server.transport.GrpcContainer;
 import org.slf4j.Logger;
@@ -57,32 +55,12 @@ public class BlogServer {
     }
 
     private BoundedContext createBoundedContext() {
-        final BlogPostAggregateRepository blogPostRepo = new BlogPostAggregateRepository();
-
-        final BoundedContextName name = BoundedContextName.newBuilder()
-                .setValue(BOUNDED_CONTEXT_NAME)
-                .build();
-        final StorageFactory storageFactory = InMemoryStorageFactory.newInstance(name, false);
-
-
-        final BoundedContext context = BoundedContext.newBuilder()
-                .setName(name)
-                .setEventBus(createEventBus(storageFactory, blogPostRepo))
-                .setStorageFactorySupplier(() -> storageFactory)
-                .build();
+        final BoundedContextName name = BoundedContextName.newBuilder().setValue(BOUNDED_CONTEXT_NAME).build();
+        final BoundedContext context = BoundedContext.newBuilder().setName(name).build();
         context.register(new BlogAggregateRepository());
-        context.register(blogPostRepo);
+        context.register(new BlogPostAggregateRepository());
         context.register(new BlogViewRepository());
-
         return context;
-    }
-
-    private static EventBus.Builder createEventBus(StorageFactory storageFactory,
-                                                   BlogPostAggregateRepository blogPostRepo) {
-        BlogEnrichments blogEnrichments = BlogEnrichments.newBuilder().setBlogPostRepository(blogPostRepo).build();
-        return EventBus.newBuilder()
-                .setEnricher(blogEnrichments.createEventEnricher())
-                .setStorageFactory(storageFactory);
     }
 
     private GrpcContainer createGrpcContainer(BoundedContext boundedContext) {

@@ -51,20 +51,17 @@ message CreateBlogPost {
     //
     BlogPostId blog_post_id = 1;
 
-    // An ID of the Blog where the new BlogPost should be attached to.
-    //
-    BlogId blog_id = 2 [(required) = true];
-
     // A title/name for the new BlogPost.
     //
-    string title = 3 [(required) = true];
+    string title = 2 [(required) = true];
 
     // A content for the new BlogPost.
     //
-    string body = 4;
+    string body = 3;
 }
 
 // A command to publish an BlogPost draft and make it visible in a certain Blog.
+//
 message PublishBlogPost {
     // An ID for the BlogPost to publish.
     //

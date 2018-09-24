@@ -24,10 +24,6 @@ import com.google.common.collect.ImmutableSet;
 import io.spine.examples.blog.events.BlogPostPublished;
 import io.spine.server.projection.ProjectionRepository;
 
-import java.util.Optional;
-
-import static io.spine.core.Enrichments.getEnrichment;
-
 /**
  * A repository for {@link BlogViewProjection}.
  *
@@ -37,13 +33,7 @@ public class BlogViewRepository extends ProjectionRepository<BlogId, BlogViewPro
 
     public BlogViewRepository() {
         super();
-        getEventRouting().route(BlogPostPublished.class, (message, context) -> {
-            Optional<BlogPostEnrichment> enrOpt = getEnrichment(BlogPostEnrichment.class, context);
-            if (!enrOpt.isPresent()) {
-                return ImmutableSet.of();
-            }
-            BlogPost blogPost = enrOpt.get().getBlogPost();
-            return ImmutableSet.of(blogPost.getBlogId());
-        });
+        getEventRouting().route(BlogPostPublished.class,
+                (message, context) -> ImmutableSet.of(message.getBlogPostId().getBlogId()));
     }
 }
