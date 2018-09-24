@@ -32,38 +32,42 @@ option java_generate_equals_and_hash = true;
 
 import "blog/identifiers.proto";
 
-// A command to create a new Blog.
+// Creates a Blog.
 //
 message CreateBlog {
-    // An ID for the new Blog.
+
+    // A Blog ID.
     //
     BlogId blog_id = 1;
 
-    // A name for the new Blog.
+    // A title/name.
     //
     string name = 2 [(required) = true];
 }
 
-// A command to create a new BlogPost in a specified Blog.
+// Creates a BlogPost in a "draft" state. The BlogPost belongs to a specific Blog.
 //
 message CreateBlogPost {
-    // An ID for the new BlogPost.
+
+    // A BlogPost ID containing Blog ID inside.
     //
     BlogPostId blog_post_id = 1;
 
-    // A title/name for the new BlogPost.
+    // A title/name.
     //
     string title = 2 [(required) = true];
 
-    // A content for the new BlogPost.
+    // A body with content.
     //
     string body = 3;
 }
 
-// A command to publish an BlogPost draft and make it visible in a certain Blog.
+// Publishes a BlogPost on a certain Blog and makes it visible externally. Initially, it is created as a "draft" and
+// not visible for everybody.
 //
 message PublishBlogPost {
-    // An ID for the BlogPost to publish.
+
+    // A BlogPost ID to publish.
     //
     BlogPostId blog_post_id = 1;
 }
