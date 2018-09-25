@@ -32,43 +32,43 @@ option java_generate_equals_and_hash = true;
 
 import "blog/identifiers.proto";
 
-// A Blog represents an informal discussion about a certain topic. Generally, it consists of informal
-// text entries called BlogPosts.
+// A `Blog` represents an informal discussion about a certain topic. Generally, it consists of informal
+// text entries called `BlogPosts`.
 //
 message Blog {
 
-    // A Blog ID.
+    // A `Blog` ID.
     //
     BlogId id = 1 [(required) = true];
 
-    // A title/name that usually defines the main topic of the Blog.
+    // A title/name that usually defines the main topic of the `Blog`.
     //
     string name = 2;
 
-    // A content of the Blog: a collection of published and draft BlogPosts.
+    // A content of the `Blog`: a collection of published and draft `BlogPost`s.
     //
     repeated BlogPostId posts = 3;
 }
 
-// A BlogPost attached to a certain Blog.
+// A `BlogPost` attached to a certain `Blog`.
 //
 message BlogPost {
 
-    // A BlogPost ID.
+    // A `BlogPost` ID.
     //
     BlogPostId id = 1 [(required) = true];
 
-    // A title tells what the BlogPost is about and usually encalsulaptes the main topic in one sentence.
+    // A title tells what the `BlogPost` is about and usually encalsulaptes the main topic in one sentence.
     //
     string title = 2;
 
-    // A content with textual information uncovering the topic of the BlogPost.
+    // A content with textual information uncovering the topic of the `BlogPost`.
     //
     string body = 3;
 
-    // A Status represents the state of the BlogPost:
+    // A `Status` represents the state of the `BlogPost`:
     // - DRAFT means that the text entry is not completed and should not be visible yet;
-    // - PUBLISHED corresponds to the finished BlogPost that can be read by other people;
+    // - PUBLISHED corresponds to the finished `BlogPost` that can be read by other people;
     // - DELETED states that the entry is removed and will not be made public anymore.
     //
     enum Status {
@@ -77,7 +77,7 @@ message BlogPost {
         DELETED = 2;
     }
 
-    // A status defines the present state and visibility of the BlogPost.
+    // A status defines the present state and visibility of the `BlogPost`.
     //
     Status status = 4;
 }

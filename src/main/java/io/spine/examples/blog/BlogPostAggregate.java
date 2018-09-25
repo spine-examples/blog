@@ -54,7 +54,12 @@ public class BlogPostAggregate extends Aggregate<BlogPostId, BlogPost, BlogPostV
     @Assign
     BlogPostPublished handle(PublishBlogPost cmd) throws CannotPublishBlogPost {
         if (getState().getStatus() != BlogPost.Status.DRAFT) {
-            throw new CannotPublishBlogPost(cmd.getBlogPostId());
+            if (getState().getStatus() == BlogPost.Status.PUBLISHED) {
+                throw new CannotPublishBlogPost(cmd.getBlogPostId(), true, false);
+            } else {
+                throw new CannotPublishBlogPost(cmd.getBlogPostId(), false, true);
+            }
+
         }
         return BlogPostPublished.newBuilder()
                 .setBlogPostId(cmd.getBlogPostId())

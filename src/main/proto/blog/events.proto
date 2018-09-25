@@ -32,7 +32,7 @@ option java_generate_equals_and_hash = true;
 
 import "blog/identifiers.proto";
 
-// An event is emitted when a new Blog is created.
+// An event is emitted when a new `Blog` is created.
 //
 message BlogCreated {
 
@@ -41,7 +41,7 @@ message BlogCreated {
     string name = 2 [(required) = true];
 }
 
-// An event is emitted when a new BlogPost is created in a "draft" mode.
+// An event is emitted when a new `BlogPost` is created in a "draft" mode.
 //
 message BlogPostCreated {
 
@@ -52,14 +52,14 @@ message BlogPostCreated {
     string body = 3;
 }
 
-// An event is emitted when a new BlogPost is added to the Blog.
+// An event is emitted when a new `BlogPost` is added to the `Blog`.
 //
 message BlogPostAdded {
 
     BlogPostId blog_post_id = 1 [(required) = true];
 }
 
-// An event is emitted when the BlogPost is published and made visible for readers.
+// An event is emitted when the `BlogPost` is published and made visible for readers.
 //
 message BlogPostPublished {
 
