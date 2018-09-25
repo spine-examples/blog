@@ -25,6 +25,9 @@ configurations {
 }
 
 apply plugin: spineProtobufPluginId
+apply plugin: 'application'
+
+mainClassName = "io.spine.examples.blog.BlogServer"
 
 dependencies {
     implementation deps.build.guava
@@ -39,4 +42,9 @@ dependencies {
 
 modelCompiler {
     generateValidatingBuilders = true
+}
+
+tasks.withType(JavaExec) {
+    // Assign Java System Properties from the command line to the JavaExec task.
+    systemProperties System.properties
 }

@@ -22,6 +22,7 @@ package io.spine.examples.blog;
 
 import io.spine.core.BoundedContextName;
 import io.spine.server.BoundedContext;
+import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.memory.InMemoryStorageFactory;
 
 /**
@@ -42,7 +43,14 @@ public class BlogBoundedContext {
 
     public static BoundedContext getInstance(String contextName) {
         final BoundedContextName name = BoundedContextName.newBuilder().setValue(contextName).build();
-        final BoundedContext context = BoundedContext.newBuilder().setName(name).build();
+        final StorageFactory storageFactory = InMemoryStorageFactory.newInstance(name, false);
+
+        final BoundedContext context = BoundedContext
+                .newBuilder()
+                .setName(name)
+                .setStorageFactorySupplier(() -> storageFactory)
+                .build();
+
         context.register(new BlogAggregateRepository());
         context.register(new BlogPostAggregateRepository());
         context.register(new BlogViewRepository());

@@ -3,7 +3,6 @@
 This example provides a blog application implemented with Spine. It allows to create blogs, write blog posts 
 and publish them on blog pages so that other people can read them.
 
-
 ## Domain Model  
 
 Blog Bounded Context is composed of two aggregates 
@@ -26,3 +25,15 @@ Blog Bounded Context is composed of two aggregates
 ### Blog View Projection
 `BlogViewProjection` represents the current state of a `Blog` and contains a list of published `BlogPost`s. 
 It encapsulates the view that the reader should see when reading the `Blog`.
+
+## Running
+
+A local gRPC server receiving commands and queries for the Blog Bounded Context can be started with: 
+```sh
+./gradlew :blog:run
+```
+
+By default, it listens on the port 50051. To start it on a different port, use:
+```sh
+/gradlew :blog:run -Dport=PORT_NUMBER
+```
