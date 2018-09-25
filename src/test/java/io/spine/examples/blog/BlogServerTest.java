@@ -4,7 +4,7 @@ import io.spine.client.QueryResponse;
 import io.spine.examples.blog.commands.CreateBlog;
 import io.spine.examples.blog.commands.CreateBlogPost;
 import io.spine.examples.blog.commands.PublishBlogPost;
-import io.spine.examples.kanban.given.KanbanClient;
+import io.spine.examples.testutil.TestServerClient;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,11 +21,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class BlogServerTest {
 
     private BlogServer blogServer;
-    private KanbanClient client;
+    private TestServerClient client;
 
     @BeforeEach
     void setup() {
-        client = new KanbanClient("localhost", DEFAULT_CLIENT_SERVICE_PORT);
+        client = new TestServerClient("localhost", DEFAULT_CLIENT_SERVICE_PORT);
         blogServer = new BlogServer(DEFAULT_CLIENT_SERVICE_PORT);
         startServer();
     }
