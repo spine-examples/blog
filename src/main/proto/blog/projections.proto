@@ -32,7 +32,8 @@ option java_generate_equals_and_hash = true;
 
 import "blog/identifiers.proto";
 
-// A projection with published posts. This view contains posts published to a certain blog.
+// A projection representing externally visible state of a Blog. The view shows a collection of BlogPosts that can
+// be read by people (published but not yet deleted).
 //
 message BlogView {
 
@@ -41,7 +42,7 @@ message BlogView {
     repeated BlogPostItem posts = 2;
 }
 
-// A blog post item.
+// A BlogPost projection with relevant information for readers: title and body.
 //
 message BlogPostItem {
 

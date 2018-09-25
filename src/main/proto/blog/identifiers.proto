@@ -49,6 +49,7 @@ message BlogPostId {
     //
     string uuid = 1 [(required) = true];
 
-    // An ID of the Blog where the BlogPost must be created.
+    // A Blog ID where the BlogPost must be created. Every Blog is attached to a BlogPost, so Blog ID is required.
+    //
     BlogId blog_id = 2 [(required) = true];
 }

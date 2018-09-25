@@ -41,7 +41,7 @@ message BlogCreated {
     string name = 2 [(required) = true];
 }
 
-// An event is emitted when a new BlogPost is created.
+// An event is emitted when a new BlogPost is created in a "draft" mode.
 //
 message BlogPostCreated {
 
@@ -59,7 +59,7 @@ message BlogPostAdded {
     BlogPostId blog_post_id = 1 [(required) = true];
 }
 
-// An event is emitted when the BlogPost is published to the Blog.
+// An event is emitted when the BlogPost is published and made visible for readers.
 //
 message BlogPostPublished {
 

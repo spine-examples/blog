@@ -31,8 +31,10 @@ option java_generate_equals_and_hash = true;
 
 import "blog/identifiers.proto";
 
-// A rejection to publish the BlogPost. It is thrown when the non-draft BlogPost is attempted to be published.
+// A rejection to publish a BlogPost. It is thrown when the non-draft BlogPost (already published or deleted one)
+// is attempted to be published.
 //
 message CannotPublishBlogPost {
+
     BlogPostId blog_post_id = 1 [(required) = true];
 }
