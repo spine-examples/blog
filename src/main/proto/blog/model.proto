@@ -66,18 +66,20 @@ message BlogPost {
     //
     string body = 3;
 
-    // A `Status` represents the state of the `BlogPost`:
-    // - DRAFT means that the text entry is not completed and should not be visible yet;
-    // - PUBLISHED corresponds to the finished `BlogPost` that can be read by other people;
-    // - DELETED states that the entry is removed and will not be made public anymore.
+    // A condition defining `BlogPost` readiness and visibility for other people.
     //
     enum Status {
+
+        // States that the text entry is not completed and should not be visible yet.
+        //
         DRAFT = 0;
+
+        // Corresponds to the finished `BlogPost` that can be read by other people.
+        //
         PUBLISHED = 1;
-        DELETED = 2;
     }
 
-    // A status defines the present state and visibility of the `BlogPost`.
+    // A status defines readiness and visibility of the `BlogPost`.
     //
     Status status = 4;
 }
