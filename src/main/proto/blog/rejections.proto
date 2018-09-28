@@ -42,7 +42,9 @@ message CannotPublishBlogPost {
     // is already published or deleted.
     //
     oneof reason {
+
         bool already_published = 2;
+        
         bool already_deleted = 3;
     }
 }
