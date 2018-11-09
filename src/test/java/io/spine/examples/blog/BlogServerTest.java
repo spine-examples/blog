@@ -53,8 +53,8 @@ class BlogServerTest {
         CreateBlog createBlog = createBlog(blogId, "Test Blog");
         client.post(createBlog);
 
-        BlogPostId blogPostId = newBlogPostId(blogId);
-        CreateBlogPost createPost = createBlogPost(blogPostId, "Test Blog Post");
+        BlogPostId postId = newBlogPostId(blogId);
+        CreateBlogPost createPost = createBlogPost(postId, "Test Blog Post");
         client.post(createPost);
 
         QueryResponse blogResponse = client.queryAll(Blog.class);
@@ -63,12 +63,12 @@ class BlogServerTest {
         assertEquals(blogId, blog.getId());
         assertEquals(createBlog.getName(), blog.getName());
         assertTrue(blog.getPostsList()
-                       .contains(blogPostId));
+                       .contains(postId));
 
         QueryResponse postResponse = client.queryAll(BlogPost.class);
         assertEquals(1, postResponse.getMessagesCount());
         BlogPost blogPost = (BlogPost) unpack(postResponse.getMessages(0));
-        assertEquals(blogPostId, blogPost.getId());
+        assertEquals(postId, blogPost.getId());
         assertEquals(createPost.getTitle(), blogPost.getTitle());
         assertEquals(BlogPost.Status.DRAFT, blogPost.getStatus());
     }
