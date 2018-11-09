@@ -21,7 +21,7 @@
 package io.spine.examples.blog;
 
 import com.google.common.annotations.VisibleForTesting;
-import io.spine.core.React;
+import io.spine.server.event.React;
 import io.spine.examples.blog.commands.CreateBlog;
 import io.spine.examples.blog.events.BlogCreated;
 import io.spine.examples.blog.events.BlogPostAdded;
@@ -35,7 +35,7 @@ import io.spine.server.command.Assign;
  *
  * @author Anton Nikulin
  */
-public class BlogAggregate extends Aggregate<BlogId, Blog, BlogVBuilder> {
+class BlogAggregate extends Aggregate<BlogId, Blog, BlogVBuilder> {
 
     @VisibleForTesting
     BlogAggregate(BlogId id) {

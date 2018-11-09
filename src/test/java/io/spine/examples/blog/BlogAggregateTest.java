@@ -20,7 +20,7 @@
 
 package io.spine.examples.blog;
 
-import com.google.protobuf.Message;
+import io.spine.base.CommandMessage;
 import io.spine.examples.blog.commands.CreateBlog;
 import io.spine.examples.blog.events.BlogCreated;
 import io.spine.server.entity.Repository;
@@ -35,46 +35,50 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SuppressWarnings("ClassCanBeStatic" /* JUnit nested classes cannot be static. */)
 class BlogAggregateTest {
+
+    private static final BlogId blogId = newBlogId();
+    private static final CreateBlog createCommand = CreateBlog.newBuilder()
+                                                              .setName("Test Blog Name")
+                                                              .setBlogId(blogId)
+                                                              .build();
     @Nested
     class CreateBlogCommandTest extends BlogAggregateCommandTest<CreateBlog> {
 
-        @Override
-        protected CreateBlog createMessage() {
-            return CreateBlog.newBuilder()
-                    .setBlogId(id())
-                    .setName("TestBlog")
-                    .build();
+        CreateBlogCommandTest() {
+            super(blogId, createCommand);
         }
 
         @Test
         @DisplayName("CreateBlog should produce BlogCreated event and change Blog state")
         void test() {
+            BlogId blogId = entityId();
+            String expectedBlogName = message().getName();
             this.expectThat(blogAggregate)
-                    .producesEvent(BlogCreated.class, created -> {
-                        assertEquals(id(), created.getBlogId());
-                        assertEquals(message().getName(), created.getName());
+                .producesEvent(BlogCreated.class, created -> {
+                        assertEquals(blogId, created.getBlogId());
+                        assertEquals(expectedBlogName, created.getName());
                     });
 
-            assertEquals(id(), blogAggregate.getState().getId());
-            assertEquals(message().getName(), blogAggregate.getState().getName());
+            Blog blog = blogAggregate.getState();
+            assertEquals(blogId, blog.getId());
+            assertEquals(expectedBlogName, blog.getName());
         }
     }
 
-    private static abstract class BlogAggregateCommandTest<C extends Message>
+    private static abstract class BlogAggregateCommandTest<C extends CommandMessage>
             extends AggregateCommandTest<BlogId, C, Blog, BlogAggregate> {
 
         BlogAggregate blogAggregate;
 
-        @Override
-        @BeforeEach
-        protected void setUp() {
-            super.setUp();
-            blogAggregate = new BlogAggregate(id());
+        BlogAggregateCommandTest(BlogId aggregateId, C commandMessage) {
+            super(aggregateId, commandMessage);
         }
 
         @Override
-        protected BlogId newId() {
-            return newBlogId();
+        @BeforeEach
+        public void setUp() {
+            super.setUp();
+            blogAggregate = new BlogAggregate(entityId());
         }
 
         @Override

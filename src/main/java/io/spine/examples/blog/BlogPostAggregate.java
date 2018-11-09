@@ -21,6 +21,7 @@
 package io.spine.examples.blog;
 
 import com.google.common.annotations.VisibleForTesting;
+import io.spine.examples.blog.BlogPost.Status;
 import io.spine.examples.blog.commands.CreateBlogPost;
 import io.spine.examples.blog.commands.PublishBlogPost;
 import io.spine.examples.blog.events.BlogPostCreated;
@@ -35,7 +36,7 @@ import io.spine.server.command.Assign;
  *
  * @author Anton Nikulin
  */
-public class BlogPostAggregate extends Aggregate<BlogPostId, BlogPost, BlogPostVBuilder> {
+class BlogPostAggregate extends Aggregate<BlogPostId, BlogPost, BlogPostVBuilder> {
 
     @VisibleForTesting
     BlogPostAggregate(BlogPostId id) {
@@ -53,18 +54,22 @@ public class BlogPostAggregate extends Aggregate<BlogPostId, BlogPost, BlogPostV
 
     @Assign
     BlogPostPublished handle(PublishBlogPost cmd) throws CannotPublishBlogPost {
-        if (getState().getStatus() != BlogPost.Status.DRAFT) {
-            if (getState().getStatus() == BlogPost.Status.PUBLISHED) {
-                throw new CannotPublishBlogPost(cmd.getBlogPostId(), true, false);
-            } else {
-                throw new CannotPublishBlogPost(cmd.getBlogPostId(), false, true);
-            }
-
+        BlogPost post = getState();
+        Status status = post.getStatus();
+        BlogPostId postId = cmd.getBlogPostId();
+        if (status != Status.DRAFT) {
+            boolean published = status == Status.PUBLISHED;
+            throw CannotPublishBlogPost
+                    .newBuilder()
+                    .setBlogPostId(postId)
+                    .setAlreadyPublished(published)
+                    .setAlreadyDeleted(!published)
+                    .build();
         }
         return BlogPostPublished.newBuilder()
-                .setBlogPostId(cmd.getBlogPostId())
-                .setTitle(getState().getTitle())
-                .setBody(getState().getBody())
+                .setBlogPostId(postId)
+                .setTitle(post.getTitle())
+                .setBody(post.getBody())
                 .build();
     }
 
@@ -74,13 +79,13 @@ public class BlogPostAggregate extends Aggregate<BlogPostId, BlogPost, BlogPostV
                 .setId(event.getBlogPostId())
                 .setTitle(event.getTitle())
                 .setBody(event.getBody())
-                .setStatus(BlogPost.Status.DRAFT);
+                .setStatus(Status.DRAFT);
     }
 
     @Apply
     void blogPostPublished(BlogPostPublished event) {
         getBuilder()
                 .setId(event.getBlogPostId())
-                .setStatus(BlogPost.Status.PUBLISHED);
+                .setStatus(Status.PUBLISHED);
     }
 }

@@ -20,7 +20,7 @@
 
 package io.spine.examples.blog;
 
-import com.google.protobuf.Message;
+import io.spine.base.CommandMessage;
 import io.spine.core.CommandEnvelope;
 import io.spine.examples.blog.commands.CreateBlogPost;
 import io.spine.examples.blog.commands.PublishBlogPost;
@@ -42,96 +42,111 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SuppressWarnings("ClassCanBeStatic" /* JUnit nested classes cannot be static. */)
 class BlogPostAggregateTest {
+
+    private static final BlogId blogId = newBlogId();
+    private static final BlogPostId blogPostId = newBlogPostId(blogId);
+
     @Nested
+    @DisplayName("CreateBlogPost should")
     class CreateBlogPostCommandTest extends BlogPostAggregateCommandTest<CreateBlogPost> {
 
-        @Override
-        protected CreateBlogPost createMessage() {
-            return CreateBlogPost.newBuilder()
-                    .setBlogPostId(id())
-                    .setTitle("Test Post in a Test Blog")
-                    .build();
+        CreateBlogPostCommandTest() {
+            super(blogPostId, CreateBlogPost.newBuilder()
+                                            .setBlogPostId(blogPostId)
+                                            .setTitle("Test Post in a Test Blog")
+                                            .build());
         }
 
         @Test
-        @DisplayName("CreateBlogPost should produce BlogPostCreated event and change BlogPost state")
+        @DisplayName("produce BlogPostCreated event and change BlogPost state")
         void createBlogPost() {
+            BlogPostId postId = entityId();
             this.expectThat(blogPostAggregate)
-                    .producesEvent(BlogPostCreated.class, created -> {
-                        assertEquals(id(), created.getBlogPostId());
+                .producesEvent(BlogPostCreated.class, created -> {
+                        assertEquals(postId, created.getBlogPostId());
                         assertEquals(blogId, created.getBlogPostId().getBlogId());
                         assertEquals(message().getTitle(), created.getTitle());
                     });
 
             final BlogPost aggregateState = blogPostAggregate.getState();
-            assertEquals(id(), aggregateState.getId());
+            assertEquals(postId, aggregateState.getId());
             assertEquals(message().getTitle(), aggregateState.getTitle());
             assertEquals(BlogPost.Status.DRAFT, aggregateState.getStatus());
         }
     }
 
     @Nested
+    @DisplayName("PublishBlogPost should")
     class PublishBlogPostCommandTest extends BlogPostAggregateCommandTest<PublishBlogPost> {
+
+        PublishBlogPostCommandTest() {
+            super(blogPostId, PublishBlogPost.newBuilder()
+                                             .setBlogPostId(blogPostId)
+                                             .build());
+        }
 
         @Override
         @BeforeEach
-        protected void setUp() {
+        public void setUp() {
             super.setUp();
             TestActorRequestFactory requestFactory =
                     TestActorRequestFactory.newInstance(getClass());
-            CreateBlogPost createBlogPost = CreateBlogPost.newBuilder()
-                    .setBlogPostId(id())
+            CreateBlogPost command = CreateBlogPost
+                    .newBuilder()
+                    .setBlogPostId(entityId())
                     .setTitle("Test Blog Post")
                     .build();
-            dispatchCommand(blogPostAggregate, CommandEnvelope.of(requestFactory.command().create(createBlogPost)));
-        }
-
-        @Override
-        protected PublishBlogPost createMessage() {
-            return PublishBlogPost.newBuilder()
-                    .setBlogPostId(id())
-                    .build();
+            CommandEnvelope envelope = requestFactory.createEnvelope(command);
+            dispatchCommand(blogPostAggregate, envelope);
         }
 
         @Test
-        @DisplayName("PublishBlogPost should produce BlogPostPublished event and change BlogPost status")
+        @DisplayName("produce BlogPostPublished event and change BlogPost status")
         void publishBlogPost() {
-            this.expectThat(blogPostAggregate)
-                    .producesEvent(BlogPostPublished.class, published -> assertEquals(id(), published.getBlogPostId()));
+            BlogPostId postId = entityId();
+            expectThat(blogPostAggregate)
+                .producesEvent(BlogPostPublished.class,
+                               published -> assertEquals(postId, published.getBlogPostId()));
 
-            final BlogPost aggregateState = blogPostAggregate.getState();
-            assertEquals(id(), aggregateState.getId());
-            assertEquals("Test Blog Post", aggregateState.getTitle());
-            assertEquals(BlogPost.Status.PUBLISHED, aggregateState.getStatus());
+            BlogPost blogPost = blogPostAggregate.getState();
+
+            assertEquals(postId, blogPost.getId());
+            assertEquals("Test Blog Post", blogPost.getTitle());
+            assertEquals(BlogPost.Status.PUBLISHED, blogPost.getStatus());
         }
 
         @Test
-        @DisplayName("PublishBlogPost should throw CannotPublishBlogPost rejection when BlogPost is already published")
+        @DisplayName("throw CannotPublishBlogPost rejection when BlogPost is already published")
         void publishPublishedBlogPost() {
-            dispatchCommand(blogPostAggregate, CommandEnvelope.of(createCommand(message())));
-            assertEquals(BlogPost.Status.PUBLISHED, blogPostAggregate.getState().getStatus());
+            dispatchCommand(blogPostAggregate, createCommand());
+            BlogPost blog = blogPostAggregate.getState();
 
-            this.expectThat(blogPostAggregate)
+            assertEquals(BlogPost.Status.PUBLISHED, blog.getStatus());
+
+            expectThat(blogPostAggregate)
                     .throwsRejection(Rejections.CannotPublishBlogPost.class);
         }
     }
 
-    private static abstract class BlogPostAggregateCommandTest<C extends Message>
+    /**
+     * Abstract base for tests of handling of Blog Post commands.
+     *
+     * @param <C> the type of the blog post command message.
+     */
+    private static abstract class BlogPostAggregateCommandTest<C extends CommandMessage>
             extends AggregateCommandTest<BlogPostId, C, BlogPost, BlogPostAggregate> {
 
-        final BlogId blogId = newBlogId();
         BlogPostAggregate blogPostAggregate;
 
-        @Override
-        @BeforeEach
-        protected void setUp() {
-            super.setUp();
-            blogPostAggregate = new BlogPostAggregate(id());
+        BlogPostAggregateCommandTest(BlogPostId aggregateId, C commandMessage) {
+            super(aggregateId, commandMessage);
         }
 
         @Override
-        protected BlogPostId newId() {
-            return newBlogPostId(blogId);
+        @BeforeEach
+        public void setUp() {
+            super.setUp();
+            blogPostAggregate = new BlogPostAggregate(entityId());
         }
 
         @Override

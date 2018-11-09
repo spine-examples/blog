@@ -25,10 +25,8 @@ import io.spine.server.BoundedContext;
 import io.spine.server.CommandService;
 import io.spine.server.QueryService;
 import io.spine.server.transport.GrpcContainer;
-import org.slf4j.Logger;
 
 import java.io.IOException;
-import java.util.function.Supplier;
 
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 
@@ -37,34 +35,40 @@ import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
  *
  * @author Anton Nikulin
  */
-public class BlogServer {
+public class BlogServer implements Logging {
 
-    private final int port;
-    private final GrpcContainer grpcContainer;
-    private final BoundedContext boundedContext;
-    private final Supplier<Logger> loggerSupplier = Logging.supplyFor(getClass());
+    private int port;
+    private GrpcContainer grpcContainer;
+    private BoundedContext boundedContext;
 
-    public BlogServer(int port) {
+    BlogServer(int port) {
         this.port = port;
         this.boundedContext = BlogBoundedContext.getInstance();
         this.grpcContainer = createGrpcContainer(this.boundedContext);
     }
 
     public static void main(String[] args) throws IOException {
-        int port = Integer.parseInt(System.getProperty("port", String.valueOf(DEFAULT_CLIENT_SERVICE_PORT)));
+        int port = getPort();
         BlogServer blogServer = new BlogServer(port);
         blogServer.start();
     }
 
+    private static int getPort() {
+        String port = System.getProperty("port", String.valueOf(DEFAULT_CLIENT_SERVICE_PORT));
+        return Integer.parseInt(port);
+    }
+
     private GrpcContainer createGrpcContainer(BoundedContext boundedContext) {
-        final CommandService commandService = CommandService.newBuilder()
+        CommandService commandService = CommandService
+                .newBuilder()
                 .add(boundedContext)
                 .build();
-        final QueryService queryService = QueryService.newBuilder()
+        QueryService queryService = QueryService
+                .newBuilder()
                 .add(boundedContext)
                 .build();
 
-        final GrpcContainer.Builder result = GrpcContainer.newBuilder()
+        GrpcContainer.Builder result = GrpcContainer.newBuilder()
                 .setPort(port)
                 .addService(commandService)
                 .addService(queryService);
@@ -80,13 +84,9 @@ public class BlogServer {
         grpcContainer.awaitTermination();
     }
 
-    public void shutdown() throws Exception {
+    void shutdown() throws Exception {
         log().info("Shutting down the server...");
         grpcContainer.shutdown();
         boundedContext.close();
-    }
-
-    private Logger log() {
-        return loggerSupplier.get();
     }
 }
