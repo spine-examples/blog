@@ -8,6 +8,7 @@ import io.spine.examples.testutil.TestServerClient;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -16,8 +17,11 @@ import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 import static io.spine.examples.blog.given.TestIdentifiers.newBlogId;
 import static io.spine.examples.blog.given.TestIdentifiers.newBlogPostId;
 import static io.spine.protobuf.AnyPacker.unpack;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
+@DisplayName("BlogServer")
 class BlogServerTest {
 
     private BlogServer blogServer;
@@ -46,76 +50,109 @@ class BlogServerTest {
         blogServer.shutdown();
     }
 
-    @Test
-    @DisplayName("CreateBlog should create a Blog, and CreateBlog should create a BlogPost")
-    void createBlogWithPost() {
-        BlogId blogId = newBlogId();
-        CreateBlog createBlog = createBlog(blogId, "Test Blog");
-        client.post(createBlog);
+    @Nested
+    @DisplayName("command side")
+    class CommandSide {
 
-        BlogPostId postId = newBlogPostId(blogId);
-        CreateBlogPost createPost = createBlogPost(postId, "Test Blog Post");
-        client.post(createPost);
+        /** ID of the blog we're creating. */
+        private final BlogId blogId = newBlogId();
+        /** The command message to create the blog. */
+        private CreateBlog createBlog;
+        /** The ID of the post we create in the blog. */
+        private BlogPostId postId;
+        /** The command to create the blog post. */
+        private CreateBlogPost createPost;
 
-        QueryResponse blogResponse = client.queryAll(Blog.class);
-        assertEquals(1, blogResponse.getMessagesCount());
-        Blog blog = (Blog) unpack(blogResponse.getMessages(0));
-        assertEquals(blogId, blog.getId());
-        assertEquals(createBlog.getName(), blog.getName());
-        assertTrue(blog.getPostsList()
-                       .contains(postId));
+        @BeforeEach
+        void setUp() {
+            createBlog = createBlog(blogId, "Server Side Blog Test");
+            client.post(createBlog);
 
-        QueryResponse postResponse = client.queryAll(BlogPost.class);
-        assertEquals(1, postResponse.getMessagesCount());
-        BlogPost blogPost = (BlogPost) unpack(postResponse.getMessages(0));
-        assertEquals(postId, blogPost.getId());
-        assertEquals(createPost.getTitle(), blogPost.getTitle());
-        assertEquals(BlogPost.Status.DRAFT, blogPost.getStatus());
+            postId = newBlogPostId(blogId);
+            createPost = createBlogPost(postId, "Server Blog Post");
+            client.post(createPost);
+        }
+
+        @Test
+        @DisplayName("create a blog")
+        void createsBlog() {
+            QueryResponse blogResponse = client.queryAll(Blog.class);
+            assertEquals(1, blogResponse.getMessagesCount());
+            Blog blog = (Blog) unpack(blogResponse.getMessages(0));
+            assertEquals(blogId, blog.getId());
+            assertEquals(createBlog.getName(), blog.getName());
+            assertTrue(blog.getPostsList()
+                           .contains(postId));
+        }
+
+        @Test
+        @DisplayName("create a blog post")
+        void createsPost() {
+            QueryResponse postResponse = client.queryAll(BlogPost.class);
+            assertEquals(1, postResponse.getMessagesCount());
+            BlogPost blogPost = (BlogPost) unpack(postResponse.getMessages(0));
+            assertEquals(postId, blogPost.getId());
+            assertEquals(createPost.getTitle(), blogPost.getTitle());
+            assertEquals(BlogPost.Status.DRAFT, blogPost.getStatus());
+        }
     }
 
-    @Test
-    @DisplayName("BlogView should return a list of published BlogPosts")
-    void queryBlogView() {
-        BlogId blogId = newBlogId();
-        CreateBlog createBlog = createBlog(blogId, "Test Blog");
-        client.post(createBlog);
+    @Nested
+    @DisplayName("query side should")
+    class QuerySide {
 
-        BlogPostId post1 = newBlogPostId(blogId);
-        CreateBlogPost createPost1 = createBlogPost(post1, "Test Blog Post");
-        client.post(createPost1);
+        private final BlogId blogId = newBlogId();
+        private BlogPostId post1;
+        private BlogPostId post2;
 
-        BlogPostId post2 = newBlogPostId(blogId);
-        CreateBlogPost createPost2 = createBlogPost(post2, "Test Blog Post 2");
-        client.post(createPost2);
+        @BeforeEach
+        void setUp() {
+            CreateBlog createBlog = createBlog(blogId, "Query Side Blog Test");
+            client.post(createBlog);
 
-        PublishBlogPost publishPost2 = PublishBlogPost
-                .newBuilder()
-                .setBlogPostId(post2)
-                .build();
-        client.post(publishPost2);
+            post1 = newBlogPostId(blogId);
+            CreateBlogPost createPost1 = createBlogPost(post1, "Post 1");
+            client.post(createPost1);
 
-        QueryResponse response = client.queryAll(BlogView.class);
-        assertEquals(1, response.getMessagesCount());
+            post2 = newBlogPostId(blogId);
+            CreateBlogPost createPost2 = createBlogPost(post2, "Post 2");
+            client.post(createPost2);
 
-        BlogView blogView = (BlogView) unpack(response.getMessages(0));
+            PublishBlogPost publishPost2 = PublishBlogPost
+                    .newBuilder()
+                    .setBlogPostId(post2)
+                    .build();
+            client.post(publishPost2);
+        }
 
-        assertEquals(blogId, blogView.getBlogId());
-        assertEquals(1, blogView.getPostsCount());
-        assertEquals(post2, blogView.getPosts(0)
-                                    .getId());
+        @Test
+        @DisplayName("return a list of published blog posts")
+        void queryBlogView() {
+            QueryResponse response = client.queryAll(BlogView.class);
+            assertEquals(1, response.getMessagesCount());
+
+            BlogView blogView = (BlogView) unpack(response.getMessages(0));
+
+            assertEquals(blogId, blogView.getBlogId());
+            assertEquals(1, blogView.getPostsCount());
+            assertEquals(post2, blogView.getPosts(0)
+                                        .getId());
+        }
     }
 
     private static CreateBlog createBlog(BlogId blogId, String name) {
-        return CreateBlog.newBuilder()
-                         .setBlogId(blogId)
-                         .setName(name)
-                         .build();
+        return CreateBlog
+                .newBuilder()
+                .setBlogId(blogId)
+                .setName(name)
+                .build();
     }
 
     private static CreateBlogPost createBlogPost(BlogPostId postId, String title) {
-        return CreateBlogPost.newBuilder()
-                             .setBlogPostId(postId)
-                             .setTitle(title)
-                             .build();
+        return CreateBlogPost
+                .newBuilder()
+                .setBlogPostId(postId)
+                .setTitle(title)
+                .build();
     }
 }

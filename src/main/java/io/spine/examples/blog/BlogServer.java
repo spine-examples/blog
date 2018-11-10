@@ -37,9 +37,9 @@ import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
  */
 public class BlogServer implements Logging {
 
-    private int port;
-    private GrpcContainer grpcContainer;
-    private BoundedContext boundedContext;
+    private final int port;
+    private final GrpcContainer grpcContainer;
+    private final BoundedContext boundedContext;
 
     BlogServer(int port) {
         this.port = port;
@@ -54,6 +54,7 @@ public class BlogServer implements Logging {
     }
 
     private static int getPort() {
+        @SuppressWarnings("AccessOfSystemProperties") // No security risk.
         String port = System.getProperty("port", String.valueOf(DEFAULT_CLIENT_SERVICE_PORT));
         return Integer.parseInt(port);
     }
@@ -79,7 +80,7 @@ public class BlogServer implements Logging {
         grpcContainer.start();
         grpcContainer.addShutdownHook();
 
-        log().info("Server started, listening to commands on the port " + port);
+        log().info("Server started, listening to commands on the port {}", port);
 
         grpcContainer.awaitTermination();
     }
