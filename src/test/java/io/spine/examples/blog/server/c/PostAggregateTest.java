@@ -29,7 +29,7 @@ import io.spine.examples.blog.commands.CreatePost;
 import io.spine.examples.blog.commands.PublishPost;
 import io.spine.examples.blog.events.PostCreated;
 import io.spine.examples.blog.events.PostPublished;
-import io.spine.examples.blog.rejections.Rejections;
+import io.spine.examples.blog.rejections.Rejections.CannotPublishPost;
 import io.spine.server.entity.Repository;
 import io.spine.testing.client.TestActorRequestFactory;
 import io.spine.testing.server.aggregate.AggregateCommandTest;
@@ -38,6 +38,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static io.spine.examples.blog.Post.Status.DRAFT;
+import static io.spine.examples.blog.Post.Status.PUBLISHED;
 import static io.spine.examples.blog.given.TestIdentifiers.newBlogId;
 import static io.spine.examples.blog.given.TestIdentifiers.newPostId;
 import static io.spine.testing.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
@@ -47,38 +49,27 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class PostAggregateTest {
 
     private static final BlogId blogId = newBlogId();
-    private static final PostId blogPostId = newPostId(blogId);
+    private static final PostId postId = newPostId(blogId);
 
     @Nested
     @DisplayName("handle CreatePost command")
     class CreatePostCommandTest extends PostAggregateCommandTest<CreatePost> {
 
         CreatePostCommandTest() {
-            super(blogPostId, CreatePost.newBuilder()
-                                            .setPostId(blogPostId)
-                                            .setTitle("Test Post in a Test Blog")
-                                            .build());
-        }
-
-        /**
-         * Dispatches the command to the aggregate.
-         */
-        @Override
-        @BeforeEach
-        @SuppressWarnings("CheckReturnValue") // We can ignore result of dispatched command.
-        public void setUp() {
-            super.setUp();
-            dispatchTo(aggregate());
+            super(postId, CreatePost.newBuilder()
+                                    .setPostId(postId)
+                                    .setTitle("Test Post in a Test Blog")
+                                    .build());
         }
 
         @Test
         @DisplayName("producing PostCreated event")
         void createPost() {
             PostId expectedPostId = entityId();
-            this.expectThat(aggregate())
-                .producesEvent(PostCreated.class, event -> {
-                    PostId newPostId = event.getPostId();
-                    assertEquals(expectedPostId, newPostId);
+            expectThat(aggregate())
+                    .producesEvent(PostCreated.class, event -> {
+                        PostId newPostId = event.getPostId();
+                        assertEquals(expectedPostId, newPostId);
                         assertEquals(blogId, newPostId.getBlogId());
                         assertEquals(message().getTitle(), event.getTitle());
                     });
@@ -86,12 +77,14 @@ class PostAggregateTest {
 
         @Test
         @DisplayName("changing the post state")
+        @SuppressWarnings("CheckReturnValue") // Ignore result of the dispatched command.
         void changesState() {
+            dispatchTo(aggregate());
             PostId postId = entityId();
             Post post = aggregate().getState();
             assertEquals(postId, post.getId());
             assertEquals(message().getTitle(), post.getTitle());
-            assertEquals(Post.Status.DRAFT, post.getStatus());
+            assertEquals(DRAFT, post.getStatus());
         }
     }
 
@@ -100,15 +93,19 @@ class PostAggregateTest {
     class PublishPostCommandTest extends PostAggregateCommandTest<PublishPost> {
 
         PublishPostCommandTest() {
-            super(blogPostId, PublishPost.newBuilder()
-                                             .setPostId(blogPostId)
-                                             .build());
+            super(postId, PublishPost.newBuilder()
+                                     .setPostId(postId)
+                                     .build());
         }
 
         @Override
         @BeforeEach
         public void setUp() {
             super.setUp();
+            createPost();
+        }
+
+        private void createPost() {
             TestActorRequestFactory requestFactory =
                     TestActorRequestFactory.newInstance(getClass());
             CreatePost command = CreatePost
@@ -129,23 +126,25 @@ class PostAggregateTest {
                 .producesEvent(PostPublished.class,
                                published -> assertEquals(postId, published.getPostId()));
 
-            Post blogPost = aggregate.getState();
+            Post post = aggregate.getState();
 
-            assertEquals(postId, blogPost.getId());
-            assertEquals("Test Blog Post", blogPost.getTitle());
-            assertEquals(Post.Status.PUBLISHED, blogPost.getStatus());
+            assertEquals(postId, post.getId());
+            assertEquals("Test Blog Post", post.getTitle());
+            assertEquals(PUBLISHED, post.getStatus());
         }
 
         @Test
         @DisplayName("throw CannotPublishPost rejection when Post is already published")
         void publishPublishedPost() {
+            // Publish the post.
             PostAggregate aggregate = aggregate();
             dispatchCommand(aggregate, createCommand());
             Post blog = aggregate.getState();
 
-            assertEquals(Post.Status.PUBLISHED, blog.getStatus());
+            assertEquals(PUBLISHED, blog.getStatus());
 
-            expectThat(aggregate).throwsRejection(Rejections.CannotPublishPost.class);
+            // Now try to publish again.
+            expectThat(aggregate).throwsRejection(CannotPublishPost.class);
         }
     }
 
