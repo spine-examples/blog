@@ -40,8 +40,11 @@ import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 import static io.spine.examples.blog.server.BlogServer.contextName;
 import static org.junit.jupiter.api.Assertions.fail;
 
+/**
+ * Abstract base for integration tests.
+ */
 @DisplayName("BlogServer")
-public class BlogServerTest {
+public abstract class BlogServerTest {
 
     private BlogServer server;
     private TestClient client;
