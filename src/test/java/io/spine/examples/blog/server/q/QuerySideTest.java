@@ -18,22 +18,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.blog.q;
+package io.spine.examples.blog.server.q;
 
 import io.spine.client.QueryResponse;
 import io.spine.examples.blog.BlogId;
-import io.spine.examples.blog.BlogPostId;
-import io.spine.examples.blog.BlogServerTest;
-import io.spine.examples.blog.BlogView;
+import io.spine.examples.blog.PostId;
 import io.spine.examples.blog.commands.CreateBlog;
-import io.spine.examples.blog.commands.CreateBlogPost;
-import io.spine.examples.blog.commands.PublishBlogPost;
+import io.spine.examples.blog.commands.CreatePost;
+import io.spine.examples.blog.commands.PublishPost;
+import io.spine.examples.blog.server.BlogServerTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static io.spine.examples.blog.given.TestIdentifiers.newBlogId;
-import static io.spine.examples.blog.given.TestIdentifiers.newBlogPostId;
+import static io.spine.examples.blog.given.TestIdentifiers.newPostId;
 import static io.spine.protobuf.AnyPacker.unpack;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -42,25 +41,25 @@ public class QuerySideTest extends BlogServerTest {
 
 
     private final BlogId blogId = newBlogId();
-    private BlogPostId post1;
-    private BlogPostId post2;
+    private PostId post1;
+    private PostId post2;
 
     @BeforeEach
     void setUp() {
         CreateBlog createBlog = createBlog(blogId, "Query Side Blog Test");
         post(createBlog);
 
-        post1 = newBlogPostId(blogId);
-        CreateBlogPost createPost1 = createBlogPost(post1, "Post 1");
+        post1 = newPostId(blogId);
+        CreatePost createPost1 = createPost(post1, "Post 1");
         post(createPost1);
 
-        post2 = newBlogPostId(blogId);
-        CreateBlogPost createPost2 = createBlogPost(post2, "Post 2");
+        post2 = newPostId(blogId);
+        CreatePost createPost2 = createPost(post2, "Post 2");
         post(createPost2);
 
-        PublishBlogPost publishPost2 = PublishBlogPost
+        PublishPost publishPost2 = PublishPost
                 .newBuilder()
-                .setBlogPostId(post2)
+                .setPostId(post2)
                 .build();
         post(publishPost2);
     }

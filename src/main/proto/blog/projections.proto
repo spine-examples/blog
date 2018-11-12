@@ -25,30 +25,30 @@ package spine.examples.blog;
 import "spine/options.proto";
 
 option (type_url_prefix) = "type.spine.examples.blog";
-option java_package = "io.spine.examples.blog";
+option java_package = "io.spine.examples.blog.server.q";
 option java_outer_classname = "ProjectionsProto";
 option java_multiple_files = true;
 option java_generate_equals_and_hash = true;
 
 import "blog/identifiers.proto";
 
-// A projection representing externally visible state of a `Blog`. The view shows a collection of `BlogPost`s that can
-// be read by people (published but not yet deleted).
-//
+// A blog view provides data visible on the screen.
 message BlogView {
 
-    BlogId blog_id = 1;
+    BlogId blog_id = 1 [(required) = true];
 
-    repeated BlogPostItem posts = 2;
+    string title = 2 [(required) = true];
+
+    // Posts in the reverse chronological order.
+    repeated PostItem posts = 3;
 }
 
-// A `BlogPost` projection with relevant information for readers: title and body.
-//
-message BlogPostItem {
+// A post in the blog.
+message PostItem {
 
-    BlogPostId id = 1;
+    PostId id = 1 [(required) = true];
 
-    string title = 2;
+    string title = 2 [(required) = true];
 
     string body = 3;
 }

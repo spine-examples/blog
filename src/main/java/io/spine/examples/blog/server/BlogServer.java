@@ -18,12 +18,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.blog;
+package io.spine.examples.blog.server;
 
 import io.spine.core.BoundedContextName;
-import io.spine.examples.blog.c.BlogRepository;
-import io.spine.examples.blog.c.BlogPostRepository;
-import io.spine.examples.blog.q.BlogViewRepository;
+import io.spine.examples.blog.server.c.BlogRepository;
+import io.spine.examples.blog.server.c.PostRepository;
+import io.spine.examples.blog.server.q.BlogViewRepository;
 import io.spine.logging.Logging;
 import io.spine.server.BoundedContext;
 import io.spine.server.CommandService;
@@ -37,9 +37,7 @@ import java.io.IOException;
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 
 /**
- * A local gRPC {@link BlogServer} running a the Blog Bounded Context.
- *
- * @author Anton Nikulin
+ * A local gRPC {@link BlogServer} running the Blog Bounded Context.
  */
 public class BlogServer implements Logging {
 
@@ -65,7 +63,7 @@ public class BlogServer implements Logging {
         return Integer.parseInt(port);
     }
 
-    static BoundedContext createBoundedContext() {
+    private static BoundedContext createBoundedContext() {
         BoundedContextName name = BoundedContextName
                 .newBuilder()
                 .setValue("Blog")
@@ -80,7 +78,7 @@ public class BlogServer implements Logging {
                 .build();
 
         context.register(new BlogRepository());
-        context.register(new BlogPostRepository());
+        context.register(new PostRepository());
         context.register(new BlogViewRepository());
         return context;
     }

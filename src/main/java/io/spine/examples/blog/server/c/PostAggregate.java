@@ -18,77 +18,75 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.blog.c;
+package io.spine.examples.blog.server.c;
 
 import com.google.common.annotations.VisibleForTesting;
-import io.spine.examples.blog.BlogPost;
-import io.spine.examples.blog.BlogPost.Status;
-import io.spine.examples.blog.BlogPostId;
-import io.spine.examples.blog.BlogPostVBuilder;
-import io.spine.examples.blog.commands.CreateBlogPost;
-import io.spine.examples.blog.commands.PublishBlogPost;
-import io.spine.examples.blog.events.BlogPostCreated;
-import io.spine.examples.blog.events.BlogPostPublished;
-import io.spine.examples.blog.rejections.CannotPublishBlogPost;
+import io.spine.examples.blog.Post;
+import io.spine.examples.blog.Post.Status;
+import io.spine.examples.blog.PostId;
+import io.spine.examples.blog.PostVBuilder;
+import io.spine.examples.blog.commands.CreatePost;
+import io.spine.examples.blog.commands.PublishPost;
+import io.spine.examples.blog.events.PostCreated;
+import io.spine.examples.blog.events.PostPublished;
+import io.spine.examples.blog.rejections.CannotPublishPost;
 import io.spine.server.aggregate.Aggregate;
 import io.spine.server.aggregate.Apply;
 import io.spine.server.command.Assign;
 
 /**
- * An aggregate that manages state of the {@link io.spine.examples.blog.BlogPost} model.
- *
- * @author Anton Nikulin
+ * A post aggregate handles commands related to a blog post.
  */
-class BlogPostAggregate extends Aggregate<BlogPostId, BlogPost, BlogPostVBuilder> {
+class PostAggregate extends Aggregate<PostId, Post, PostVBuilder> {
 
     @VisibleForTesting
-    BlogPostAggregate(BlogPostId id) {
+    PostAggregate(PostId id) {
         super(id);
     }
 
     @Assign
-    BlogPostCreated handle(CreateBlogPost cmd) {
-        return BlogPostCreated.newBuilder()
-                .setBlogPostId(cmd.getBlogPostId())
+    PostCreated handle(CreatePost cmd) {
+        return PostCreated.newBuilder()
+                .setPostId(cmd.getPostId())
                 .setTitle(cmd.getTitle())
                 .setBody(cmd.getBody())
                 .build();
     }
 
     @Assign
-    BlogPostPublished handle(PublishBlogPost cmd) throws CannotPublishBlogPost {
-        BlogPost post = getState();
+    PostPublished handle(PublishPost cmd) throws CannotPublishPost {
+        Post post = getState();
         Status status = post.getStatus();
-        BlogPostId postId = cmd.getBlogPostId();
+        PostId postId = cmd.getPostId();
         if (status != Status.DRAFT) {
             boolean published = status == Status.PUBLISHED;
-            throw CannotPublishBlogPost
+            throw CannotPublishPost
                     .newBuilder()
-                    .setBlogPostId(postId)
+                    .setPostId(postId)
                     .setAlreadyPublished(published)
                     .setAlreadyDeleted(!published)
                     .build();
         }
-        return BlogPostPublished.newBuilder()
-                .setBlogPostId(postId)
+        return PostPublished.newBuilder()
+                .setPostId(postId)
                 .setTitle(post.getTitle())
                 .setBody(post.getBody())
                 .build();
     }
 
     @Apply
-    void blogPostCreated(BlogPostCreated event) {
+    void blogPostCreated(PostCreated event) {
         getBuilder()
-                .setId(event.getBlogPostId())
+                .setId(event.getPostId())
                 .setTitle(event.getTitle())
                 .setBody(event.getBody())
                 .setStatus(Status.DRAFT);
     }
 
     @Apply
-    void blogPostPublished(BlogPostPublished event) {
+    void blogPostPublished(PostPublished event) {
         getBuilder()
-                .setId(event.getBlogPostId())
+                .setId(event.getPostId())
                 .setStatus(Status.PUBLISHED);
     }
 }

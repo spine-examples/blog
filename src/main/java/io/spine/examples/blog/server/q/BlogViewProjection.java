@@ -18,22 +18,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.blog.q;
+package io.spine.examples.blog.server.q;
 
-import com.google.common.collect.ImmutableSet;
+import io.spine.core.Subscribe;
 import io.spine.examples.blog.BlogId;
-import io.spine.examples.blog.BlogView;
-import io.spine.examples.blog.events.BlogPostPublished;
-import io.spine.server.projection.ProjectionRepository;
+import io.spine.examples.blog.PostId;
+import io.spine.examples.blog.events.PostPublished;
+import io.spine.server.projection.Projection;
 
 /**
- * A repository for {@link BlogViewProjection}.
+ * A projection that represents the current state of a blog and contains published blog posts.
  */
-public class BlogViewRepository extends ProjectionRepository<BlogId, BlogViewProjection, BlogView> {
+class BlogViewProjection extends Projection<BlogId, BlogView, BlogViewVBuilder> {
 
-    public BlogViewRepository() {
-        super();
-        getEventRouting().route(BlogPostPublished.class,
-                (message, context) -> ImmutableSet.of(message.getBlogPostId().getBlogId()));
+    BlogViewProjection(BlogId id) {
+        super(id);
+    }
+
+    @Subscribe
+    public void on(PostPublished event) {
+        PostId postId = event.getPostId();
+        PostItem item = PostItem
+                .newBuilder()
+                .setId(postId)
+                .setBody(event.getBody())
+                .setTitle(event.getTitle())
+                .build();
+        getBuilder()
+                .setBlogId(postId.getBlogId())
+                .addPosts(0, item);
     }
 }

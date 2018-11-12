@@ -18,22 +18,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.blog.c;
+package io.spine.examples.blog.server.c;
 
 import io.spine.client.QueryResponse;
 import io.spine.examples.blog.Blog;
 import io.spine.examples.blog.BlogId;
-import io.spine.examples.blog.BlogPost;
-import io.spine.examples.blog.BlogPostId;
-import io.spine.examples.blog.BlogServerTest;
+import io.spine.examples.blog.Post;
+import io.spine.examples.blog.PostId;
+import io.spine.examples.blog.server.BlogServerTest;
 import io.spine.examples.blog.commands.CreateBlog;
-import io.spine.examples.blog.commands.CreateBlogPost;
+import io.spine.examples.blog.commands.CreatePost;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static io.spine.examples.blog.given.TestIdentifiers.newBlogId;
-import static io.spine.examples.blog.given.TestIdentifiers.newBlogPostId;
+import static io.spine.examples.blog.given.TestIdentifiers.newPostId;
 import static io.spine.protobuf.AnyPacker.unpack;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -46,17 +46,17 @@ class CommandSideTest extends BlogServerTest {
     /** The command message to create the blog. */
     private CreateBlog createBlog;
     /** The ID of the post we create in the blog. */
-    private BlogPostId postId;
+    private PostId postId;
     /** The command to create the blog post. */
-    private CreateBlogPost createPost;
+    private CreatePost createPost;
 
     @BeforeEach
     void setUp() {
         createBlog = createBlog(blogId, "Server Side Blog Test");
         post(createBlog);
 
-        postId = newBlogPostId(blogId);
-        createPost = createBlogPost(postId, "Server Blog Post");
+        postId = newPostId(blogId);
+        createPost = createPost(postId, "Server Blog Post");
         post(createPost);
     }
 
@@ -67,7 +67,7 @@ class CommandSideTest extends BlogServerTest {
         assertEquals(1, blogResponse.getMessagesCount());
         Blog blog = (Blog) unpack(blogResponse.getMessages(0));
         assertEquals(blogId, blog.getId());
-        assertEquals(createBlog.getName(), blog.getName());
+        assertEquals(createBlog.getTitle(), blog.getTitle());
         assertTrue(blog.getPostsList()
                        .contains(postId));
     }
@@ -75,11 +75,11 @@ class CommandSideTest extends BlogServerTest {
     @Test
     @DisplayName("create a blog post")
     void createsPost() {
-        QueryResponse postResponse = queryAll(BlogPost.class);
+        QueryResponse postResponse = queryAll(Post.class);
         assertEquals(1, postResponse.getMessagesCount());
-        BlogPost blogPost = (BlogPost) unpack(postResponse.getMessages(0));
+        Post blogPost = (Post) unpack(postResponse.getMessages(0));
         assertEquals(postId, blogPost.getId());
         assertEquals(createPost.getTitle(), blogPost.getTitle());
-        assertEquals(BlogPost.Status.DRAFT, blogPost.getStatus());
+        assertEquals(Post.Status.DRAFT, blogPost.getStatus());
     }
 }

@@ -30,35 +30,19 @@ option java_outer_classname = "IdentifiersProto";
 option java_multiple_files = true;
 option java_generate_equals_and_hash = true;
 
-// A `Blog` identifier.
-//
-// A `Blog` ID must be unique in the scope of the application and should not be based
-// on internal fields of the `Blog`. IDs for new entities must be generated on the
-// client-side using a UUID generator and supplied to the application as the first
-// parameter of `CreateBlog` command.
-//
+// An identifier of a blog.
 message BlogId {
 
-    // String representation of UUID value.
-    //
+    // Generated UUID-based value.
     string uuid = 1 [(required) = true];
 }
 
-// A `BlogPost` identifier.
-//
-// A `BlogPost` ID must be unique in the scope of the application and should not be based
-// on internal fields of the `BlogPost`. IDs for new entities must be generated on the
-// client-side using a UUID generator and supplied to the application as the first
-// parameter of `CreateBlogPost` command.
-//
-message BlogPostId {
+// An identifier of a blog post.
+message PostId {
 
-    // String representation of UUID value.
-    //
+    // Generated UUID-based value.
     string uuid = 1 [(required) = true];
 
-    // A `Blog` ID where the `BlogPost` must be created. The `Blog` identifier is
-    // mandatory because every `BlogPost` is attached to a `Blog`.
-    //
+    // An ID of the blog for which this post belongs.
     BlogId blog_id = 2 [(required) = true];
 }

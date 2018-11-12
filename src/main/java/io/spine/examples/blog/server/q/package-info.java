@@ -18,31 +18,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.blog.given;
-
-import io.spine.examples.blog.BlogId;
-import io.spine.examples.blog.PostId;
-
-import static io.spine.base.Identifier.newUuid;
-
 /**
- * A helper class with static methods for creating entity identifiers.
+ * This package contains query-side of the Blog server.
  */
-public class TestIdentifiers {
+@CheckReturnValue
+@ParametersAreNonnullByDefault
+package io.spine.examples.blog.server.q;
 
-    private TestIdentifiers() {
-    }
+import com.google.errorprone.annotations.CheckReturnValue;
 
-    public static BlogId newBlogId() {
-        return BlogId.newBuilder()
-                .setUuid(newUuid())
-                .build();
-    }
-
-    public static PostId newPostId(BlogId blogId) {
-        return PostId.newBuilder()
-                .setUuid(newUuid())
-                .setBlogId(blogId)
-                .build();
-    }
-}
+import javax.annotation.ParametersAreNonnullByDefault;

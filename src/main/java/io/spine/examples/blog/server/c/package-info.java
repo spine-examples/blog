@@ -18,20 +18,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.blog.c;
-
-import com.google.common.collect.ImmutableSet;
-import io.spine.examples.blog.BlogId;
-import io.spine.examples.blog.events.BlogPostCreated;
-import io.spine.server.aggregate.AggregateRepository;
-
 /**
- * A repository for {@link BlogAggregate}.
+ * This package contains command-side of the Blog server.
  */
-public class BlogRepository extends AggregateRepository<BlogId, BlogAggregate> {
-    public BlogRepository() {
-        super();
-        getEventRouting().route(BlogPostCreated.class,
-                (message, context) -> ImmutableSet.of(message.getBlogPostId().getBlogId()));
-    }
-}
+
+@CheckReturnValue
+@ParametersAreNonnullByDefault
+package io.spine.examples.blog.server.c;
+
+import com.google.errorprone.annotations.CheckReturnValue;
+
+import javax.annotation.ParametersAreNonnullByDefault;

@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.blog.c;
+package io.spine.examples.blog.server.c;
 
 import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.blog.Blog;
@@ -27,8 +27,8 @@ import io.spine.examples.blog.BlogVBuilder;
 import io.spine.server.event.React;
 import io.spine.examples.blog.commands.CreateBlog;
 import io.spine.examples.blog.events.BlogCreated;
-import io.spine.examples.blog.events.BlogPostAdded;
-import io.spine.examples.blog.events.BlogPostCreated;
+import io.spine.examples.blog.events.PostAdded;
+import io.spine.examples.blog.events.PostCreated;
 import io.spine.server.aggregate.Aggregate;
 import io.spine.server.aggregate.Apply;
 import io.spine.server.command.Assign;
@@ -47,14 +47,14 @@ class BlogAggregate extends Aggregate<BlogId, Blog, BlogVBuilder> {
     BlogCreated handle(CreateBlog cmd) {
         return BlogCreated.newBuilder()
                 .setBlogId(cmd.getBlogId())
-                .setName(cmd.getName())
+                .setTitle(cmd.getTitle())
                 .build();
     }
 
     @React
-    BlogPostAdded on(BlogPostCreated event) {
-        return BlogPostAdded.newBuilder()
-                .setBlogPostId(event.getBlogPostId())
+    PostAdded on(PostCreated event) {
+        return PostAdded.newBuilder()
+                .setPostId(event.getPostId())
                 .build();
     }
 
@@ -62,13 +62,13 @@ class BlogAggregate extends Aggregate<BlogId, Blog, BlogVBuilder> {
     void blogCreated(BlogCreated event) {
         getBuilder()
                 .setId(event.getBlogId())
-                .setName(event.getName());
+                .setTitle(event.getTitle());
     }
 
     @Apply
-    void blogPostAdded(BlogPostAdded event) {
+    void blogPostAdded(PostAdded event) {
         getBuilder()
-                .setId(event.getBlogPostId().getBlogId())
-                .addPosts(event.getBlogPostId());
+                .setId(event.getPostId().getBlogId())
+                .addPosts(event.getPostId());
     }
 }

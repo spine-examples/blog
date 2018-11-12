@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.blog.c;
+package io.spine.examples.blog.server.c;
 
 import io.spine.base.CommandMessage;
 import io.spine.examples.blog.Blog;
@@ -27,6 +27,7 @@ import io.spine.examples.blog.commands.CreateBlog;
 import io.spine.examples.blog.events.BlogCreated;
 import io.spine.server.entity.Repository;
 import io.spine.testing.server.aggregate.AggregateCommandTest;
+import io.spine.testing.server.expected.CommandHandlerExpected;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -35,52 +36,82 @@ import org.junit.jupiter.api.Test;
 import static io.spine.examples.blog.given.TestIdentifiers.newBlogId;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SuppressWarnings("ClassCanBeStatic" /* JUnit nested classes cannot be static. */)
+@DisplayName("BlogAggregate should")
 class BlogAggregateTest {
 
     private static final BlogId blogId = newBlogId();
     private static final CreateBlog createCommand = CreateBlog.newBuilder()
-                                                              .setName("Test Blog Name")
+                                                              .setTitle("DDD in Pictures")
                                                               .setBlogId(blogId)
                                                               .build();
     @Nested
+    @DisplayName("handle CreateBlog command")
     class CreateBlogCommandTest extends BlogAggregateCommandTest<CreateBlog> {
+
+        private BlogId expectedId;
+        private Blog blog;
+        private String expectedTitle;
 
         CreateBlogCommandTest() {
             super(blogId, createCommand);
-        }
-
-        @Test
-        @DisplayName("CreateBlog should produce BlogCreated event and change Blog state")
-        void test() {
-            BlogId blogId = entityId();
-            String expectedBlogName = message().getName();
-            this.expectThat(blogAggregate)
-                .producesEvent(BlogCreated.class, created -> {
-                        assertEquals(blogId, created.getBlogId());
-                        assertEquals(expectedBlogName, created.getName());
-                    });
-
-            Blog blog = blogAggregate.getState();
-            assertEquals(blogId, blog.getId());
-            assertEquals(expectedBlogName, blog.getName());
-        }
-    }
-
-    private static abstract class BlogAggregateCommandTest<C extends CommandMessage>
-            extends AggregateCommandTest<BlogId, C, Blog, BlogAggregate> {
-
-        BlogAggregate blogAggregate;
-
-        BlogAggregateCommandTest(BlogId aggregateId, C commandMessage) {
-            super(aggregateId, commandMessage);
         }
 
         @Override
         @BeforeEach
         public void setUp() {
             super.setUp();
-            blogAggregate = new BlogAggregate(entityId());
+            expectedId = entityId();
+            expectedTitle = message().getTitle();
+            blog = aggregate().getState();
+        }
+
+        @Test
+        @DisplayName("producing BlogCreated event and change Blog state")
+        void produceEvent() {
+            expectThat()
+                    .producesEvent(BlogCreated.class, created -> {
+                        assertEquals(expectedId, created.getBlogId());
+                        assertEquals(expectedTitle, created.getTitle());
+                    });
+        }
+
+        @Test
+        @DisplayName("setting ID")
+        void setId() {
+            assertEquals(expectedId, blog.getId());
+        }
+
+        @Test
+        @DisplayName("setting title")
+        void setTitle() {
+            assertEquals(expectedTitle, blog.getTitle());
+        }
+    }
+
+    private abstract static class BlogAggregateCommandTest<C extends CommandMessage>
+            extends AggregateCommandTest<BlogId, C, Blog, BlogAggregate> {
+
+        private BlogAggregate aggregate;
+        private CommandHandlerExpected<Blog> expectThat;
+
+        BlogAggregateCommandTest(BlogId aggregateId, C commandMessage) {
+            super(aggregateId, commandMessage);
+        }
+
+        protected final BlogAggregate aggregate() {
+            return aggregate;
+        }
+
+        @Override
+        @BeforeEach
+        public void setUp() {
+            super.setUp();
+            aggregate = new BlogAggregate(entityId());
+            expectThat = expectThat(aggregate);
+        }
+
+        final CommandHandlerExpected<Blog> expectThat() {
+            return expectThat;
         }
 
         @Override

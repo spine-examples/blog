@@ -32,54 +32,46 @@ option java_generate_equals_and_hash = true;
 
 import "blog/identifiers.proto";
 
-// A `Blog` represents an informal discussion about a certain topic. Generally, it consists of informal
-// text entries called `BlogPosts`.
-//
+// A blog is an informal discussion about a certain topic.
 message Blog {
 
-    // A `Blog` ID.
-    //
+    // An ID of the blog.
     BlogId id = 1 [(required) = true];
 
-    // A title/name that usually defines the main topic of the `Blog`.
-    //
-    string name = 2;
-
-    // A content of the `Blog`: a collection of published and draft `BlogPost`s.
-    //
-    repeated BlogPostId posts = 3;
-}
-
-// A `BlogPost` attached to a certain `Blog`.
-//
-message BlogPost {
-
-    // A `BlogPost` ID.
-    //
-    BlogPostId id = 1 [(required) = true];
-
-    // A title tells what the `BlogPost` is about and usually encalsulaptes the main topic in one sentence.
+    // A title of the blog.
     //
     string title = 2;
 
-    // A content with textual information uncovering the topic of the `BlogPost`.
-    //
+    // References to posts in the chronological order.
+    repeated PostId posts = 3;
+}
+
+// An entry in the blog.
+//
+message Post {
+
+    // An ID of the post.
+    PostId id = 1 [(required) = true];
+
+    // A title of the blog post.
+    string title = 2;
+
+    // A content of the post.
     string body = 3;
 
-    // A condition defining `BlogPost` readiness and visibility for other people.
-    //
+    // Defines readiness and visibility of the for other people.
     enum Status {
 
-        // States that the text entry is not completed and should not be visible yet.
-        //
+        // The post is not completed and should not be visible yet.
         DRAFT = 0;
 
-        // Corresponds to the finished `BlogPost` that can be read by other people.
-        //
-        PUBLISHED = 1;
+        // The post is ready to be published.
+        READY = 1;
+
+        // The post is visible to readers of the blog.
+        PUBLISHED = 2;
     }
 
-    // A status defines readiness and visibility of the `BlogPost`.
-    //
+    // A status defines readiness and visibility of the blog post.
     Status status = 4;
 }

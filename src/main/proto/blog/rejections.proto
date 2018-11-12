@@ -31,16 +31,15 @@ option java_generate_equals_and_hash = true;
 
 import "blog/identifiers.proto";
 
-// A rejection to publish a `BlogPost`. It is thrown when the non-draft `BlogPost` (already published or deleted one)
-// is attempted to be published.
+// A rejection to publish a post.
 //
-message CannotPublishBlogPost {
+// Thrown if a post is already published or deleted.
+//
+message CannotPublishPost {
 
-    BlogPostId blog_post_id = 1 [(required) = true];
+    PostId post_id = 1 [(required) = true];
 
-    // A reason why a command to publish a `BlogPost` is rejected: either the `BlogPost`
-    // is already published or deleted.
-    //
+    // A reason why a command to publish cannot be fulfilled.
     oneof reason {
 
         bool already_published = 2;
