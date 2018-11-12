@@ -96,7 +96,7 @@ public abstract class BlogServerTest {
                 .newBuilder()
                 .setPostId(postId)
                 .setTitle(title)
-                .setBody("Generated post body " + randomString())
+                .setBody("Generated " + randomString() + " post body.")
                 .build();
     }
 }
