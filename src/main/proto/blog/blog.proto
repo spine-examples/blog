@@ -35,6 +35,8 @@ import "blog/identifiers.proto";
 // A blog is an informal discussion about a certain topic.
 message Blog {
 
+    option (entity).kind = AGGREGATE;
+
     // An ID of the blog.
     BlogId id = 1 [(required) = true];
 
@@ -49,6 +51,8 @@ message Blog {
 // An entry in the blog.
 //
 message Post {
+
+    option (entity).kind = AGGREGATE;
 
     // An ID of the post.
     PostId id = 1 [(required) = true];

@@ -39,7 +39,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @DisplayName("Blog Query Side should")
 class QuerySideTest extends BlogServerTest {
 
-
     private final BlogId blogId = newBlogId();
     private PostId post1;
     private PostId post2;
