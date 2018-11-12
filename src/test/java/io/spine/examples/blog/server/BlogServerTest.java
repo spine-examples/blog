@@ -38,6 +38,7 @@ import java.io.IOException;
 
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 import static io.spine.examples.blog.server.BlogServer.contextName;
+import static io.spine.testing.TestValues.randomString;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
@@ -95,6 +96,7 @@ public abstract class BlogServerTest {
                 .newBuilder()
                 .setPostId(postId)
                 .setTitle(title)
+                .setBody("Generated post body " + randomString())
                 .build();
     }
 }
