@@ -37,7 +37,7 @@ import static io.spine.protobuf.AnyPacker.unpack;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisplayName("Blog Query Side should")
-public class QuerySideTest extends BlogServerTest {
+class QuerySideTest extends BlogServerTest {
 
 
     private final BlogId blogId = newBlogId();

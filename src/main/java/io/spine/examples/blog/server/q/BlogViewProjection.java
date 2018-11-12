@@ -23,6 +23,7 @@ package io.spine.examples.blog.server.q;
 import io.spine.core.Subscribe;
 import io.spine.examples.blog.BlogId;
 import io.spine.examples.blog.PostId;
+import io.spine.examples.blog.events.BlogCreated;
 import io.spine.examples.blog.events.PostPublished;
 import io.spine.server.projection.Projection;
 
@@ -36,16 +37,25 @@ class BlogViewProjection extends Projection<BlogId, BlogView, BlogViewVBuilder> 
     }
 
     @Subscribe
-    public void on(PostPublished event) {
+    void on(BlogCreated event) {
+        getBuilder().setBlogId(event.getBlogId())
+                    .setTitle(event.getTitle());
+    }
+
+    @Subscribe
+    void on(PostPublished event) {
+        PostItem item = toPostItem(event);
+        getBuilder().addPosts(0, item);
+    }
+
+    /** Converts publishing event to a post item. */
+    private static PostItem toPostItem(PostPublished event) {
         PostId postId = event.getPostId();
-        PostItem item = PostItem
+        return PostItem
                 .newBuilder()
                 .setId(postId)
-                .setBody(event.getBody())
                 .setTitle(event.getTitle())
+                .setBody(event.getBody())
                 .build();
-        getBuilder()
-                .setBlogId(postId.getBlogId())
-                .addPosts(0, item);
     }
 }

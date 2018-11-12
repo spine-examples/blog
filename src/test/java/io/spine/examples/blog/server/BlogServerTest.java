@@ -28,6 +28,8 @@ import io.spine.examples.blog.PostId;
 import io.spine.examples.blog.commands.CreateBlog;
 import io.spine.examples.blog.commands.CreatePost;
 import io.spine.examples.testutil.TestClient;
+import io.spine.server.storage.StorageFactory;
+import io.spine.server.storage.memory.InMemoryStorageFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -35,6 +37,7 @@ import org.junit.jupiter.api.DisplayName;
 import java.io.IOException;
 
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
+import static io.spine.examples.blog.server.BlogServer.contextName;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @DisplayName("BlogServer")
@@ -45,9 +48,10 @@ public class BlogServerTest {
 
     @BeforeEach
     void setup() {
+        StorageFactory storageFactory = InMemoryStorageFactory.newInstance(contextName, false);
         int port = DEFAULT_CLIENT_SERVICE_PORT;
+        server = new BlogServer(storageFactory, port);
         client = new TestClient("localhost", port);
-        server = new BlogServer(port);
         startServer();
     }
 

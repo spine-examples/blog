@@ -41,19 +41,26 @@ import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
  */
 public class BlogServer implements Logging {
 
+    static final BoundedContextName contextName = BoundedContextName
+            .newBuilder()
+            .setValue("Blog")
+            .build();
+
     private final int port;
     private final GrpcContainer grpcContainer;
     private final BoundedContext boundedContext;
 
-    BlogServer(int port) {
+    BlogServer(StorageFactory storageFactory, int port) {
         this.port = port;
-        this.boundedContext = createBoundedContext();
+        this.boundedContext = createBoundedContext(storageFactory);
         this.grpcContainer = createGrpcContainer(this.boundedContext);
     }
 
     public static void main(String[] args) throws IOException {
         int port = getPort();
-        BlogServer blogServer = new BlogServer(port);
+        StorageFactory storageFactory = InMemoryStorageFactory.newInstance(contextName, false);
+
+        BlogServer blogServer = new BlogServer(storageFactory, port);
         blogServer.start();
     }
 
@@ -63,17 +70,10 @@ public class BlogServer implements Logging {
         return Integer.parseInt(port);
     }
 
-    private static BoundedContext createBoundedContext() {
-        BoundedContextName name = BoundedContextName
-                .newBuilder()
-                .setValue("Blog")
-                .build();
-
-        StorageFactory storageFactory = InMemoryStorageFactory.newInstance(name, false);
-
+    private static BoundedContext createBoundedContext(StorageFactory storageFactory) {
         BoundedContext context = BoundedContext
                 .newBuilder()
-                .setName(name)
+                .setName(contextName)
                 .setStorageFactorySupplier(() -> storageFactory)
                 .build();
 

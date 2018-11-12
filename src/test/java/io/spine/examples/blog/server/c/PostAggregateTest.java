@@ -43,7 +43,6 @@ import static io.spine.examples.blog.given.TestIdentifiers.newPostId;
 import static io.spine.testing.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SuppressWarnings("ClassCanBeStatic" /* JUnit nested classes cannot be static. */)
 @DisplayName("PostAggregate should")
 class PostAggregateTest {
 
@@ -66,6 +65,7 @@ class PostAggregateTest {
          */
         @Override
         @BeforeEach
+        @SuppressWarnings("CheckReturnValue") // We can ignore result of dispatched command.
         public void setUp() {
             super.setUp();
             dispatchTo(aggregate());
