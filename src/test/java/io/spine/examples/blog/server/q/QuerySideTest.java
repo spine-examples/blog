@@ -27,9 +27,11 @@ import io.spine.examples.blog.commands.CreateBlog;
 import io.spine.examples.blog.commands.CreatePost;
 import io.spine.examples.blog.commands.PublishPost;
 import io.spine.examples.blog.server.BlogServerTest;
+import io.spine.testing.server.ShardingReset;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import static io.spine.examples.blog.given.TestIdentifiers.newBlogId;
 import static io.spine.examples.blog.given.TestIdentifiers.newPostId;
@@ -37,6 +39,7 @@ import static io.spine.protobuf.AnyPacker.unpack;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisplayName("Blog Query Side should")
+@ExtendWith(ShardingReset.class)
 class QuerySideTest extends BlogServerTest {
 
     private final BlogId blogId = newBlogId();
