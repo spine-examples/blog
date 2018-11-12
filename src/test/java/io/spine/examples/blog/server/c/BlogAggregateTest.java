@@ -66,7 +66,7 @@ class BlogAggregateTest {
         }
 
         @Test
-        @DisplayName("producing BlogCreated event and change Blog state")
+        @DisplayName("producing BlogCreated event")
         void produceEvent() {
             expectThat()
                     .producesEvent(BlogCreated.class, created -> {
