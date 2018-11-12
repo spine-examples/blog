@@ -18,22 +18,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.blog;
-
-import com.google.common.collect.ImmutableSet;
-import io.spine.examples.blog.events.BlogPostPublished;
-import io.spine.server.projection.ProjectionRepository;
-
 /**
- * A repository for {@link BlogViewProjection}.
- *
- * @author Anton Nikulin
+ * This package contains query-side of the Blog server.
  */
-public class BlogViewRepository extends ProjectionRepository<BlogId, BlogViewProjection, BlogView> {
+@CheckReturnValue
+@ParametersAreNonnullByDefault
+package io.spine.examples.blog.q;
 
-    public BlogViewRepository() {
-        super();
-        getEventRouting().route(BlogPostPublished.class,
-                (message, context) -> ImmutableSet.of(message.getBlogPostId().getBlogId()));
-    }
-}
+import com.google.errorprone.annotations.CheckReturnValue;
+
+import javax.annotation.ParametersAreNonnullByDefault;

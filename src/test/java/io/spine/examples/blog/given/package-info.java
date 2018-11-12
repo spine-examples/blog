@@ -18,31 +18,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * This package contains test environment utilities for testing Blog server.
+ */
+
+@CheckReturnValue
+@ParametersAreNonnullByDefault
 package io.spine.examples.blog.given;
 
-import io.spine.examples.blog.BlogId;
-import io.spine.examples.blog.BlogPostId;
+import com.google.errorprone.annotations.CheckReturnValue;
 
-import static io.spine.base.Identifier.newUuid;
-
-/**
- * A helper class with static methods for creating entity identifiers.
- */
-public class TestIdentifiers {
-
-    private TestIdentifiers() {
-    }
-
-    public static BlogId newBlogId() {
-        return BlogId.newBuilder()
-                .setUuid(newUuid())
-                .build();
-    }
-
-    public static BlogPostId newBlogPostId(BlogId blogId) {
-        return BlogPostId.newBuilder()
-                .setUuid(newUuid())
-                .setBlogId(blogId)
-                .build();
-    }
-}
+import javax.annotation.ParametersAreNonnullByDefault;

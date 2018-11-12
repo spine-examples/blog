@@ -20,10 +20,16 @@
 
 package io.spine.examples.blog;
 
+import io.spine.core.BoundedContextName;
+import io.spine.examples.blog.c.BlogRepository;
+import io.spine.examples.blog.c.BlogPostRepository;
+import io.spine.examples.blog.q.BlogViewRepository;
 import io.spine.logging.Logging;
 import io.spine.server.BoundedContext;
 import io.spine.server.CommandService;
 import io.spine.server.QueryService;
+import io.spine.server.storage.StorageFactory;
+import io.spine.server.storage.memory.InMemoryStorageFactory;
 import io.spine.server.transport.GrpcContainer;
 
 import java.io.IOException;
@@ -31,7 +37,7 @@ import java.io.IOException;
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 
 /**
- * A local gRPC {@link BlogServer} running a {@link BlogBoundedContext}.
+ * A local gRPC {@link BlogServer} running a the Blog Bounded Context.
  *
  * @author Anton Nikulin
  */
@@ -43,7 +49,7 @@ public class BlogServer implements Logging {
 
     BlogServer(int port) {
         this.port = port;
-        this.boundedContext = BlogBoundedContext.getInstance();
+        this.boundedContext = createBoundedContext();
         this.grpcContainer = createGrpcContainer(this.boundedContext);
     }
 
@@ -57,6 +63,26 @@ public class BlogServer implements Logging {
         @SuppressWarnings("AccessOfSystemProperties") // No security risk.
         String port = System.getProperty("port", String.valueOf(DEFAULT_CLIENT_SERVICE_PORT));
         return Integer.parseInt(port);
+    }
+
+    static BoundedContext createBoundedContext() {
+        BoundedContextName name = BoundedContextName
+                .newBuilder()
+                .setValue("Blog")
+                .build();
+
+        StorageFactory storageFactory = InMemoryStorageFactory.newInstance(name, false);
+
+        BoundedContext context = BoundedContext
+                .newBuilder()
+                .setName(name)
+                .setStorageFactorySupplier(() -> storageFactory)
+                .build();
+
+        context.register(new BlogRepository());
+        context.register(new BlogPostRepository());
+        context.register(new BlogViewRepository());
+        return context;
     }
 
     private GrpcContainer createGrpcContainer(BoundedContext boundedContext) {

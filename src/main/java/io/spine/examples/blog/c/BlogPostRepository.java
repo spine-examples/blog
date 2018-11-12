@@ -18,31 +18,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.blog.given;
+package io.spine.examples.blog.c;
 
-import io.spine.examples.blog.BlogId;
 import io.spine.examples.blog.BlogPostId;
-
-import static io.spine.base.Identifier.newUuid;
+import io.spine.server.aggregate.AggregateRepository;
 
 /**
- * A helper class with static methods for creating entity identifiers.
+ * A repository for {@link BlogPostAggregate}.
  */
-public class TestIdentifiers {
-
-    private TestIdentifiers() {
-    }
-
-    public static BlogId newBlogId() {
-        return BlogId.newBuilder()
-                .setUuid(newUuid())
-                .build();
-    }
-
-    public static BlogPostId newBlogPostId(BlogId blogId) {
-        return BlogPostId.newBuilder()
-                .setUuid(newUuid())
-                .setBlogId(blogId)
-                .build();
-    }
+public class BlogPostRepository extends AggregateRepository<BlogPostId, BlogPostAggregate> {
 }

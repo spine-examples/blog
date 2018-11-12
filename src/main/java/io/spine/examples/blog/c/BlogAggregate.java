@@ -18,9 +18,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.blog;
+package io.spine.examples.blog.c;
 
 import com.google.common.annotations.VisibleForTesting;
+import io.spine.examples.blog.Blog;
+import io.spine.examples.blog.BlogId;
+import io.spine.examples.blog.BlogVBuilder;
 import io.spine.server.event.React;
 import io.spine.examples.blog.commands.CreateBlog;
 import io.spine.examples.blog.events.BlogCreated;
@@ -31,9 +34,7 @@ import io.spine.server.aggregate.Apply;
 import io.spine.server.command.Assign;
 
 /**
- * An aggregate that manages state of the {@link Blog} model.
- *
- * @author Anton Nikulin
+ * An aggregate that manages state of the {@link io.spine.examples.blog.Blog} model.
  */
 class BlogAggregate extends Aggregate<BlogId, Blog, BlogVBuilder> {
 

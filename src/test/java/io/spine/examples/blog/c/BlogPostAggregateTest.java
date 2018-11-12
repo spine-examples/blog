@@ -1,27 +1,30 @@
 /*
  * Copyright 2018, TeamDev. All rights reserved.
  *
- *  Redistribution and use in source and/or binary forms, with or without
- *  modification, must retain the above copyright notice and the following
- *  disclaimer.
+ * Redistribution and use in source and/or binary forms, with or without
+ * modification, must retain the above copyright notice and the following
+ * disclaimer.
  *
- *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.blog;
+package io.spine.examples.blog.c;
 
 import io.spine.base.CommandMessage;
 import io.spine.core.CommandEnvelope;
+import io.spine.examples.blog.BlogId;
+import io.spine.examples.blog.BlogPost;
+import io.spine.examples.blog.BlogPostId;
 import io.spine.examples.blog.commands.CreateBlogPost;
 import io.spine.examples.blog.commands.PublishBlogPost;
 import io.spine.examples.blog.events.BlogPostCreated;
@@ -41,13 +44,14 @@ import static io.spine.testing.server.aggregate.AggregateMessageDispatcher.dispa
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SuppressWarnings("ClassCanBeStatic" /* JUnit nested classes cannot be static. */)
+@DisplayName("BlogPostAggregate should")
 class BlogPostAggregateTest {
 
     private static final BlogId blogId = newBlogId();
     private static final BlogPostId blogPostId = newBlogPostId(blogId);
 
     @Nested
-    @DisplayName("CreateBlogPost should")
+    @DisplayName("handle CreateBlogPost command")
     class CreateBlogPostCommandTest extends BlogPostAggregateCommandTest<CreateBlogPost> {
 
         CreateBlogPostCommandTest() {
@@ -57,21 +61,37 @@ class BlogPostAggregateTest {
                                             .build());
         }
 
-        @Test
-        @DisplayName("produce BlogPostCreated event and change BlogPost state")
-        void createBlogPost() {
-            BlogPostId postId = entityId();
-            this.expectThat(blogPostAggregate)
-                .producesEvent(BlogPostCreated.class, created -> {
-                        assertEquals(postId, created.getBlogPostId());
-                        assertEquals(blogId, created.getBlogPostId().getBlogId());
-                        assertEquals(message().getTitle(), created.getTitle());
-                    });
+        /**
+         * Dispatches the command to the aggregate.
+         */
+        @Override
+        @BeforeEach
+        public void setUp() {
+            super.setUp();
+            dispatchTo(aggregate());
+        }
 
-            final BlogPost aggregateState = blogPostAggregate.getState();
-            assertEquals(postId, aggregateState.getId());
-            assertEquals(message().getTitle(), aggregateState.getTitle());
-            assertEquals(BlogPost.Status.DRAFT, aggregateState.getStatus());
+        @Test
+        @DisplayName("producing BlogPostCreated event")
+        void createBlogPost() {
+            BlogPostId expectedPostId = entityId();
+            this.expectThat(aggregate())
+                .producesEvent(BlogPostCreated.class, event -> {
+                    BlogPostId newPostId = event.getBlogPostId();
+                    assertEquals(expectedPostId, newPostId);
+                        assertEquals(blogId, newPostId.getBlogId());
+                        assertEquals(message().getTitle(), event.getTitle());
+                    });
+        }
+
+        @Test
+        @DisplayName("changing the post state")
+        void changesState() {
+            BlogPostId postId = entityId();
+            BlogPost post = aggregate().getState();
+            assertEquals(postId, post.getId());
+            assertEquals(message().getTitle(), post.getTitle());
+            assertEquals(BlogPost.Status.DRAFT, post.getStatus());
         }
     }
 
@@ -97,18 +117,19 @@ class BlogPostAggregateTest {
                     .setTitle("Test Blog Post")
                     .build();
             CommandEnvelope envelope = requestFactory.createEnvelope(command);
-            dispatchCommand(blogPostAggregate, envelope);
+            dispatchCommand(aggregate(), envelope);
         }
 
         @Test
         @DisplayName("produce BlogPostPublished event and change BlogPost status")
         void publishBlogPost() {
             BlogPostId postId = entityId();
-            expectThat(blogPostAggregate)
+            BlogPostAggregate aggregate = aggregate();
+            expectThat(aggregate)
                 .producesEvent(BlogPostPublished.class,
                                published -> assertEquals(postId, published.getBlogPostId()));
 
-            BlogPost blogPost = blogPostAggregate.getState();
+            BlogPost blogPost = aggregate.getState();
 
             assertEquals(postId, blogPost.getId());
             assertEquals("Test Blog Post", blogPost.getTitle());
@@ -118,40 +139,47 @@ class BlogPostAggregateTest {
         @Test
         @DisplayName("throw CannotPublishBlogPost rejection when BlogPost is already published")
         void publishPublishedBlogPost() {
-            dispatchCommand(blogPostAggregate, createCommand());
-            BlogPost blog = blogPostAggregate.getState();
+            BlogPostAggregate aggregate = aggregate();
+            dispatchCommand(aggregate, createCommand());
+            BlogPost blog = aggregate.getState();
 
             assertEquals(BlogPost.Status.PUBLISHED, blog.getStatus());
 
-            expectThat(blogPostAggregate)
-                    .throwsRejection(Rejections.CannotPublishBlogPost.class);
+            expectThat(aggregate).throwsRejection(Rejections.CannotPublishBlogPost.class);
         }
     }
 
     /**
      * Abstract base for tests of handling of Blog Post commands.
      *
-     * @param <C> the type of the blog post command message.
+     * @param <C> the type of the blog post command message
      */
-    private static abstract class BlogPostAggregateCommandTest<C extends CommandMessage>
+    private abstract static class BlogPostAggregateCommandTest<C extends CommandMessage>
             extends AggregateCommandTest<BlogPostId, C, BlogPost, BlogPostAggregate> {
 
-        BlogPostAggregate blogPostAggregate;
+        private BlogPostAggregate aggregate;
 
         BlogPostAggregateCommandTest(BlogPostId aggregateId, C commandMessage) {
             super(aggregateId, commandMessage);
         }
 
+        /**
+         * Creates the aggregate under the tests.
+         */
         @Override
         @BeforeEach
         public void setUp() {
             super.setUp();
-            blogPostAggregate = new BlogPostAggregate(entityId());
+            aggregate = new BlogPostAggregate(entityId());
         }
 
         @Override
         protected Repository<BlogPostId, BlogPostAggregate> createEntityRepository() {
-            return new BlogPostAggregateRepository();
+            return new BlogPostRepository();
+        }
+
+        protected final BlogPostAggregate aggregate() {
+            return aggregate;
         }
     }
 }

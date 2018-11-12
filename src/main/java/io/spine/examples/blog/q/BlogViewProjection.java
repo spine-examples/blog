@@ -18,31 +18,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.blog.given;
+package io.spine.examples.blog.q;
 
+import io.spine.core.Subscribe;
 import io.spine.examples.blog.BlogId;
 import io.spine.examples.blog.BlogPostId;
-
-import static io.spine.base.Identifier.newUuid;
+import io.spine.examples.blog.BlogPostItem;
+import io.spine.examples.blog.BlogView;
+import io.spine.examples.blog.BlogViewVBuilder;
+import io.spine.examples.blog.events.BlogPostPublished;
+import io.spine.server.projection.Projection;
 
 /**
- * A helper class with static methods for creating entity identifiers.
+ * A projection that represents the current state of a blog and contains published blog posts.
  */
-public class TestIdentifiers {
+class BlogViewProjection extends Projection<BlogId, BlogView, BlogViewVBuilder> {
 
-    private TestIdentifiers() {
+    BlogViewProjection(BlogId id) {
+        super(id);
     }
 
-    public static BlogId newBlogId() {
-        return BlogId.newBuilder()
-                .setUuid(newUuid())
+    @Subscribe
+    public void on(BlogPostPublished event) {
+        BlogPostId postId = event.getBlogPostId();
+        BlogPostItem item = BlogPostItem
+                .newBuilder()
+                .setId(postId)
+                .setBody(event.getBody())
+                .setTitle(event.getTitle())
                 .build();
-    }
-
-    public static BlogPostId newBlogPostId(BlogId blogId) {
-        return BlogPostId.newBuilder()
-                .setUuid(newUuid())
-                .setBlogId(blogId)
-                .build();
+        getBuilder()
+                .setBlogId(postId.getBlogId())
+                .addPosts(item);
     }
 }

@@ -18,10 +18,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.blog;
+package io.spine.examples.blog.c;
 
 import com.google.common.annotations.VisibleForTesting;
+import io.spine.examples.blog.BlogPost;
 import io.spine.examples.blog.BlogPost.Status;
+import io.spine.examples.blog.BlogPostId;
+import io.spine.examples.blog.BlogPostVBuilder;
 import io.spine.examples.blog.commands.CreateBlogPost;
 import io.spine.examples.blog.commands.PublishBlogPost;
 import io.spine.examples.blog.events.BlogPostCreated;
@@ -32,7 +35,7 @@ import io.spine.server.aggregate.Apply;
 import io.spine.server.command.Assign;
 
 /**
- * An aggregate that manages state of the {@link BlogPost} model.
+ * An aggregate that manages state of the {@link io.spine.examples.blog.BlogPost} model.
  *
  * @author Anton Nikulin
  */
