@@ -63,7 +63,7 @@ message Post {
     // A content of the post.
     string body = 3;
 
-    // Defines readiness and visibility of the for other people.
+    // Defines readiness and visibility of the post.
     enum Status {
 
         // The post is not completed and should not be visible yet.
