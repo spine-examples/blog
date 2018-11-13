@@ -43,6 +43,6 @@ message PostId {
     // Generated UUID-based value.
     string uuid = 1 [(required) = true];
 
-    // An ID of the blog for which this post belongs.
+    // An ID of the blog to which this post belongs.
     BlogId blog_id = 2 [(required) = true];
 }
