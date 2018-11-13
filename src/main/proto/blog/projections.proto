@@ -38,8 +38,10 @@ message BlogView {
 
     // The ID of the blog.
     BlogId blog_id = 1 [(required) = true];
+
     // The title of the blog.
     string title = 2 [(required) = true];
+    
     // Posts in the reverse chronological order.
     repeated PostItem posts = 3;
 }
@@ -50,8 +52,10 @@ message PostItem {
 
     // The ID of the post.
     PostId id = 1 [(required) = true];
+
     // The title of the post.
     string title = 2 [(required) = true];
+
     // The content of the post.
     string body = 3;
 }
