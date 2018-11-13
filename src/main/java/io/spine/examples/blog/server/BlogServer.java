@@ -41,10 +41,11 @@ import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
  */
 public class BlogServer implements Logging {
 
-    static final BoundedContextName contextName = BoundedContextName
-            .newBuilder()
-            .setValue("Blog")
-            .build();
+    static final BoundedContextName contextName =
+            BoundedContextName
+                    .newBuilder()
+                    .setValue("Blog")
+                    .build();
 
     private final int port;
     private final GrpcContainer grpcContainer;
