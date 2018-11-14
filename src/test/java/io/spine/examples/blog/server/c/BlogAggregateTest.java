@@ -115,7 +115,7 @@ class BlogAggregateTest {
         }
 
         @Override
-        protected Repository<BlogId, BlogAggregate> createEntityRepository() {
+        protected Repository<BlogId, BlogAggregate> createRepository() {
             return new BlogRepository();
         }
     }

@@ -173,7 +173,7 @@ class PostAggregateTest {
         }
 
         @Override
-        protected Repository<PostId, PostAggregate> createEntityRepository() {
+        protected Repository<PostId, PostAggregate> createRepository() {
             return new PostRepository();
         }
 
