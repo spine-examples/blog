@@ -21,9 +21,9 @@
 package io.spine.examples.blog.server;
 
 import io.spine.core.BoundedContextName;
-import io.spine.examples.blog.server.c.BlogRepository;
-import io.spine.examples.blog.server.c.PostRepository;
-import io.spine.examples.blog.server.q.BlogViewRepository;
+import io.spine.examples.blog.server.blog.BlogRepository;
+import io.spine.examples.blog.server.blog.BlogViewRepository;
+import io.spine.examples.blog.server.post.PostRepository;
 import io.spine.logging.Logging;
 import io.spine.server.BoundedContext;
 import io.spine.server.CommandService;

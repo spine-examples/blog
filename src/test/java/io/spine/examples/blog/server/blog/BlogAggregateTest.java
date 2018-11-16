@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.blog.server.c;
+package io.spine.examples.blog.server.blog;
 
 import io.spine.base.CommandMessage;
 import io.spine.examples.blog.Blog;

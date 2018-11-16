@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.blog.server.q;
+package io.spine.examples.blog.server;
 
 import io.spine.client.QueryResponse;
 import io.spine.examples.blog.BlogId;
@@ -27,6 +27,7 @@ import io.spine.examples.blog.commands.CreateBlog;
 import io.spine.examples.blog.commands.CreatePost;
 import io.spine.examples.blog.commands.PublishPost;
 import io.spine.examples.blog.server.BlogServerTest;
+import io.spine.examples.blog.server.q.BlogView;
 import io.spine.testing.server.ShardingReset;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

@@ -19,11 +19,11 @@
  */
 
 /**
- * This package contains query-side of the Blog server.
+ * This package provides server-side classes for managing posts.
  */
 @CheckReturnValue
 @ParametersAreNonnullByDefault
-package io.spine.examples.blog.server.q;
+package io.spine.examples.blog.server.post;
 
 import com.google.errorprone.annotations.CheckReturnValue;
 

@@ -18,13 +18,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.blog.server.q;
+package io.spine.examples.blog.server.blog;
 
 import io.spine.core.Subscribe;
 import io.spine.examples.blog.BlogId;
 import io.spine.examples.blog.PostId;
 import io.spine.examples.blog.events.BlogCreated;
 import io.spine.examples.blog.events.PostPublished;
+import io.spine.examples.blog.server.q.BlogView;
+import io.spine.examples.blog.server.q.BlogViewVBuilder;
+import io.spine.examples.blog.server.q.PostItem;
 import io.spine.server.projection.Projection;
 
 /**

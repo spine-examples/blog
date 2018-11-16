@@ -18,13 +18,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.blog.server.c;
-
-import io.spine.examples.blog.PostId;
-import io.spine.server.aggregate.AggregateRepository;
-
 /**
- * A repository for {@link PostAggregate}.
+ * This package provides server-side classes for managing blogs.
  */
-public class PostRepository extends AggregateRepository<PostId, PostAggregate> {
-}
+
+@CheckReturnValue
+@ParametersAreNonnullByDefault
+package io.spine.examples.blog.server.blog;
+
+import com.google.errorprone.annotations.CheckReturnValue;
+
+import javax.annotation.ParametersAreNonnullByDefault;

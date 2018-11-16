@@ -18,20 +18,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.blog.server.c;
+package io.spine.examples.blog.server.blog;
 
 import com.google.common.collect.ImmutableSet;
 import io.spine.examples.blog.BlogId;
-import io.spine.examples.blog.events.PostCreated;
-import io.spine.server.aggregate.AggregateRepository;
+import io.spine.examples.blog.events.PostPublished;
+import io.spine.examples.blog.server.q.BlogView;
+import io.spine.server.projection.ProjectionRepository;
 
 /**
- * A repository for {@link BlogAggregate}.
+ * A repository for {@link BlogViewProjection}.
  */
-public class BlogRepository extends AggregateRepository<BlogId, BlogAggregate> {
-    public BlogRepository() {
+public class BlogViewRepository extends ProjectionRepository<BlogId, BlogViewProjection, BlogView> {
+
+    public BlogViewRepository() {
         super();
-        getEventRouting().route(PostCreated.class,
+        getEventRouting().route(PostPublished.class,
                 (message, context) -> ImmutableSet.of(message.getPostId().getBlogId()));
     }
 }
