@@ -25,7 +25,6 @@ import io.spine.examples.blog.Blog;
 import io.spine.examples.blog.BlogId;
 import io.spine.examples.blog.Post;
 import io.spine.examples.blog.PostId;
-import io.spine.examples.blog.server.BlogServerTest;
 import io.spine.examples.blog.commands.CreateBlog;
 import io.spine.examples.blog.commands.CreatePost;
 import io.spine.testing.server.ShardingReset;
