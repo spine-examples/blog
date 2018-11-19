@@ -28,8 +28,7 @@ import io.spine.examples.blog.BlogId;
 import io.spine.examples.blog.PostId;
 import io.spine.examples.blog.commands.CreateBlog;
 import io.spine.examples.blog.commands.CreatePost;
-import io.spine.server.storage.StorageFactory;
-import io.spine.server.storage.memory.InMemoryStorageFactory;
+import io.spine.server.Server;
 import io.spine.testing.client.grpc.TestClient;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,8 +36,6 @@ import org.junit.jupiter.api.DisplayName;
 
 import java.io.IOException;
 
-import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
-import static io.spine.examples.blog.server.BlogServer.contextName;
 import static io.spine.testing.TestValues.randomString;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -48,20 +45,17 @@ import static org.junit.jupiter.api.Assertions.fail;
 @DisplayName("BlogServer")
 public abstract class BlogServerTest {
 
-    private BlogServer server;
+    private Server server;
     private TestClient client;
 
     @BeforeEach
     void setup() {
-        StorageFactory storageFactory = InMemoryStorageFactory.newInstance(contextName, false);
-        int port = DEFAULT_CLIENT_SERVICE_PORT;
-        server = new BlogServer(storageFactory, port);
-
+        server = BlogServer.create();
         UserId userId = UserId
                 .newBuilder()
                 .setValue(getClass().getSimpleName())
                 .build();
-        client = new TestClient(userId, "localhost", port);
+        client = new TestClient(userId, "localhost", server.getPort());
         startServer();
     }
 
@@ -85,11 +79,11 @@ public abstract class BlogServerTest {
         client.post(command);
     }
 
-    protected final QueryResponse queryAll(Class<? extends Message> messageType) {
+    final QueryResponse queryAll(Class<? extends Message> messageType) {
         return client.queryAll(messageType);
     }
 
-    protected static CreateBlog createBlog(BlogId blogId, String name) {
+    static CreateBlog createBlog(BlogId blogId, String name) {
         return CreateBlog
                 .newBuilder()
                 .setBlogId(blogId)
@@ -97,7 +91,7 @@ public abstract class BlogServerTest {
                 .build();
     }
 
-    protected static CreatePost createPost(PostId postId, String title) {
+    static CreatePost createPost(PostId postId, String title) {
         return CreatePost
                 .newBuilder()
                 .setPostId(postId)

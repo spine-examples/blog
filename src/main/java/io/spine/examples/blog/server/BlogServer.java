@@ -20,17 +20,12 @@
 
 package io.spine.examples.blog.server;
 
-import io.spine.core.BoundedContextName;
 import io.spine.examples.blog.server.blog.BlogRepository;
 import io.spine.examples.blog.server.blog.BlogViewRepository;
 import io.spine.examples.blog.server.post.PostRepository;
-import io.spine.logging.Logging;
 import io.spine.server.BoundedContext;
-import io.spine.server.CommandService;
-import io.spine.server.QueryService;
-import io.spine.server.storage.StorageFactory;
-import io.spine.server.storage.memory.InMemoryStorageFactory;
-import io.spine.server.transport.GrpcContainer;
+import io.spine.server.BoundedContextBuilder;
+import io.spine.server.Server;
 
 import java.io.IOException;
 
@@ -39,80 +34,29 @@ import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 /**
  * A local gRPC {@link BlogServer} running the Blog Bounded Context.
  */
-public class BlogServer implements Logging {
+public class BlogServer {
 
-    static final BoundedContextName contextName =
-            BoundedContextName
-                    .newBuilder()
-                    .setValue("Blog")
-                    .build();
+    /** Prevents instantiation. */
+    private BlogServer() {
+    }
 
-    private final int port;
-    private final GrpcContainer grpcContainer;
-    private final BoundedContext boundedContext;
-
-    BlogServer(StorageFactory storageFactory, int port) {
-        this.port = port;
-        this.boundedContext = createBoundedContext(storageFactory);
-        this.grpcContainer = createGrpcContainer(this.boundedContext);
+    static Server create() {
+        BoundedContextBuilder context = BoundedContext
+                .newBuilder()
+                .setName("Blog")
+                .add(new BlogRepository())
+                .add(new PostRepository())
+                .add(new BlogViewRepository());
+        return Server
+                .newBuilder()
+                .add(context)
+                .setPort(DEFAULT_CLIENT_SERVICE_PORT)
+                .build();
     }
 
     public static void main(String[] args) throws IOException {
-        int port = getPort();
-        StorageFactory storageFactory = InMemoryStorageFactory.newInstance(contextName, false);
-
-        BlogServer blogServer = new BlogServer(storageFactory, port);
-        blogServer.start();
-    }
-
-    private static int getPort() {
-        @SuppressWarnings("AccessOfSystemProperties") // No security risk.
-        String port = System.getProperty("port", String.valueOf(DEFAULT_CLIENT_SERVICE_PORT));
-        return Integer.parseInt(port);
-    }
-
-    private static BoundedContext createBoundedContext(StorageFactory storageFactory) {
-        BoundedContext context = BoundedContext
-                .newBuilder()
-                .setName(contextName)
-                .setStorageFactorySupplier(() -> storageFactory)
-                .build();
-
-        context.register(new BlogRepository());
-        context.register(new PostRepository());
-        context.register(new BlogViewRepository());
-        return context;
-    }
-
-    private GrpcContainer createGrpcContainer(BoundedContext boundedContext) {
-        CommandService commandService = CommandService
-                .newBuilder()
-                .add(boundedContext)
-                .build();
-        QueryService queryService = QueryService
-                .newBuilder()
-                .add(boundedContext)
-                .build();
-
-        GrpcContainer.Builder result = GrpcContainer.newBuilder()
-                .setPort(port)
-                .addService(commandService)
-                .addService(queryService);
-        return result.build();
-    }
-
-    public void start() throws IOException {
-        grpcContainer.start();
-        grpcContainer.addShutdownHook();
-
-        log().info("Server started, listening to commands on the port {}", port);
-
-        grpcContainer.awaitTermination();
-    }
-
-    void shutdown() throws Exception {
-        log().info("Shutting down the server...");
-        grpcContainer.shutdown();
-        boundedContext.close();
+        Server server = create();
+        server.start();
+        server.awaitTermination();
     }
 }
