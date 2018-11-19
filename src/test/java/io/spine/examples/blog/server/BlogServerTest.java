@@ -23,13 +23,14 @@ package io.spine.examples.blog.server;
 import com.google.protobuf.Message;
 import io.spine.base.CommandMessage;
 import io.spine.client.QueryResponse;
+import io.spine.core.UserId;
 import io.spine.examples.blog.BlogId;
 import io.spine.examples.blog.PostId;
 import io.spine.examples.blog.commands.CreateBlog;
 import io.spine.examples.blog.commands.CreatePost;
-import io.spine.examples.testutil.TestClient;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.memory.InMemoryStorageFactory;
+import io.spine.testing.client.grpc.TestClient;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -55,7 +56,12 @@ public abstract class BlogServerTest {
         StorageFactory storageFactory = InMemoryStorageFactory.newInstance(contextName, false);
         int port = DEFAULT_CLIENT_SERVICE_PORT;
         server = new BlogServer(storageFactory, port);
-        client = new TestClient("localhost", port);
+
+        UserId userId = UserId
+                .newBuilder()
+                .setValue(getClass().getSimpleName())
+                .build();
+        client = new TestClient(userId, "localhost", port);
         startServer();
     }
 
