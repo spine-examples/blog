@@ -24,9 +24,9 @@ package spine.examples.blog;
 
 import "spine/options.proto";
 
-option (type_url_prefix) = "type.spine.examples.blog";
+option (type_url_prefix) = "type.spine.io";
 option java_package = "io.spine.examples.blog";
-option java_outer_classname = "ModelsProto";
+option java_outer_classname = "BlogProto";
 option java_multiple_files = true;
 option java_generate_equals_and_hash = true;
 
@@ -78,4 +78,32 @@ message Post {
 
     // A status defines readiness and visibility of the blog post.
     Status status = 4;
+}
+
+// A blog view provides data visible on the screen.
+message BlogView {
+    option (entity).kind = PROJECTION;
+
+    // The ID of the blog.
+    BlogId blog_id = 1 [(required) = true];
+
+    // The title of the blog.
+    string title = 2 [(required) = true];
+
+    // Posts in the reverse chronological order.
+    repeated PostItem posts = 3;
+}
+
+// A post in the blog.
+message PostItem {
+    option (entity).kind = PROJECTION;
+
+    // The ID of the post.
+    PostId id = 1 [(required) = true];
+
+    // The title of the post.
+    string title = 2 [(required) = true];
+
+    // The content of the post.
+    string body = 3;
 }
