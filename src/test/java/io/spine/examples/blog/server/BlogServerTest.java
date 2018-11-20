@@ -68,7 +68,7 @@ public abstract class BlogServerTest {
     @AfterEach
     void tearDown() throws Exception {
         client.shutdown();
-        server.shutdown();
+        server.shutdownAndWait();
     }
 
     protected final void post(CommandMessage command) {
