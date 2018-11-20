@@ -56,13 +56,11 @@ public abstract class BlogServerTest {
     }
 
     private void startServer() {
-        new Thread(() -> {
-            try {
-                this.server.start();
-            } catch (IOException e) {
-                fail(e);
-            }
-        }).start();
+        try {
+            this.server.start();
+        } catch (IOException e) {
+            fail(e);
+        }
     }
 
     @AfterEach
