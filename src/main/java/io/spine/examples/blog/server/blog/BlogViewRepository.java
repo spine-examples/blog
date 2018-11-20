@@ -23,7 +23,7 @@ package io.spine.examples.blog.server.blog;
 import com.google.common.collect.ImmutableSet;
 import io.spine.examples.blog.BlogId;
 import io.spine.examples.blog.events.PostPublished;
-import io.spine.examples.blog.server.q.BlogView;
+import io.spine.examples.blog.BlogView;
 import io.spine.server.projection.ProjectionRepository;
 
 /**

@@ -26,7 +26,7 @@ import io.spine.examples.blog.PostId;
 import io.spine.examples.blog.commands.CreateBlog;
 import io.spine.examples.blog.commands.CreatePost;
 import io.spine.examples.blog.commands.PublishPost;
-import io.spine.examples.blog.server.q.BlogView;
+import io.spine.examples.blog.BlogView;
 import io.spine.testing.server.ShardingReset;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
