@@ -23,7 +23,6 @@ package io.spine.examples.blog.server;
 import com.google.protobuf.Message;
 import io.spine.base.CommandMessage;
 import io.spine.client.QueryResponse;
-import io.spine.core.UserId;
 import io.spine.examples.blog.BlogId;
 import io.spine.examples.blog.PostId;
 import io.spine.examples.blog.commands.CreateBlog;
@@ -37,6 +36,7 @@ import org.junit.jupiter.api.DisplayName;
 import java.io.IOException;
 
 import static io.spine.testing.TestValues.randomString;
+import static io.spine.testing.core.given.GivenUserId.newUuid;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
@@ -51,11 +51,7 @@ public abstract class BlogServerTest {
     @BeforeEach
     void setup() {
         server = BlogServer.create();
-        UserId userId = UserId
-                .newBuilder()
-                .setValue(getClass().getSimpleName())
-                .build();
-        client = new TestClient(userId, "localhost", server.getPort());
+        client = new TestClient(newUuid(), "localhost", server.getPort());
         startServer();
     }
 
