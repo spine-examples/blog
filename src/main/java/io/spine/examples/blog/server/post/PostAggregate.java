@@ -76,17 +76,14 @@ class PostAggregate extends Aggregate<PostId, Post, PostVBuilder> {
 
     @Apply
     void blogPostCreated(PostCreated event) {
-        getBuilder()
-                .setId(event.getPostId())
-                .setTitle(event.getTitle())
-                .setBody(event.getBody())
-                .setStatus(Status.DRAFT);
+        getBuilder().setId(event.getPostId())
+                    .setTitle(event.getTitle())
+                    .setBody(event.getBody())
+                    .setStatus(Status.DRAFT);
     }
 
     @Apply
     void blogPostPublished(PostPublished event) {
-        getBuilder()
-                .setId(event.getPostId())
-                .setStatus(Status.PUBLISHED);
+        getBuilder().setStatus(Status.PUBLISHED);
     }
 }

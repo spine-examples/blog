@@ -60,15 +60,12 @@ class BlogAggregate extends Aggregate<BlogId, Blog, BlogVBuilder> {
 
     @Apply
     void blogCreated(BlogCreated event) {
-        getBuilder()
-                .setId(event.getBlogId())
-                .setTitle(event.getTitle());
+        getBuilder().setId(event.getBlogId())
+                    .setTitle(event.getTitle());
     }
 
     @Apply
     void blogPostAdded(PostAdded event) {
-        getBuilder()
-                .setId(event.getPostId().getBlogId())
-                .addPosts(event.getPostId());
+        getBuilder().addPosts(event.getPostId());
     }
 }
