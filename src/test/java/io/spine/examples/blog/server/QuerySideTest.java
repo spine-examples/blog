@@ -69,7 +69,7 @@ class QuerySideTest extends BlogServerTest {
         QueryResponse response = queryAll(BlogView.class);
         assertEquals(1, response.getMessagesCount());
 
-        BlogView blogView = (BlogView) unpack(response.getMessages(0));
+        BlogView blogView = (BlogView) unpack(response.getMessages(0).getState());
 
         assertEquals(blogId, blogView.getBlogId());
         assertEquals(1, blogView.getPostsCount());

@@ -55,7 +55,7 @@ class PostAggregate extends Aggregate<PostId, Post, PostVBuilder> {
 
     @Assign
     PostPublished handle(PublishPost cmd) throws CannotPublishPost {
-        Post post = getState();
+        Post post = state();
         Status status = post.getStatus();
         PostId postId = cmd.getPostId();
         if (status != Status.DRAFT) {
@@ -76,7 +76,7 @@ class PostAggregate extends Aggregate<PostId, Post, PostVBuilder> {
 
     @Apply
     void blogPostCreated(PostCreated event) {
-        getBuilder().setId(event.getPostId())
+        builder().setId(event.getPostId())
                     .setTitle(event.getTitle())
                     .setBody(event.getBody())
                     .setStatus(Status.DRAFT);
@@ -84,6 +84,6 @@ class PostAggregate extends Aggregate<PostId, Post, PostVBuilder> {
 
     @Apply
     void blogPostPublished(PostPublished event) {
-        getBuilder().setStatus(Status.PUBLISHED);
+        builder().setStatus(Status.PUBLISHED);
     }
 }

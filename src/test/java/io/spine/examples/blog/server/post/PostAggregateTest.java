@@ -21,7 +21,7 @@
 package io.spine.examples.blog.server.post;
 
 import io.spine.base.CommandMessage;
-import io.spine.core.CommandEnvelope;
+import io.spine.server.type.CommandEnvelope;
 import io.spine.examples.blog.BlogId;
 import io.spine.examples.blog.Post;
 import io.spine.examples.blog.PostId;
@@ -81,7 +81,7 @@ class PostAggregateTest {
         void changesState() {
             dispatchTo(aggregate());
             PostId postId = entityId();
-            Post post = aggregate().getState();
+            Post post = aggregate().state();
             assertEquals(postId, post.getId());
             assertEquals(message().getTitle(), post.getTitle());
             assertEquals(DRAFT, post.getStatus());
@@ -91,6 +91,9 @@ class PostAggregateTest {
     @Nested
     @DisplayName("PublishPost should")
     class PublishPostCommandTest extends PostAggregateCommandTest<PublishPost> {
+
+        private final TestActorRequestFactory requestFactory =
+                new TestActorRequestFactory(getClass());
 
         PublishPostCommandTest() {
             super(postId, PublishPost.newBuilder()
@@ -106,14 +109,12 @@ class PostAggregateTest {
         }
 
         private void createPost() {
-            TestActorRequestFactory requestFactory =
-                    TestActorRequestFactory.newInstance(getClass());
             CreatePost command = CreatePost
                     .newBuilder()
                     .setPostId(entityId())
                     .setTitle("Test Blog Post")
                     .build();
-            CommandEnvelope envelope = requestFactory.createEnvelope(command);
+            CommandEnvelope envelope = CommandEnvelope.of(requestFactory.createCommand(command));
             dispatchCommand(aggregate(), envelope);
         }
 
@@ -126,7 +127,7 @@ class PostAggregateTest {
                 .producesEvent(PostPublished.class,
                                published -> assertEquals(postId, published.getPostId()));
 
-            Post post = aggregate.getState();
+            Post post = aggregate.state();
 
             assertEquals(postId, post.getId());
             assertEquals("Test Blog Post", post.getTitle());
@@ -139,7 +140,7 @@ class PostAggregateTest {
             // Publish the post.
             PostAggregate aggregate = aggregate();
             dispatchCommand(aggregate, createCommand());
-            Post blog = aggregate.getState();
+            Post blog = aggregate.state();
 
             assertEquals(PUBLISHED, blog.getStatus());
 

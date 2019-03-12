@@ -64,7 +64,7 @@ class CommandSideTest extends BlogServerTest {
     void createsBlog() {
         QueryResponse blogResponse = queryAll(Blog.class);
         assertEquals(1, blogResponse.getMessagesCount());
-        Blog blog = (Blog) unpack(blogResponse.getMessages(0));
+        Blog blog = (Blog) unpack(blogResponse.getMessages(0).getState());
         assertEquals(blogId, blog.getId());
         assertEquals(createBlog.getTitle(), blog.getTitle());
         assertTrue(blog.getPostsList()
@@ -76,7 +76,7 @@ class CommandSideTest extends BlogServerTest {
     void createsPost() {
         QueryResponse postResponse = queryAll(Post.class);
         assertEquals(1, postResponse.getMessagesCount());
-        Post blogPost = (Post) unpack(postResponse.getMessages(0));
+        Post blogPost = (Post) unpack(postResponse.getMessages(0).getState());
         assertEquals(postId, blogPost.getId());
         assertEquals(createPost.getTitle(), blogPost.getTitle());
         assertEquals(Post.Status.DRAFT, blogPost.getStatus());

@@ -31,7 +31,8 @@ import io.spine.server.aggregate.AggregateRepository;
 public class BlogRepository extends AggregateRepository<BlogId, BlogAggregate> {
     public BlogRepository() {
         super();
-        getEventRouting().route(PostCreated.class,
-                (message, context) -> ImmutableSet.of(message.getPostId().getBlogId()));
+        eventRouting().route(PostCreated.class,
+                             (message, context) -> ImmutableSet.of(message.getPostId()
+                                                                          .getBlogId()));
     }
 }

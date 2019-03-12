@@ -41,14 +41,14 @@ class BlogViewProjection extends Projection<BlogId, BlogView, BlogViewVBuilder> 
 
     @Subscribe
     void on(BlogCreated event) {
-        getBuilder().setBlogId(event.getBlogId())
+        builder().setBlogId(event.getBlogId())
                     .setTitle(event.getTitle());
     }
 
     @Subscribe
     void on(PostPublished event) {
         PostItem item = toPostItem(event);
-        getBuilder().addPosts(0, item);
+        builder().addPosts(0, item);
     }
 
     /** Converts publishing event to a post item. */

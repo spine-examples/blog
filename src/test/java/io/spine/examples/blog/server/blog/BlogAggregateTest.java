@@ -62,7 +62,7 @@ class BlogAggregateTest {
             super.setUp();
             expectedId = entityId();
             expectedTitle = message().getTitle();
-            blog = aggregate().getState();
+            blog = aggregate().state();
         }
 
         @Test
