@@ -20,7 +20,6 @@
 
 package io.spine.examples.blog.server.blog;
 
-import com.google.common.collect.ImmutableSet;
 import io.spine.examples.blog.BlogId;
 import io.spine.examples.blog.events.PostCreated;
 import io.spine.server.aggregate.AggregateRepository;
@@ -32,7 +31,6 @@ public class BlogRepository extends AggregateRepository<BlogId, BlogAggregate> {
     public BlogRepository() {
         super();
         eventRouting().route(PostCreated.class,
-                             (message, context) -> ImmutableSet.of(message.getPostId()
-                                                                          .getBlogId()));
+                             (event, context) -> withId(event.getPostId().getBlogId()));
     }
 }

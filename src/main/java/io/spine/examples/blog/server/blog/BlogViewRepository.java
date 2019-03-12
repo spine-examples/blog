@@ -34,7 +34,6 @@ public class BlogViewRepository extends ProjectionRepository<BlogId, BlogViewPro
     public BlogViewRepository() {
         super();
         eventRouting().route(PostPublished.class,
-                             (message, context) -> ImmutableSet.of(message.getPostId()
-                                                                          .getBlogId()));
+                             (message, context) -> withId(message.getPostId().getBlogId()));
     }
 }
