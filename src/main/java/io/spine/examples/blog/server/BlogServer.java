@@ -22,9 +22,10 @@ package io.spine.examples.blog.server;
 
 import io.spine.examples.blog.server.blog.BlogRepository;
 import io.spine.examples.blog.server.blog.BlogViewRepository;
-import io.spine.examples.blog.server.post.PostRepository;
+import io.spine.examples.blog.server.post.PostAggregate;
 import io.spine.server.BoundedContext;
 import io.spine.server.BoundedContextBuilder;
+import io.spine.server.DefaultRepository;
 import io.spine.server.Server;
 
 import java.io.IOException;
@@ -45,7 +46,7 @@ public class BlogServer {
                 .newBuilder()
                 .setName("Blog")
                 .add(new BlogRepository())
-                .add(new PostRepository())
+                .add(DefaultRepository.of(PostAggregate.class))
                 .add(new BlogViewRepository());
         return Server
                 .newBuilder()

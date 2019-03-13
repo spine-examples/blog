@@ -28,7 +28,9 @@ import io.spine.examples.blog.PostVBuilder;
 import io.spine.examples.blog.commands.CreatePost;
 import io.spine.examples.blog.commands.PublishPost;
 import io.spine.examples.blog.events.PostCreated;
+import io.spine.examples.blog.events.PostCreatedVBuilder;
 import io.spine.examples.blog.events.PostPublished;
+import io.spine.examples.blog.events.PostPublishedVBuilder;
 import io.spine.examples.blog.rejections.CannotPublishPost;
 import io.spine.server.aggregate.Aggregate;
 import io.spine.server.aggregate.Apply;
@@ -37,7 +39,7 @@ import io.spine.server.command.Assign;
 /**
  * A post aggregate handles commands related to a blog post.
  */
-class PostAggregate extends Aggregate<PostId, Post, PostVBuilder> {
+public final class PostAggregate extends Aggregate<PostId, Post, PostVBuilder> {
 
     @VisibleForTesting
     PostAggregate(PostId id) {
@@ -45,19 +47,20 @@ class PostAggregate extends Aggregate<PostId, Post, PostVBuilder> {
     }
 
     @Assign
-    PostCreated handle(CreatePost cmd) {
-        return PostCreated.newBuilder()
-                .setPostId(cmd.getPostId())
-                .setTitle(cmd.getTitle())
-                .setBody(cmd.getBody())
+    PostCreated handle(CreatePost c) {
+        return PostCreatedVBuilder
+                .newBuilder()
+                .setPostId(c.getPostId())
+                .setTitle(c.getTitle())
+                .setBody(c.getBody())
                 .build();
     }
 
     @Assign
-    PostPublished handle(PublishPost cmd) throws CannotPublishPost {
+    PostPublished handle(PublishPost c) throws CannotPublishPost {
         Post post = state();
         Status status = post.getStatus();
-        PostId postId = cmd.getPostId();
+        PostId postId = c.getPostId();
         if (status != Status.DRAFT) {
             boolean published = status == Status.PUBLISHED;
             throw CannotPublishPost
@@ -67,7 +70,8 @@ class PostAggregate extends Aggregate<PostId, Post, PostVBuilder> {
                     .setAlreadyDeleted(!published)
                     .build();
         }
-        return PostPublished.newBuilder()
+        return PostPublishedVBuilder
+                .newBuilder()
                 .setPostId(postId)
                 .setTitle(post.getTitle())
                 .setBody(post.getBody())
@@ -75,15 +79,15 @@ class PostAggregate extends Aggregate<PostId, Post, PostVBuilder> {
     }
 
     @Apply
-    void blogPostCreated(PostCreated event) {
-        builder().setId(event.getPostId())
-                    .setTitle(event.getTitle())
-                    .setBody(event.getBody())
-                    .setStatus(Status.DRAFT);
+    private void event(PostCreated e) {
+        builder().setId(e.getPostId())
+                 .setTitle(e.getTitle())
+                 .setBody(e.getBody())
+                 .setStatus(Status.DRAFT);
     }
 
     @Apply
-    void blogPostPublished(PostPublished event) {
+    private void event(PostPublished e) {
         builder().setStatus(Status.PUBLISHED);
     }
 }

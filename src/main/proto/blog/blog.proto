@@ -41,7 +41,6 @@ message Blog {
     BlogId id = 1 [(required) = true];
 
     // A title of the blog.
-    //
     string title = 2;
 
     // References to posts in the chronological order.

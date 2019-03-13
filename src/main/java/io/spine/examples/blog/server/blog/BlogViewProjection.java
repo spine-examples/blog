@@ -33,7 +33,7 @@ import io.spine.server.projection.Projection;
 /**
  * A projection that represents the current state of a blog and contains published blog posts.
  */
-class BlogViewProjection extends Projection<BlogId, BlogView, BlogViewVBuilder> {
+final class BlogViewProjection extends Projection<BlogId, BlogView, BlogViewVBuilder> {
 
     BlogViewProjection(BlogId id) {
         super(id);
@@ -42,7 +42,7 @@ class BlogViewProjection extends Projection<BlogId, BlogView, BlogViewVBuilder> 
     @Subscribe
     void on(BlogCreated event) {
         builder().setBlogId(event.getBlogId())
-                    .setTitle(event.getTitle());
+                 .setTitle(event.getTitle());
     }
 
     @Subscribe

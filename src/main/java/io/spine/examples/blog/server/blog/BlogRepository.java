@@ -27,7 +27,7 @@ import io.spine.server.aggregate.AggregateRepository;
 /**
  * A repository for {@link BlogAggregate}.
  */
-public class BlogRepository extends AggregateRepository<BlogId, BlogAggregate> {
+public final class BlogRepository extends AggregateRepository<BlogId, BlogAggregate> {
     public BlogRepository() {
         super();
         eventRouting().route(PostCreated.class,
