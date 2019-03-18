@@ -25,6 +25,8 @@ import io.spine.examples.blog.BlogView;
 import io.spine.examples.blog.events.PostPublished;
 import io.spine.server.projection.ProjectionRepository;
 
+import static io.spine.server.route.EventRoute.withId;
+
 /**
  * A repository for {@link BlogViewProjection}.
  */

@@ -24,6 +24,8 @@ import io.spine.examples.blog.BlogId;
 import io.spine.examples.blog.events.PostCreated;
 import io.spine.server.aggregate.AggregateRepository;
 
+import static io.spine.server.route.EventRoute.withId;
+
 /**
  * A repository for {@link BlogAggregate}.
  */
