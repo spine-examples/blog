@@ -18,19 +18,11 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-configurations {
-    // Avoid collisions of Java classes defined both in `protobuf-lite` and `protobuf-java`
-    runtime.exclude group: "com.google.protobuf", module: "protobuf-lite"
-    testRuntime.exclude group: "com.google.protobuf", module: "protobuf-lite"
-}
-
-apply plugin: spineProtobufPluginId
 apply plugin: 'application'
 
 mainClassName = "io.spine.examples.blog.BlogServer"
 
 dependencies {
-    implementation deps.build.guava
     implementation group: 'io.spine', name: 'spine-server', version: spineVersion
 
     testImplementation group: 'io.spine', name: 'spine-testutil-server', version: spineVersion

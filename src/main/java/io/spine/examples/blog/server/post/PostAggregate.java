@@ -87,6 +87,7 @@ public final class PostAggregate extends Aggregate<PostId, Post, PostVBuilder> {
     }
 
     @Apply
+    @SuppressWarnings("PMD.UnusedFormalParameter")
     private void event(PostPublished e) {
         builder().setStatus(Status.PUBLISHED);
     }
