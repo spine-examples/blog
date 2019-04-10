@@ -22,14 +22,6 @@ apply plugin: 'application'
 
 mainClassName = "io.spine.examples.blog.BlogServer"
 
-dependencies {
-    implementation group: 'io.spine', name: 'spine-server', version: spineVersion
-
-    testImplementation group: 'io.spine', name: 'spine-testutil-server', version: spineVersion
-
-    testRuntime deps.test.junit5Runner
-}
-
 tasks.withType(JavaExec) {
     // Assign Java System Properties from the command line to the JavaExec task.
     systemProperties System.properties
