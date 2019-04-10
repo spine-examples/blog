@@ -30,10 +30,6 @@ dependencies {
     testRuntime deps.test.junit5Runner
 }
 
-modelCompiler {
-    generateValidatingBuilders = true
-}
-
 tasks.withType(JavaExec) {
     // Assign Java System Properties from the command line to the JavaExec task.
     systemProperties System.properties
