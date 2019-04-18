@@ -24,9 +24,6 @@ import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.blog.Blog;
 import io.spine.examples.blog.BlogId;
 import io.spine.examples.blog.BlogVBuilder;
-import io.spine.examples.blog.events.BlogCreatedVBuilder;
-import io.spine.examples.blog.events.PostAddedVBuilder;
-import io.spine.server.event.React;
 import io.spine.examples.blog.commands.CreateBlog;
 import io.spine.examples.blog.events.BlogCreated;
 import io.spine.examples.blog.events.PostAdded;
@@ -34,6 +31,7 @@ import io.spine.examples.blog.events.PostCreated;
 import io.spine.server.aggregate.Aggregate;
 import io.spine.server.aggregate.Apply;
 import io.spine.server.command.Assign;
+import io.spine.server.event.React;
 
 /**
  * An aggregate that manages state of the {@link io.spine.examples.blog.Blog} model.
@@ -47,8 +45,8 @@ final class BlogAggregate extends Aggregate<BlogId, Blog, BlogVBuilder> {
 
     @Assign
     BlogCreated handle(CreateBlog c) {
-        return BlogCreatedVBuilder
-                .newBuilder()
+        return BlogCreated
+                .vBuilder()
                 .setBlogId(c.getBlogId())
                 .setTitle(c.getTitle())
                 .build();
@@ -59,8 +57,8 @@ final class BlogAggregate extends Aggregate<BlogId, Blog, BlogVBuilder> {
      */
     @React
     PostAdded postCreationPolicy(PostCreated e) {
-        return PostAddedVBuilder
-                .newBuilder()
+        return PostAdded
+                .vBuilder()
                 .setPostId(e.getPostId())
                 .build();
     }

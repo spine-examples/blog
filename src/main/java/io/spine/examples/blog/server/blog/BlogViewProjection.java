@@ -22,12 +22,12 @@ package io.spine.examples.blog.server.blog;
 
 import io.spine.core.Subscribe;
 import io.spine.examples.blog.BlogId;
-import io.spine.examples.blog.PostId;
-import io.spine.examples.blog.events.BlogCreated;
-import io.spine.examples.blog.events.PostPublished;
 import io.spine.examples.blog.BlogView;
 import io.spine.examples.blog.BlogViewVBuilder;
+import io.spine.examples.blog.PostId;
 import io.spine.examples.blog.PostItem;
+import io.spine.examples.blog.events.BlogCreated;
+import io.spine.examples.blog.events.PostPublished;
 import io.spine.server.projection.Projection;
 
 /**
@@ -55,7 +55,7 @@ final class BlogViewProjection extends Projection<BlogId, BlogView, BlogViewVBui
     private static PostItem toPostItem(PostPublished event) {
         PostId postId = event.getPostId();
         return PostItem
-                .newBuilder()
+                .vBuilder()
                 .setId(postId)
                 .setTitle(event.getTitle())
                 .setBody(event.getBody())

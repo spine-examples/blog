@@ -34,13 +34,13 @@ public class TestIdentifiers {
     }
 
     public static BlogId newBlogId() {
-        return BlogId.newBuilder()
+        return BlogId.vBuilder()
                 .setUuid(newUuid())
                 .build();
     }
 
     public static PostId newPostId(BlogId blogId) {
-        return PostId.newBuilder()
+        return PostId.vBuilder()
                 .setUuid(newUuid())
                 .setBlogId(blogId)
                 .build();

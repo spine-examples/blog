@@ -25,9 +25,7 @@ import io.spine.examples.blog.BlogId;
 import io.spine.examples.blog.Post;
 import io.spine.examples.blog.PostId;
 import io.spine.examples.blog.commands.CreatePost;
-import io.spine.examples.blog.commands.CreatePostVBuilder;
 import io.spine.examples.blog.commands.PublishPost;
-import io.spine.examples.blog.commands.PublishPostVBuilder;
 import io.spine.examples.blog.events.PostCreated;
 import io.spine.examples.blog.events.PostPublished;
 import io.spine.examples.blog.rejections.Rejections.CannotPublishPost;
@@ -96,8 +94,8 @@ class PostAggregateTest {
 
         CreatePostCommandTest() {
             super(postId,
-                  CreatePostVBuilder
-                          .newBuilder()
+                  CreatePost
+                          .vBuilder()
                           .setPostId(postId)
                           .setTitle("Test Post in a Test Blog")
                           .build()
@@ -149,7 +147,7 @@ class PostAggregateTest {
 
         PublishPostCommandTest() {
             super(postId,
-                  PublishPostVBuilder
+                  PublishPost
                           .newBuilder()
                           .setPostId(postId)
                           .build()
@@ -164,8 +162,8 @@ class PostAggregateTest {
         }
 
         private void createPost() {
-            CreatePost command = CreatePostVBuilder
-                    .newBuilder()
+            CreatePost command = CreatePost
+                    .vBuilder()
                     .setPostId(entityId())
                     .setTitle(POST_TITLE)
                     .build();

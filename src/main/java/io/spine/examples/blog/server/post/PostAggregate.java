@@ -28,9 +28,7 @@ import io.spine.examples.blog.PostVBuilder;
 import io.spine.examples.blog.commands.CreatePost;
 import io.spine.examples.blog.commands.PublishPost;
 import io.spine.examples.blog.events.PostCreated;
-import io.spine.examples.blog.events.PostCreatedVBuilder;
 import io.spine.examples.blog.events.PostPublished;
-import io.spine.examples.blog.events.PostPublishedVBuilder;
 import io.spine.examples.blog.rejections.CannotPublishPost;
 import io.spine.server.aggregate.Aggregate;
 import io.spine.server.aggregate.Apply;
@@ -48,8 +46,8 @@ public final class PostAggregate extends Aggregate<PostId, Post, PostVBuilder> {
 
     @Assign
     PostCreated handle(CreatePost c) {
-        return PostCreatedVBuilder
-                .newBuilder()
+        return PostCreated
+                .vBuilder()
                 .setPostId(c.getPostId())
                 .setTitle(c.getTitle())
                 .setBody(c.getBody())
@@ -70,8 +68,8 @@ public final class PostAggregate extends Aggregate<PostId, Post, PostVBuilder> {
                     .setAlreadyDeleted(!published)
                     .build();
         }
-        return PostPublishedVBuilder
-                .newBuilder()
+        return PostPublished
+                .vBuilder()
                 .setPostId(postId)
                 .setTitle(post.getTitle())
                 .setBody(post.getBody())
