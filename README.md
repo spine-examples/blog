@@ -6,9 +6,9 @@ and publish them on blog pages so that other people can read them.
 ## Domain Model  
 
 Blog Bounded Context is composed of two aggregates 
-([`BlogAggregate`](./src/main/java/io/spine/examples/blog/BlogAggregate.java) and 
-[`BlogPostAggregate`](./src/main/java/io/spine/examples/blog/BlogPostAggregate.java)) and one projection
-([`BlogViewProjection`](./src/main/java/io/spine/examples/blog/BlogViewProjection.java)). 
+([`BlogAggregate`](server/src/main/java/io/spine/examples/blog/BlogAggregate.java) and 
+[`BlogPostAggregate`](server/src/main/java/io/spine/examples/blog/BlogPostAggregate.java)) and one projection
+([`BlogViewProjection`](server/src/main/java/io/spine/examples/blog/BlogViewProjection.java)). 
 
 ### Blog Aggregate
 `BlogAggregate` manages the state of `Blog` model by handling `CreateBlog` command and reacting to `BlogPostCreated` event.
