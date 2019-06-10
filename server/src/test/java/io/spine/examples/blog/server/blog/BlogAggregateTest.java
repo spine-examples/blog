@@ -33,13 +33,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.examples.blog.given.TestIdentifiers.newBlogId;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisplayName("BlogAggregate should")
 class BlogAggregateTest {
 
-    private static final BlogId blogId = newBlogId();
+    private static final BlogId blogId = BlogId.generate();
     private static final CreateBlog createCommand = CreateBlog.newBuilder()
                                                               .setTitle("DDD in Pictures")
                                                               .setBlogId(blogId)

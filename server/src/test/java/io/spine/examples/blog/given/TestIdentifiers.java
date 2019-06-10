@@ -33,16 +33,10 @@ public class TestIdentifiers {
     private TestIdentifiers() {
     }
 
-    public static BlogId newBlogId() {
-        return BlogId.vBuilder()
+    public static PostId newPostId(BlogId blog) {
+        return PostId.newBuilder()
                 .setUuid(newUuid())
-                .build();
-    }
-
-    public static PostId newPostId(BlogId blogId) {
-        return PostId.vBuilder()
-                .setUuid(newUuid())
-                .setBlogId(blogId)
+                .setBlogId(blog)
                 .build();
     }
 }

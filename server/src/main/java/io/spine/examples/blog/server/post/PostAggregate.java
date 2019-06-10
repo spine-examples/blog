@@ -24,7 +24,6 @@ import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.blog.Post;
 import io.spine.examples.blog.Post.Status;
 import io.spine.examples.blog.PostId;
-import io.spine.examples.blog.PostVBuilder;
 import io.spine.examples.blog.commands.CreatePost;
 import io.spine.examples.blog.commands.PublishPost;
 import io.spine.examples.blog.events.PostCreated;
@@ -37,7 +36,7 @@ import io.spine.server.command.Assign;
 /**
  * A post aggregate handles commands related to a blog post.
  */
-public final class PostAggregate extends Aggregate<PostId, Post, PostVBuilder> {
+public final class PostAggregate extends Aggregate<PostId, Post, Post.Builder> {
 
     @VisibleForTesting
     PostAggregate(PostId id) {
@@ -47,7 +46,7 @@ public final class PostAggregate extends Aggregate<PostId, Post, PostVBuilder> {
     @Assign
     PostCreated handle(CreatePost c) {
         return PostCreated
-                .vBuilder()
+                .newBuilder()
                 .setPostId(c.getPostId())
                 .setTitle(c.getTitle())
                 .setBody(c.getBody())
@@ -69,7 +68,7 @@ public final class PostAggregate extends Aggregate<PostId, Post, PostVBuilder> {
                     .build();
         }
         return PostPublished
-                .vBuilder()
+                .newBuilder()
                 .setPostId(postId)
                 .setTitle(post.getTitle())
                 .setBody(post.getBody())

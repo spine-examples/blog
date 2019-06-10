@@ -41,14 +41,13 @@ import org.junit.jupiter.api.Test;
 import static com.google.common.truth.Truth.assertThat;
 import static io.spine.examples.blog.Post.Status.DRAFT;
 import static io.spine.examples.blog.Post.Status.PUBLISHED;
-import static io.spine.examples.blog.given.TestIdentifiers.newBlogId;
 import static io.spine.examples.blog.given.TestIdentifiers.newPostId;
 import static io.spine.testing.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
 
 @DisplayName("PostAggregate should")
 class PostAggregateTest {
 
-    private static final BlogId blogId = newBlogId();
+    private static final BlogId blogId = BlogId.generate();
     private static final PostId postId = newPostId(blogId);
 
     /**
@@ -95,7 +94,7 @@ class PostAggregateTest {
         CreatePostCommandTest() {
             super(postId,
                   CreatePost
-                          .vBuilder()
+                          .newBuilder()
                           .setPostId(postId)
                           .setTitle("Test Post in a Test Blog")
                           .build()
@@ -163,7 +162,7 @@ class PostAggregateTest {
 
         private void createPost() {
             CreatePost command = CreatePost
-                    .vBuilder()
+                    .newBuilder()
                     .setPostId(entityId())
                     .setTitle(POST_TITLE)
                     .build();

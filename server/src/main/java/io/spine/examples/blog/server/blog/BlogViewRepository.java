@@ -24,6 +24,7 @@ import io.spine.examples.blog.BlogId;
 import io.spine.examples.blog.BlogView;
 import io.spine.examples.blog.events.PostPublished;
 import io.spine.server.projection.ProjectionRepository;
+import io.spine.server.route.EventRouting;
 
 import static io.spine.server.route.EventRoute.withId;
 
@@ -33,9 +34,10 @@ import static io.spine.server.route.EventRoute.withId;
 public final class BlogViewRepository
         extends ProjectionRepository<BlogId, BlogViewProjection, BlogView> {
 
-    public BlogViewRepository() {
-        super();
-        eventRouting().route(PostPublished.class,
-                             (message, context) -> withId(message.getPostId().getBlogId()));
+    @Override
+    protected void setupEventRouting(EventRouting<BlogId> routing) {
+        super.setupEventRouting(routing);
+        routing.route(PostPublished.class,
+                (message, context) -> withId(message.getPostId().getBlogId()));
     }
 }
