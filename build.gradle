@@ -19,7 +19,7 @@
  */
 
 plugins {
-    id 'io.spine.tools.gradle.bootstrap' version '0.15.3' apply false
+    id 'io.spine.tools.gradle.bootstrap' version '0.15.4' apply false
     id 'net.ltgt.errorprone' version '0.8.1' apply false
 }
 
@@ -32,7 +32,7 @@ subprojects {
     targetCompatibility = JavaVersion.VERSION_1_8
 
     apply plugin: 'net.ltgt.errorprone'
-    apply from: "$rootDir/gradle/pmd.gradle"
+    apply from: "$rootDir/gradle/static-analysis.gradle"
     apply from: "$rootDir/gradle/idea.gradle"
     apply from: "$rootDir/gradle/tests.gradle"
 
