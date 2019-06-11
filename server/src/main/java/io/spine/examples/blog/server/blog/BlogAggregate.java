@@ -64,8 +64,7 @@ final class BlogAggregate extends Aggregate<BlogId, Blog, Blog.Builder> {
 
     @Apply
     private void event(BlogCreated e) {
-        builder().setId(e.getBlogId())
-                 .setTitle(e.getTitle());
+        builder().setTitle(e.getTitle());
     }
 
     @Apply
