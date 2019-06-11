@@ -31,7 +31,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.examples.blog.given.TestIdentifiers.newPostId;
 import static io.spine.protobuf.AnyPacker.unpack;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -41,10 +40,13 @@ class CommandSideTest extends BlogServerTest {
 
     /** ID of the blog we're creating. */
     private final BlogId blogId = BlogId.generate();
+
     /** The command message to create the blog. */
     private CreateBlog createBlog;
+
     /** The ID of the post we create in the blog. */
     private PostId postId;
+
     /** The command to create the blog post. */
     private CreatePost createPost;
 
@@ -53,8 +55,8 @@ class CommandSideTest extends BlogServerTest {
         createBlog = createBlog(blogId, "Server Side Blog Test");
         post(createBlog);
 
-        postId = newPostId(blogId);
-        createPost = createPost(postId, "Server Blog Post");
+        postId = PostId.generate();
+        createPost = createPost(postId, blogId, "Server Blog Post");
         post(createPost);
     }
 
@@ -66,7 +68,7 @@ class CommandSideTest extends BlogServerTest {
         Blog blog = (Blog) unpack(blogResponse.getMessages(0).getState());
         assertEquals(blogId, blog.getId());
         assertEquals(createBlog.getTitle(), blog.getTitle());
-        assertTrue(blog.getPostsList()
+        assertTrue(blog.getPostList()
                        .contains(postId));
     }
 

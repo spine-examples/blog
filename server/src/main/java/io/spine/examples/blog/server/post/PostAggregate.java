@@ -47,17 +47,18 @@ public final class PostAggregate extends Aggregate<PostId, Post, Post.Builder> {
     PostCreated handle(CreatePost c) {
         return PostCreated
                 .newBuilder()
-                .setPostId(c.getPostId())
+                .setId(c.getId())
+                .setBlog(c.getBlog())
                 .setTitle(c.getTitle())
                 .setBody(c.getBody())
-                .build();
+                .vBuild();
     }
 
     @Assign
     PostPublished handle(PublishPost c) throws CannotPublishPost {
         Post post = state();
         Status status = post.getStatus();
-        PostId postId = c.getPostId();
+        PostId postId = c.getPost();
         if (status != Status.DRAFT) {
             boolean published = status == Status.PUBLISHED;
             throw CannotPublishPost
@@ -69,16 +70,16 @@ public final class PostAggregate extends Aggregate<PostId, Post, Post.Builder> {
         }
         return PostPublished
                 .newBuilder()
-                .setPostId(postId)
+                .setPost(postId)
+                .setBlog(c.getBlog())
                 .setTitle(post.getTitle())
                 .setBody(post.getBody())
-                .build();
+                .vBuild();
     }
 
     @Apply
     private void event(PostCreated e) {
-        builder().setId(e.getPostId())
-                 .setTitle(e.getTitle())
+        builder().setTitle(e.getTitle())
                  .setBody(e.getBody())
                  .setStatus(Status.DRAFT);
     }

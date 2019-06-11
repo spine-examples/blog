@@ -41,9 +41,7 @@ message CannotPublishPost {
 
     // A reason why a command to publish cannot be fulfilled.
     oneof reason {
-
         bool already_published = 2;
-        
         bool already_deleted = 3;
     }
 }

@@ -35,7 +35,6 @@ public final class BlogRepository extends AggregateRepository<BlogId, BlogAggreg
     @Override
     protected void setupEventRouting(EventRouting<BlogId> routing) {
         super.setupEventRouting(routing);
-        routing.route(PostCreated.class, (event, context) ->
-                      withId(event.getPostId().getBlogId()));
+        routing.route(PostCreated.class, (event, context) -> withId(event.getBlog()));
     }
 }

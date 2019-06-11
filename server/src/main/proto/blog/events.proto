@@ -34,34 +34,28 @@ import "blog/identifiers.proto";
 
 // A new blog has been created.
 message BlogCreated {
-
-    BlogId blog_id = 1 [(required) = true];
-
+    BlogId id = 1 [(required) = true];
     string title = 2 [(required) = true];
 }
 
 // A new post has been created.
 message PostCreated {
-
-    PostId post_id = 1 [(required) = true];
-
-    string title = 2 [(required) = true];
-
-    string body = 3;
+    PostId id = 1 [(required) = true];
+    BlogId blog = 2 [(required) = true];
+    string title = 3 [(required) = true];
+    string body = 4;
 }
 
 // A new post has been added to the blog.
 message PostAdded {
-
-    PostId post_id = 1 [(required) = true];
+    PostId post = 1 [(required) = true];
+    BlogId blog = 2 [(required) = true];
 }
 
 // A post has been published.
 message PostPublished {
-
-    PostId post_id = 1 [(required) = true];
-
-    string title = 2 [(required) = true];
-
-    string body = 3;
+    PostId post = 1 [(required) = true];
+    BlogId blog = 2 [(required) = true];
+    string title = 3 [(required) = true];
+    string body = 4;
 }

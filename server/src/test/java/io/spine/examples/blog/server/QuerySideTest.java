@@ -31,34 +31,33 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.examples.blog.given.TestIdentifiers.newPostId;
+import static com.google.common.truth.extensions.proto.ProtoTruth.assertThat;
 import static io.spine.protobuf.AnyPacker.unpack;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisplayName("Blog Query Side should")
 class QuerySideTest extends BlogServerTest {
 
     private final BlogId blogId = BlogId.generate();
-    private PostId post1;
-    private PostId post2;
+    private PostId publishedPost;
 
     @BeforeEach
     void setUp() {
         CreateBlog createBlog = createBlog(blogId, "Query Side Blog Test");
         post(createBlog);
 
-        post1 = newPostId(blogId);
-        CreatePost createPost1 = createPost(post1, "Post 1");
+        PostId nonPublishedPost = PostId.generate();
+        CreatePost createPost1 = createPost(nonPublishedPost, blogId, "Post 1");
         post(createPost1);
 
-        post2 = newPostId(blogId);
-        CreatePost createPost2 = createPost(post2, "Post 2");
+        publishedPost = PostId.generate();
+        CreatePost createPost2 = createPost(publishedPost, blogId, "Post 2");
         post(createPost2);
 
         PublishPost publishPost2 = PublishPost
                 .newBuilder()
-                .setPostId(post2)
-                .build();
+                .setPost(publishedPost)
+                .setBlog(blogId)
+                .vBuild();
         post(publishPost2);
     }
 
@@ -66,13 +65,17 @@ class QuerySideTest extends BlogServerTest {
     @DisplayName("return a list of published blog posts")
     void queryBlogView() {
         QueryResponse response = queryAll(BlogView.class);
-        assertEquals(1, response.getMessagesCount());
+
+        assertThat(response.getMessagesList())
+                .hasSize(1);
 
         BlogView blogView = (BlogView) unpack(response.getMessages(0).getState());
 
-        assertEquals(blogId, blogView.getBlogId());
-        assertEquals(1, blogView.getPostsCount());
-        assertEquals(post2, blogView.getPosts(0)
-                                    .getId());
+        assertThat(blogView.getId())
+                .isEqualTo(blogId);
+        assertThat(blogView.getPostList())
+                .hasSize(1);
+        assertThat(blogView.getPost(0).getId())
+                .isEqualTo(publishedPost);
     }
 }

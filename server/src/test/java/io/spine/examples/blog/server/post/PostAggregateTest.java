@@ -41,14 +41,13 @@ import org.junit.jupiter.api.Test;
 import static com.google.common.truth.Truth.assertThat;
 import static io.spine.examples.blog.Post.Status.DRAFT;
 import static io.spine.examples.blog.Post.Status.PUBLISHED;
-import static io.spine.examples.blog.given.TestIdentifiers.newPostId;
 import static io.spine.testing.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
 
 @DisplayName("PostAggregate should")
 class PostAggregateTest {
 
     private static final BlogId blogId = BlogId.generate();
-    private static final PostId postId = newPostId(blogId);
+    private static final PostId postId = PostId.generate();
 
     /**
      * Abstract base for tests of handling of Blog Post commands.
@@ -92,13 +91,11 @@ class PostAggregateTest {
     class CreatePostCommandTest extends PostCommandTest<CreatePost> {
 
         CreatePostCommandTest() {
-            super(postId,
-                  CreatePost
-                          .newBuilder()
-                          .setPostId(postId)
-                          .setTitle("Test Post in a Test Blog")
-                          .build()
-            );
+            super(postId, CreatePost.newBuilder()
+                                    .setId(postId)
+                                    .setBlog(blogId)
+                                    .setTitle("Test Post in a Test Blog")
+                                    .vBuild());
         }
 
         @Test
@@ -107,11 +104,9 @@ class PostAggregateTest {
             PostId expectedPostId = entityId();
             expectThat(aggregate())
                     .producesEvent(PostCreated.class, event -> {
-                        PostId newPostId = event.getPostId();
-
-                        assertThat(newPostId)
+                        assertThat(event.getId())
                                 .isEqualTo(expectedPostId);
-                        assertThat(newPostId.getBlogId())
+                        assertThat(event.getBlog())
                                 .isEqualTo(blogId);
                         assertThat(event.getTitle())
                                 .isEqualTo(message().getTitle());
@@ -145,12 +140,10 @@ class PostAggregateTest {
                 new TestActorRequestFactory(getClass());
 
         PublishPostCommandTest() {
-            super(postId,
-                  PublishPost
-                          .newBuilder()
-                          .setPostId(postId)
-                          .build()
-            );
+            super(postId, PublishPost.newBuilder()
+                                     .setPost(postId)
+                                     .setBlog(blogId)
+                                     .vBuild());
         }
 
         @Override
@@ -163,9 +156,10 @@ class PostAggregateTest {
         private void createPost() {
             CreatePost command = CreatePost
                     .newBuilder()
-                    .setPostId(entityId())
+                    .setId(entityId())
+                    .setBlog(blogId)
                     .setTitle(POST_TITLE)
-                    .build();
+                    .vBuild();
             dispatchCommand(aggregate(), requestFactory.createCommand(command));
         }
 
@@ -176,7 +170,7 @@ class PostAggregateTest {
             PostAggregate aggregate = aggregate();
             expectThat(aggregate)
                     .producesEvent(PostPublished.class, event ->
-                            assertThat(event.getPostId())
+                            assertThat(event.getPost())
                                     .isEqualTo(postId)
                     );
 
