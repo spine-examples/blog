@@ -20,6 +20,7 @@
 
 package io.spine.examples.blog.server;
 
+import com.google.common.truth.Truth;
 import io.spine.client.QueryResponse;
 import io.spine.examples.blog.BlogId;
 import io.spine.examples.blog.BlogView;
@@ -32,7 +33,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.extensions.proto.ProtoTruth.assertThat;
-import static io.spine.protobuf.AnyPacker.unpack;
 
 @DisplayName("Blog Query Side should")
 class QuerySideTest extends BlogServerTest {
@@ -66,10 +66,10 @@ class QuerySideTest extends BlogServerTest {
     void queryBlogView() {
         QueryResponse response = queryAll(BlogView.class);
 
-        assertThat(response.getMessagesList())
-                .hasSize(1);
+        Truth.assertThat(response.size())
+             .isEqualTo(1);
 
-        BlogView blogView = (BlogView) unpack(response.getMessages(0).getState());
+        BlogView blogView = (BlogView) response.state(0);
 
         assertThat(blogView.getId())
                 .isEqualTo(blogId);
