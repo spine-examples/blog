@@ -41,8 +41,8 @@ class BlogAggregateTest {
     private static final BlogId blogId = BlogId.generate();
     private static final CreateBlog createCommand = CreateBlog.newBuilder()
                                                               .setTitle("DDD in Pictures")
-                                                              .setBlogId(blogId)
-                                                              .build();
+                                                              .setId(blogId)
+                                                              .vBuild();
     @Nested
     @DisplayName("handle CreateBlog command")
     class CreateBlogCommandTest extends BlogAggregateCommandTest<CreateBlog> {
@@ -69,7 +69,7 @@ class BlogAggregateTest {
         void produceEvent() {
             expectThat()
                     .producesEvent(BlogCreated.class, created -> {
-                        assertEquals(expectedId, created.getBlogId());
+                        assertEquals(expectedId, created.getId());
                         assertEquals(expectedTitle, created.getTitle());
                     });
         }

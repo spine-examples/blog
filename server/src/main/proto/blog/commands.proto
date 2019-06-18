@@ -35,10 +35,10 @@ import "blog/identifiers.proto";
 // Creates a new blog.
 message CreateBlog {
 
-    // An ID of the new blog.
-    BlogId blog_id = 1;
+    // The ID of the new blog.
+    BlogId id = 1;
 
-    // A title of the new blog.
+    // The title of the new blog.
     string title = 2 [(required) = true];
 }
 
@@ -46,18 +46,24 @@ message CreateBlog {
 message CreatePost {
 
     // The ID of the new post.
-    PostId post_id = 1;
+    PostId id = 1;
 
-    // A title of the new post.
-    string title = 2 [(required) = true];
+    // The ID of the blog to which this post is going to belong.
+    BlogId blog = 2 [(required) = true];
 
-    // A body with content.
-    string body = 3;
+    // The title of the new post.
+    string title = 3 [(required) = true];
+
+    // The body with content.
+    string body = 4;
 }
 
 // Publishes a previously unpublished post.
 message PublishPost {
 
-    // An ID of the post to publish.
-    PostId post_id = 1;
+    // The ID of the post to publish.
+    PostId post = 1;
+
+    // The ID of the blog to which the post is published.
+    BlogId blog = 2 [(required) = true];
 }

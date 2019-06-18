@@ -34,7 +34,6 @@ import "blog/identifiers.proto";
 
 // A blog is an informal discussion about a certain topic.
 message Blog {
-
     option (entity) = { kind: AGGREGATE visibility: FULL };
 
     // An ID of the blog.
@@ -44,13 +43,12 @@ message Blog {
     string title = 2;
 
     // References to posts in the chronological order.
-    repeated PostId posts = 3;
+    repeated PostId post = 3;
 }
 
 // An entry in the blog.
 //
 message Post {
-
     option (entity) = { kind: AGGREGATE visibility: FULL };
 
     // An ID of the post.
@@ -84,13 +82,13 @@ message BlogView {
     option (entity).kind = PROJECTION;
 
     // The ID of the blog.
-    BlogId blog_id = 1 [(required) = true];
+    BlogId id = 1 [(required) = true];
 
     // The title of the blog.
     string title = 2 [(required) = true];
 
     // Posts in the reverse chronological order.
-    repeated PostItem posts = 3;
+    repeated PostItem post = 3;
 }
 
 // A post in the blog.
