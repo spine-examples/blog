@@ -53,11 +53,11 @@ class CommandSideTest extends BlogServerTest {
     @BeforeEach
     void setUp() {
         createBlog = createBlog(blogId, "Server Side Blog Test");
-        post(createBlog);
+        send(createBlog);
 
         postId = PostId.generate();
         createPost = createPost(postId, blogId, "Server Blog Post");
-        post(createPost);
+        send(createPost);
     }
 
     @Test

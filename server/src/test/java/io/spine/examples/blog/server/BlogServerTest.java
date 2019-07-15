@@ -69,7 +69,7 @@ public abstract class BlogServerTest {
         server.shutdownAndWait();
     }
 
-    protected final void post(CommandMessage command) {
+    protected final void send(CommandMessage command) {
         client.post(command);
     }
 

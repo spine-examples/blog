@@ -24,6 +24,7 @@ import io.spine.client.QueryResponse;
 import io.spine.examples.blog.BlogId;
 import io.spine.examples.blog.BlogView;
 import io.spine.examples.blog.PostId;
+import io.spine.examples.blog.PostItem;
 import io.spine.examples.blog.commands.CreateBlog;
 import io.spine.examples.blog.commands.CreatePost;
 import io.spine.examples.blog.commands.PublishPost;
@@ -31,6 +32,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static com.google.common.truth.extensions.proto.ProtoTruth.assertThat;
 import static io.spine.protobuf.AnyPacker.unpack;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -38,29 +40,27 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class QuerySideTest extends BlogServerTest {
 
     private final BlogId blog = BlogId.generate();
-    @SuppressWarnings("FieldCanBeLocal") // made field for clarity of the setup and checks
-    private PostId post1;
-    private PostId post2;
+    private PostId publishedPost;
 
     @BeforeEach
     void setUp() {
         CreateBlog createBlog = createBlog(blog, "Query Side Blog Test");
-        post(createBlog);
+        send(createBlog);
 
-        post1 = PostId.generate();
-        CreatePost createPost1 = createPost(post1, blog, "Post 1");
-        post(createPost1);
+        PostId nonPublishedPost = PostId.generate();
+        CreatePost createPost1 = createPost(nonPublishedPost, blog, "Draft Post");
+        send(createPost1);
 
-        post2 = PostId.generate();
-        CreatePost createPost2 = createPost(post2, blog, "Post 2");
-        post(createPost2);
+        publishedPost = PostId.generate();
+        CreatePost createPost2 = createPost(publishedPost, blog, "Published Post");
+        send(createPost2);
 
         PublishPost publishPost2 = PublishPost
                 .newBuilder()
-                .setPost(post2)
+                .setPost(publishedPost)
                 .setBlog(blog)
                 .build();
-        post(publishPost2);
+        send(publishPost2);
     }
 
     @Test
@@ -69,11 +69,16 @@ class QuerySideTest extends BlogServerTest {
         QueryResponse response = queryAll(BlogView.class);
         assertEquals(1, response.getMessageCount());
 
-        BlogView blogView = (BlogView) unpack(response.getMessage(0).getState());
+        BlogView expected = BlogView
+                .newBuilder()
+                .setId(blog)
+                .addPost(PostItem.newBuilder()
+                                 .setId(publishedPost))
+                .buildPartial();
 
-        assertEquals(blog, blogView.getId());
-        assertEquals(1, blogView.getPostCount());
-        assertEquals(post2, blogView.getPost(0)
-                                    .getId());
+        BlogView blogView = (BlogView) unpack(response.getMessage(0).getState());
+        assertThat(blogView)
+                .comparingExpectedFieldsOnly()
+                .isEqualTo(expected);
     }
 }
