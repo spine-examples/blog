@@ -31,34 +31,34 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.examples.blog.given.TestIdentifiers.newPostId;
 import static io.spine.protobuf.AnyPacker.unpack;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisplayName("Blog Query Side should")
 class QuerySideTest extends BlogServerTest {
 
-    private final BlogId blogId = BlogId.generate();
+    private final BlogId blog = BlogId.generate();
     @SuppressWarnings("FieldCanBeLocal") // made field for clarity of the setup and checks
     private PostId post1;
     private PostId post2;
 
     @BeforeEach
     void setUp() {
-        CreateBlog createBlog = createBlog(blogId, "Query Side Blog Test");
+        CreateBlog createBlog = createBlog(blog, "Query Side Blog Test");
         post(createBlog);
 
-        post1 = newPostId(blogId);
-        CreatePost createPost1 = createPost(post1, "Post 1");
+        post1 = PostId.generate();
+        CreatePost createPost1 = createPost(post1, blog, "Post 1");
         post(createPost1);
 
-        post2 = newPostId(blogId);
-        CreatePost createPost2 = createPost(post2, "Post 2");
+        post2 = PostId.generate();
+        CreatePost createPost2 = createPost(post2, blog, "Post 2");
         post(createPost2);
 
         PublishPost publishPost2 = PublishPost
                 .newBuilder()
-                .setPostId(post2)
+                .setPost(post2)
+                .setBlog(blog)
                 .build();
         post(publishPost2);
     }
@@ -71,9 +71,9 @@ class QuerySideTest extends BlogServerTest {
 
         BlogView blogView = (BlogView) unpack(response.getMessage(0).getState());
 
-        assertEquals(blogId, blogView.getBlogId());
-        assertEquals(1, blogView.getPostsCount());
-        assertEquals(post2, blogView.getPosts(0)
+        assertEquals(blog, blogView.getId());
+        assertEquals(1, blogView.getPostCount());
+        assertEquals(post2, blogView.getPost(0)
                                     .getId());
     }
 }
