@@ -51,7 +51,7 @@ public abstract class BlogServerTest {
     @BeforeEach
     void setup() {
         server = BlogServer.create();
-        client = new TestClient(newUuid(), "localhost", server.getPort());
+        client = new TestClient(newUuid(), "localhost", server.port());
         startServer();
     }
 

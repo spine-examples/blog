@@ -39,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class QuerySideTest extends BlogServerTest {
 
     private final BlogId blogId = BlogId.generate();
+    @SuppressWarnings("FieldCanBeLocal") // made field for clarity of the setup and checks
     private PostId post1;
     private PostId post2;
 
@@ -66,9 +67,9 @@ class QuerySideTest extends BlogServerTest {
     @DisplayName("return a list of published blog posts")
     void queryBlogView() {
         QueryResponse response = queryAll(BlogView.class);
-        assertEquals(1, response.getMessagesCount());
+        assertEquals(1, response.getMessageCount());
 
-        BlogView blogView = (BlogView) unpack(response.getMessages(0).getState());
+        BlogView blogView = (BlogView) unpack(response.getMessage(0).getState());
 
         assertEquals(blogId, blogView.getBlogId());
         assertEquals(1, blogView.getPostsCount());
