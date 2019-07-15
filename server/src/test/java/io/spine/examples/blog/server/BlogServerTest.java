@@ -77,20 +77,21 @@ public abstract class BlogServerTest {
         return client.queryAll(messageType);
     }
 
-    static CreateBlog createBlog(BlogId blogId, String name) {
+    static CreateBlog createBlog(BlogId id, String name) {
         return CreateBlog
                 .newBuilder()
-                .setBlogId(blogId)
+                .setId(id)
                 .setTitle(name)
-                .build();
+                .vBuild();
     }
 
-    static CreatePost createPost(PostId postId, String title) {
+    static CreatePost createPost(PostId id, BlogId blog, String title) {
         return CreatePost
                 .newBuilder()
-                .setPostId(postId)
+                .setId(id)
+                .setBlog(blog)
                 .setTitle(title)
                 .setBody("Generated " + randomString() + " post body.")
-                .build();
+                .vBuild();
     }
 }

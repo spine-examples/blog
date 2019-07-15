@@ -46,9 +46,9 @@ final class BlogAggregate extends Aggregate<BlogId, Blog, Blog.Builder> {
     BlogCreated handle(CreateBlog c) {
         return BlogCreated
                 .newBuilder()
-                .setBlogId(c.getBlogId())
+                .setId(c.getId())
                 .setTitle(c.getTitle())
-                .build();
+                .vBuild();
     }
 
     /**
@@ -58,18 +58,18 @@ final class BlogAggregate extends Aggregate<BlogId, Blog, Blog.Builder> {
     PostAdded postCreationPolicy(PostCreated e) {
         return PostAdded
                 .newBuilder()
-                .setPostId(e.getPostId())
-                .build();
+                .setPost(e.getId())
+                .setBlog(e.getBlog())
+                .vBuild();
     }
 
     @Apply
     private void event(BlogCreated e) {
-        builder().setId(e.getBlogId())
-                 .setTitle(e.getTitle());
+        builder().setTitle(e.getTitle());
     }
 
     @Apply
     private void event(PostAdded e) {
-        builder().addPosts(e.getPostId());
+        builder().addPost(e.getPost());
     }
 }
