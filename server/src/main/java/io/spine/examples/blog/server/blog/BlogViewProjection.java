@@ -23,7 +23,6 @@ package io.spine.examples.blog.server.blog;
 import io.spine.core.Subscribe;
 import io.spine.examples.blog.BlogId;
 import io.spine.examples.blog.BlogView;
-import io.spine.examples.blog.BlogViewVBuilder;
 import io.spine.examples.blog.PostId;
 import io.spine.examples.blog.PostItem;
 import io.spine.examples.blog.events.BlogCreated;
@@ -33,7 +32,7 @@ import io.spine.server.projection.Projection;
 /**
  * A projection that represents the current state of a blog and contains published blog posts.
  */
-final class BlogViewProjection extends Projection<BlogId, BlogView, BlogViewVBuilder> {
+final class BlogViewProjection extends Projection<BlogId, BlogView, BlogView.Builder> {
 
     BlogViewProjection(BlogId id) {
         super(id);
@@ -55,7 +54,7 @@ final class BlogViewProjection extends Projection<BlogId, BlogView, BlogViewVBui
     private static PostItem toPostItem(PostPublished event) {
         PostId postId = event.getPostId();
         return PostItem
-                .vBuilder()
+                .newBuilder()
                 .setId(postId)
                 .setTitle(event.getTitle())
                 .setBody(event.getBody())

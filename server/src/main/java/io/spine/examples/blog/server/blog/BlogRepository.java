@@ -23,6 +23,7 @@ package io.spine.examples.blog.server.blog;
 import io.spine.examples.blog.BlogId;
 import io.spine.examples.blog.events.PostCreated;
 import io.spine.server.aggregate.AggregateRepository;
+import io.spine.server.route.EventRouting;
 
 import static io.spine.server.route.EventRoute.withId;
 
@@ -30,9 +31,11 @@ import static io.spine.server.route.EventRoute.withId;
  * A repository for {@link BlogAggregate}.
  */
 public final class BlogRepository extends AggregateRepository<BlogId, BlogAggregate> {
-    public BlogRepository() {
-        super();
-        eventRouting().route(PostCreated.class,
-                             (event, context) -> withId(event.getPostId().getBlogId()));
+
+    @Override
+    protected void setupEventRouting(EventRouting<BlogId> routing) {
+        super.setupEventRouting(routing);
+        routing.route(PostCreated.class,
+                (event, context) -> withId(event.getPostId().getBlogId()));
     }
 }

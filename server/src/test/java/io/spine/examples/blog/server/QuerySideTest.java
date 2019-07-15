@@ -31,7 +31,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.examples.blog.given.TestIdentifiers.newBlogId;
 import static io.spine.examples.blog.given.TestIdentifiers.newPostId;
 import static io.spine.protobuf.AnyPacker.unpack;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @DisplayName("Blog Query Side should")
 class QuerySideTest extends BlogServerTest {
 
-    private final BlogId blogId = newBlogId();
+    private final BlogId blogId = BlogId.generate();
     private PostId post1;
     private PostId post2;
 
