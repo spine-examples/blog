@@ -20,11 +20,11 @@
 
 package io.spine.examples.blog.server;
 
-import com.google.common.truth.Truth;
 import io.spine.client.QueryResponse;
 import io.spine.examples.blog.BlogId;
 import io.spine.examples.blog.BlogView;
 import io.spine.examples.blog.PostId;
+import io.spine.examples.blog.PostItem;
 import io.spine.examples.blog.commands.CreateBlog;
 import io.spine.examples.blog.commands.CreatePost;
 import io.spine.examples.blog.commands.PublishPost;
@@ -33,49 +33,52 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.extensions.proto.ProtoTruth.assertThat;
+import static io.spine.protobuf.AnyPacker.unpack;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisplayName("Blog Query Side should")
 class QuerySideTest extends BlogServerTest {
 
-    private final BlogId blogId = BlogId.generate();
+    private final BlogId blog = BlogId.generate();
     private PostId publishedPost;
 
     @BeforeEach
     void setUp() {
-        CreateBlog createBlog = createBlog(blogId, "Query Side Blog Test");
-        post(createBlog);
+        CreateBlog createBlog = createBlog(blog, "Query Side Blog Test");
+        send(createBlog);
 
         PostId nonPublishedPost = PostId.generate();
-        CreatePost createPost1 = createPost(nonPublishedPost, blogId, "Post 1");
-        post(createPost1);
+        CreatePost createPost1 = createPost(nonPublishedPost, blog, "Draft Post");
+        send(createPost1);
 
         publishedPost = PostId.generate();
-        CreatePost createPost2 = createPost(publishedPost, blogId, "Post 2");
-        post(createPost2);
+        CreatePost createPost2 = createPost(publishedPost, blog, "Published Post");
+        send(createPost2);
 
         PublishPost publishPost2 = PublishPost
                 .newBuilder()
                 .setPost(publishedPost)
-                .setBlog(blogId)
-                .vBuild();
-        post(publishPost2);
+                .setBlog(blog)
+                .build();
+        send(publishPost2);
     }
 
     @Test
     @DisplayName("return a list of published blog posts")
     void queryBlogView() {
         QueryResponse response = queryAll(BlogView.class);
+        assertEquals(1, response.getMessageCount());
 
-        Truth.assertThat(response.size())
-             .isEqualTo(1);
+        BlogView expected = BlogView
+                .newBuilder()
+                .setId(blog)
+                .addPost(PostItem.newBuilder()
+                                 .setId(publishedPost))
+                .buildPartial();
 
-        BlogView blogView = (BlogView) response.state(0);
-
-        assertThat(blogView.getId())
-                .isEqualTo(blogId);
-        assertThat(blogView.getPostList())
-                .hasSize(1);
-        assertThat(blogView.getPost(0).getId())
-                .isEqualTo(publishedPost);
+        BlogView blogView = (BlogView) unpack(response.getMessage(0).getState());
+        assertThat(blogView)
+                .comparingExpectedFieldsOnly()
+                .isEqualTo(expected);
     }
 }

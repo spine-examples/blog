@@ -31,9 +31,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static com.google.common.truth.Truth.assertThat;
+import static com.google.common.truth.extensions.proto.ProtoTruth.assertThat;
+import static io.spine.protobuf.AnyPacker.unpack;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisplayName("Blog Command Side should")
 class CommandSideTest extends BlogServerTest {
@@ -53,36 +53,49 @@ class CommandSideTest extends BlogServerTest {
     @BeforeEach
     void setUp() {
         createBlog = createBlog(blogId, "Server Side Blog Test");
-        post(createBlog);
+        send(createBlog);
 
         postId = PostId.generate();
         createPost = createPost(postId, blogId, "Server Blog Post");
-        post(createPost);
+        send(createPost);
     }
 
     @Test
     @DisplayName("create a blog")
     void createsBlog() {
         QueryResponse blogResponse = queryAll(Blog.class);
-        assertThat(blogResponse.size())
-                .isEqualTo(1);
-        Blog blog = (Blog) blogResponse.state(0);
-        assertEquals(blogId, blog.getId());
-        assertEquals(createBlog.getTitle(), blog.getTitle());
-        assertTrue(blog.getPostList()
-                       .contains(postId));
+        assertThat(blogResponse.getMessageList())
+                .hasSize(1);
+
+        Blog expected = Blog
+                .newBuilder()
+                .setId(blogId)
+                .setTitle(createBlog.getTitle())
+                .addPost(postId)
+                .build();
+
+        Blog blog = (Blog) unpack(blogResponse.getMessage(0).getState());
+        assertThat(blog)
+                .comparingExpectedFieldsOnly()
+                .isEqualTo(expected);
     }
 
     @Test
     @DisplayName("create a blog post")
     void createsPost() {
         QueryResponse postResponse = queryAll(Post.class);
-        assertThat(postResponse.size())
-                .isEqualTo(1);
+        assertEquals(1, postResponse.getMessageCount());
 
-        Post blogPost = (Post) postResponse.state(0);
-        assertEquals(postId, blogPost.getId());
-        assertEquals(createPost.getTitle(), blogPost.getTitle());
-        assertEquals(Post.Status.DRAFT, blogPost.getStatus());
+        Post expected = Post
+                .newBuilder()
+                .setId(postId)
+                .setTitle(createPost.getTitle())
+                .setStatus(Post.Status.DRAFT)
+                .build();
+
+        Post blogPost = (Post) unpack(postResponse.getMessage(0).getState());
+        assertThat(blogPost)
+                .comparingExpectedFieldsOnly()
+                .isEqualTo(expected);
     }
 }

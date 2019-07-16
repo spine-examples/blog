@@ -51,7 +51,7 @@ public abstract class BlogServerTest {
     @BeforeEach
     void setup() {
         server = BlogServer.create();
-        client = new TestClient(newUuid(), "localhost", server.getPort());
+        client = new TestClient(newUuid(), "localhost", server.port());
         startServer();
     }
 
@@ -69,7 +69,7 @@ public abstract class BlogServerTest {
         server.shutdownAndWait();
     }
 
-    protected final void post(CommandMessage command) {
+    protected final void send(CommandMessage command) {
         client.post(command);
     }
 
