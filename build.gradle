@@ -23,6 +23,10 @@ plugins {
     id 'net.ltgt.errorprone' version '0.8.1' apply false
 }
 
+ext {
+    spineVersion = '1.0.0-SNAPSHOT'
+}
+
 subprojects {
     apply plugin: 'io.spine.tools.gradle.bootstrap'
 
@@ -38,16 +42,16 @@ subprojects {
 
     forceConfiguration(project)
     dependencies {
-        errorprone deps.build.errorProneCore
-        errorproneJavac deps.build.errorProneJavac
+        errorprone "com.google.errorprone:error_prone_core:2.3.3"
+        errorproneJavac "com.google.errorprone:javac:9+181-r4173-1"
 
-        implementation deps.build.guava
-        implementation deps.build.checkerAnnotations
+        implementation "com.google.guava:guava:28.0-jre"
+        implementation "org.checkerframework:checker-qual:2.9.0"
 
-        runtimeOnly deps.grpc.grpcNetty
+        runtimeOnly "io.grpc:grpc-netty:1.22.0"
 
         testImplementation group: 'io.spine', name: 'spine-testutil-server', version: spineVersion
-        testRuntimeOnly deps.test.junit5Runner
+        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.5.0"
     }
 
     tasks.withType(JavaCompile) {
