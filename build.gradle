@@ -44,7 +44,7 @@ subprojects {
         implementation deps.build.guava
         implementation deps.build.checkerAnnotations
 
-        runtime deps.grpc.grpcNetty
+        runtimeOnly deps.grpc.grpcNetty
 
         testImplementation group: 'io.spine', name: 'spine-testutil-server', version: spineVersion
         testRuntimeOnly deps.test.junit5Runner
