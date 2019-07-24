@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.fail;
  * Abstract base for integration tests.
  */
 @DisplayName("BlogServer")
-public abstract class BlogServerTest {
+abstract class BlogServerTest {
 
     private Server server;
     private TestClient client;
@@ -69,7 +69,7 @@ public abstract class BlogServerTest {
         server.shutdownAndWait();
     }
 
-    protected final void send(CommandMessage command) {
+    final void send(CommandMessage command) {
         client.post(command);
     }
 
