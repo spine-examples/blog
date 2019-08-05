@@ -51,7 +51,7 @@ subprojects {
         runtimeOnly "io.grpc:grpc-netty:1.22.0"
 
         testImplementation group: 'io.spine', name: 'spine-testutil-server', version: spineVersion
-        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.5.0"
+        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.5.1"
     }
 
     tasks.withType(JavaCompile) {
