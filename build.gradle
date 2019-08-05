@@ -48,7 +48,7 @@ subprojects {
         implementation "com.google.guava:guava:28.0-jre"
         implementation "org.checkerframework:checker-qual:2.10.0"
 
-        runtimeOnly "io.grpc:grpc-netty:1.22.0"
+        runtimeOnly "io.grpc:grpc-netty:1.22.1"
 
         testImplementation group: 'io.spine', name: 'spine-testutil-server', version: spineVersion
         testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.5.0"
