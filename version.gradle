@@ -18,13 +18,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-dependencies {
-    testImplementation "org.junit.jupiter:junit-jupiter-api:$deps.versions.junit"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$deps.versions.junit"
-}
 
-test {
-    useJUnitPlatform {
-        includeEngines 'junit-jupiter'
-    }
+final def versions = [
+        spine            : "1.0.1",
+        errorProne       : "2.3.3",
+        errorProneJavac  : "9+181-r4173-1", // taken from here: https://github.com/tbroyer/gradle-errorprone-plugin/blob/v0.8/build.gradle.kts
+        guava            : "28.0-jre",
+        checkerFramework : "2.10.0",
+        netty            : "1.23.0",
+        pmd              : "6.16.0",
+        junit            : "5.5.1"
+]
+
+
+ext {
+    deps = [
+            "versions"   : versions
+    ]
 }

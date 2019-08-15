@@ -19,12 +19,19 @@
  */
 
 plugins {
-    id 'io.spine.tools.gradle.bootstrap' version '0.15.6' apply false
+    id 'io.spine.tools.gradle.bootstrap' version '1.0.1' apply false
     id 'net.ltgt.errorprone' version '0.8.1' apply false
 }
 
-ext {
-    spineVersion = '1.0.0-SNAPSHOT'
+final def scripts = [
+        version         : "$rootDir/version.gradle",
+        tests          : "$rootDir/gradle/tests.gradle",
+        staticAnalysis  : "$rootDir/gradle/static-analysis.gradle",
+        idea            : "$rootDir/gradle/idea.gradle"
+]
+
+allprojects {
+    apply from: "$scripts.version"
 }
 
 subprojects {
@@ -36,22 +43,21 @@ subprojects {
     targetCompatibility = JavaVersion.VERSION_1_8
 
     apply plugin: 'net.ltgt.errorprone'
-    apply from: "$rootDir/gradle/static-analysis.gradle"
-    apply from: "$rootDir/gradle/idea.gradle"
-    apply from: "$rootDir/gradle/tests.gradle"
+    apply from: "$scripts.tests"
+    apply from: "$scripts.staticAnalysis"
+    apply from: "$scripts.idea"
 
-    forceConfiguration(project)
     dependencies {
-        errorprone "com.google.errorprone:error_prone_core:2.3.3"
-        errorproneJavac "com.google.errorprone:javac:9+181-r4173-1"
+        errorprone "com.google.errorprone:error_prone_core:$deps.versions.errorProne"
+        errorproneJavac "com.google.errorprone:javac:$deps.versions.errorProneJavac"
 
-        implementation "com.google.guava:guava:28.0-jre"
-        implementation "org.checkerframework:checker-qual:2.10.0"
+        implementation "com.google.guava:guava:$deps.versions.guava"
+        implementation "org.checkerframework:checker-qual:$deps.versions.checkerFramework"
 
-        runtimeOnly "io.grpc:grpc-netty:1.22.0"
+        runtimeOnly "io.grpc:grpc-netty:$deps.versions.netty"
 
-        testImplementation group: 'io.spine', name: 'spine-testutil-server', version: spineVersion
-        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.5.0"
+        testImplementation "io.spine:spine-testutil-server:$deps.versions.spine"
+        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$deps.versions.junit"
     }
 
     tasks.withType(JavaCompile) {
