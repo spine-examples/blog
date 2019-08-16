@@ -25,7 +25,7 @@ plugins {
 
 final def scripts = [
         version         : "$rootDir/version.gradle",
-        tests          : "$rootDir/gradle/tests.gradle",
+        tests           : "$rootDir/gradle/tests.gradle",
         staticAnalysis  : "$rootDir/gradle/static-analysis.gradle",
         idea            : "$rootDir/gradle/idea.gradle"
 ]
@@ -37,51 +37,27 @@ allprojects {
 subprojects {
     apply plugin: 'io.spine.tools.gradle.bootstrap'
 
-    spine.enableJava().server()
-
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-
-    apply plugin: 'net.ltgt.errorprone'
-    apply from: "$scripts.tests"
-    apply from: "$scripts.staticAnalysis"
     apply from: "$scripts.idea"
 
-    dependencies {
-        errorprone "com.google.errorprone:error_prone_core:$deps.versions.errorProne"
-        errorproneJavac "com.google.errorprone:javac:$deps.versions.errorProneJavac"
+    pluginManager.withPlugin('java') {
+        apply plugin: 'net.ltgt.errorprone'
+        apply from: "$scripts.tests"
+        apply from: "$scripts.staticAnalysis"
 
-        implementation "com.google.guava:guava:$deps.versions.guava"
-        implementation "org.checkerframework:checker-qual:$deps.versions.checkerFramework"
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
 
-        runtimeOnly "io.grpc:grpc-netty:$deps.versions.netty"
+        dependencies {
+            errorprone "com.google.errorprone:error_prone_core:$deps.versions.errorProne"
+            errorproneJavac "com.google.errorprone:javac:$deps.versions.errorProneJavac"
 
-        testImplementation "io.spine:spine-testutil-server:$deps.versions.spine"
-        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$deps.versions.junit"
-    }
+            implementation "com.google.guava:guava:$deps.versions.guava"
+            implementation "org.checkerframework:checker-qual:$deps.versions.checkerFramework"
 
-    tasks.withType(JavaCompile) {
+            runtimeOnly "io.grpc:grpc-netty:$deps.versions.netty"
 
-        // Explicitly states the encoding of the source and test source files, ensuring
-        // correct execution of the `javac` task.
-        options.encoding = 'UTF-8'
-        options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
-
-        // Configure Error Prone:
-        // 1. Exclude generated sources from being analyzed by Error Prone.
-        // 2. Turn the check off until Error Prone can handle `@Nested` JUnit classes.
-        //    See issue: https://github.com/google/error-prone/issues/956
-        // 3. Turn off checks which report unused methods and unused method parameters.
-        //    See issue: https://github.com/SpineEventEngine/config/issues/61
-        //
-        // For more config details see:
-        //    https://github.com/tbroyer/gradle-errorprone-plugin/tree/master#usage
-
-        options.errorprone.errorproneArgs.addAll(
-                '-XepExcludedPaths:.*/generated/.*',
-                '-Xep:ClassCanBeStatic:OFF',
-                '-Xep:UnusedMethod:OFF',
-                '-Xep:UnusedVariable:OFF',
-                '-Xep:CheckReturnValue:OFF')
+            testImplementation "io.spine:spine-testutil-server:$deps.versions.spine"
+            testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$deps.versions.junit"
+        }
     }
 }
