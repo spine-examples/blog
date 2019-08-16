@@ -26,6 +26,8 @@ import io.spine.examples.blog.server.post.PostAggregate;
 import io.spine.server.BoundedContext;
 import io.spine.server.BoundedContextBuilder;
 import io.spine.server.Server;
+import io.spine.server.ServerEnvironment;
+import io.spine.server.transport.memory.InMemoryTransportFactory;
 
 import java.io.IOException;
 
@@ -41,6 +43,10 @@ public class BlogServer {
     }
 
     static Server create() {
+        ServerEnvironment serverEnvironment = ServerEnvironment.instance();
+        serverEnvironment.configureStorage(new BlogStorageFactory());
+        serverEnvironment.configureTransport(InMemoryTransportFactory.newInstance());
+
         BoundedContextBuilder context = BoundedContext
                 .singleTenant("Blog")
                 .add(new BlogRepository())

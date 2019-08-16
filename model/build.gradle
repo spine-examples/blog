@@ -18,13 +18,4 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-dependencies {
-    testImplementation "org.junit.jupiter:junit-jupiter-api:$deps.versions.junit"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$deps.versions.junit"
-}
-
-test {
-    useJUnitPlatform {
-        includeEngines 'junit-jupiter'
-    }
-}
+spine.enableJava()
