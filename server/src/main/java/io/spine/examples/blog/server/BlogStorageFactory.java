@@ -14,8 +14,8 @@ import io.spine.server.storage.memory.InMemoryStorageFactory;
 /**
  * An in-memory storage factory for the {@link BlogServer} application.
  *
- * <p>Such factory is sufficient for example application run locally, but should not be used in a
- * production environment.
+ * <p>Such factory is sufficient for an example application run locally, but should not be used in
+ * a production environment.
  *
  * <p>For the production scenarios consider using
  * <a href="https://github.com/SpineEventEngine/gcloud-java/">Spine library for
