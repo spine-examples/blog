@@ -56,7 +56,6 @@ subprojects {
 
             runtimeOnly "io.grpc:grpc-netty:$deps.versions.netty"
 
-            testImplementation "io.spine:spine-testutil-server:$deps.versions.spine"
             testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$deps.versions.junit"
         }
     }
