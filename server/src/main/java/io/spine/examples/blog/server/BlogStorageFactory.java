@@ -49,7 +49,7 @@ public final class BlogStorageFactory implements StorageFactory {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         delegate.close();
     }
 }
