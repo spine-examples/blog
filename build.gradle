@@ -59,4 +59,8 @@ subprojects {
             testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$deps.versions.junit"
         }
     }
+
+    spine {
+        forceDependencies = true
+    }
 }
