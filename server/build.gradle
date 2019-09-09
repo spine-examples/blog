@@ -26,7 +26,7 @@ dependencies {
 
 apply plugin: 'application'
 
-mainClassName = "io.spine.examples.blog.BlogServer"
+mainClassName = "io.spine.examples.blog.server.BlogServer"
 
 tasks.withType(JavaExec) {
     // Assign Java System Properties from the command line to the JavaExec task.
