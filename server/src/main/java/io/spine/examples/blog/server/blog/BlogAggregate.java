@@ -20,7 +20,6 @@
 
 package io.spine.examples.blog.server.blog;
 
-import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.blog.Blog;
 import io.spine.examples.blog.BlogId;
 import io.spine.examples.blog.commands.CreateBlog;
@@ -33,11 +32,10 @@ import io.spine.server.command.Assign;
 import io.spine.server.event.React;
 
 /**
- * An aggregate that manages state of the {@link io.spine.examples.blog.Blog} model.
+ * An aggregate that manages state of the {@link Blog} model.
  */
 final class BlogAggregate extends Aggregate<BlogId, Blog, Blog.Builder> {
 
-    @VisibleForTesting
     BlogAggregate(BlogId id) {
         super(id);
     }

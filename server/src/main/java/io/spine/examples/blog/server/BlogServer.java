@@ -27,6 +27,7 @@ import io.spine.server.BoundedContext;
 import io.spine.server.BoundedContextBuilder;
 import io.spine.server.Server;
 import io.spine.server.ServerEnvironment;
+import io.spine.server.storage.memory.InMemoryStorageFactory;
 import io.spine.server.transport.memory.InMemoryTransportFactory;
 
 import java.io.IOException;
@@ -44,7 +45,7 @@ public class BlogServer {
 
     static Server create() {
         ServerEnvironment serverEnvironment = ServerEnvironment.instance();
-        serverEnvironment.configureStorage(new BlogStorageFactory());
+        serverEnvironment.configureStorage(InMemoryStorageFactory.newInstance());
         serverEnvironment.configureTransport(InMemoryTransportFactory.newInstance());
 
         BoundedContextBuilder context = BoundedContext
