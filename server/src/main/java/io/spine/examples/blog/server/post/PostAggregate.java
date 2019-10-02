@@ -20,7 +20,6 @@
 
 package io.spine.examples.blog.server.post;
 
-import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.blog.Post;
 import io.spine.examples.blog.Post.Status;
 import io.spine.examples.blog.PostId;
@@ -38,7 +37,6 @@ import io.spine.server.command.Assign;
  */
 public final class PostAggregate extends Aggregate<PostId, Post, Post.Builder> {
 
-    @VisibleForTesting
     PostAggregate(PostId id) {
         super(id);
     }
