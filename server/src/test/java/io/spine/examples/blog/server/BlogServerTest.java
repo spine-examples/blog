@@ -73,8 +73,8 @@ abstract class BlogServerTest {
         client.post(command);
     }
 
-    final QueryResponse queryAll(Class<? extends EntityState> messageType) {
-        return client.queryAll(messageType);
+    final QueryResponse queryAll(Class<? extends EntityState> stateType) {
+        return client.queryAll(stateType);
     }
 
     static CreateBlog createBlog(BlogId id, String name) {
