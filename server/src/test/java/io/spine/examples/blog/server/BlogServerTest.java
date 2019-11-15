@@ -20,8 +20,8 @@
 
 package io.spine.examples.blog.server;
 
-import com.google.protobuf.Message;
 import io.spine.base.CommandMessage;
+import io.spine.base.EntityState;
 import io.spine.client.QueryResponse;
 import io.spine.examples.blog.BlogId;
 import io.spine.examples.blog.PostId;
@@ -73,8 +73,8 @@ abstract class BlogServerTest {
         client.post(command);
     }
 
-    final QueryResponse queryAll(Class<? extends Message> messageType) {
-        return client.queryAll(messageType);
+    final QueryResponse queryAll(Class<? extends EntityState> stateType) {
+        return client.queryAll(stateType);
     }
 
     static CreateBlog createBlog(BlogId id, String name) {
