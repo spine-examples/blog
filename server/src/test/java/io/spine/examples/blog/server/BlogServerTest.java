@@ -35,6 +35,7 @@ import org.junit.jupiter.api.DisplayName;
 
 import java.io.IOException;
 
+import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 import static io.spine.testing.TestValues.randomString;
 import static io.spine.testing.core.given.GivenUserId.newUuid;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -51,7 +52,7 @@ abstract class BlogServerTest {
     @BeforeEach
     void setup() {
         server = BlogServer.create();
-        client = new TestClient(newUuid(), "localhost", server.port());
+        client = new TestClient(newUuid(), "localhost", DEFAULT_CLIENT_SERVICE_PORT);
         startServer();
     }
 

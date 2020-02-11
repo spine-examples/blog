@@ -54,9 +54,8 @@ public class BlogServer {
                 .add(PostAggregate.class)
                 .add(new BlogViewRepository());
         return Server
-                .newBuilder()
+                .atPort(DEFAULT_CLIENT_SERVICE_PORT)
                 .add(context)
-                .setPort(DEFAULT_CLIENT_SERVICE_PORT)
                 .build();
     }
 
