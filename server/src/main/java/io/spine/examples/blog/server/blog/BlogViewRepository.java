@@ -38,6 +38,6 @@ public final class BlogViewRepository
     protected void setupEventRouting(EventRouting<BlogId> routing) {
         super.setupEventRouting(routing);
         routing.route(PostPublished.class,
-                (message, context) -> withId(message.getBlog()));
+                      (message, context) -> withId(message.getBlog()));
     }
 }
