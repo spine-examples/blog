@@ -19,18 +19,10 @@
  */
 
 
-final def versions = [
-        errorProne       : "2.3.4",
-        errorProneJavac  : "9+181-r4173-1", // taken from here: https://github.com/tbroyer/gradle-errorprone-plugin/blob/v0.8/build.gradle.kts
-        guava            : "28.2-jre",
-        checkerFramework : "3.2.0",
-        netty            : "1.28.0",
-        pmd              : "6.21.0",
-        junit            : "5.5.2"
-]
-
-ext {
-    deps = [
-            "versions"   : versions
-    ]
-}
+val errorProneVersion by extra("2.3.4")
+val errorProneJavacVersion by extra("9+181-r4173-1") // taken from here: https://github.com/tbroyer/gradle-errorprone-plugin/blob/v0.8/build.gradle.kts
+val guavaVersion by extra("28.2-jre")
+val checkerFrameworkVersion by extra("3.2.0")
+val nettyVersion by extra("1.28.0")
+val pmdVersion by extra("6.21.0")
+val junitVersion by extra("5.5.2")
