@@ -23,5 +23,5 @@ val errorProneJavacVersion by extra("9+181-r4173-1") // taken from here: https:/
 val guavaVersion by extra("28.2-jre")
 val checkerFrameworkVersion by extra("3.2.0")
 val nettyVersion by extra("1.28.0")
-val pmdVersion by extra("6.21.0")
+val pmdVersion by extra("6.24.0")
 val junitVersion by extra("5.5.2")
