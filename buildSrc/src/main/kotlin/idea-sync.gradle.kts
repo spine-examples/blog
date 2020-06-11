@@ -1,5 +1,5 @@
 /*
- * Copyright 2019, TeamDev. All rights reserved.
+ * Copyright 2020, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -18,7 +18,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-rootProject.name = 'blog'
+plugins {
+    idea
+}
 
-include 'server'
-include 'model'
+val generatedRootDir = "$projectDir/generated"
+val generatedJavaDir = "$generatedRootDir/main/java"
+val generatedTestJavaDir = "$generatedRootDir/test/java"
+val generatedGrpcDir = "$generatedRootDir/main/grpc"
+val generatedTestGrpcDir = "$generatedRootDir/test/grpc"
+val generatedSpineDir = "$generatedRootDir/main/spine"
+val generatedTestSpineDir = "$generatedRootDir/test/spine"
+
+idea {
+    module {
+        generatedSourceDirs.addAll(files(
+                generatedJavaDir,
+                generatedSpineDir,
+                generatedGrpcDir
+        ))
+        testSourceDirs.addAll(files(
+                generatedTestJavaDir,
+                generatedTestSpineDir,
+                generatedTestGrpcDir
+        ))
+        isDownloadJavadoc = true
+        isDownloadSources = true
+    }
+}

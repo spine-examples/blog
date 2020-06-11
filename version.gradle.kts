@@ -1,5 +1,5 @@
 /*
- * Copyright 2019, TeamDev. All rights reserved.
+ * Copyright 2020, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -18,4 +18,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-spine.enableJava()
+val errorProneVersion by extra("2.3.4")
+val errorProneJavacVersion by extra("9+181-r4173-1") // taken from here: https://github.com/tbroyer/gradle-errorprone-plugin/blob/v0.8/build.gradle.kts
+val guavaVersion by extra("28.2-jre")
+val checkerFrameworkVersion by extra("3.2.0")
+val nettyVersion by extra("1.28.0")
+val pmdVersion by extra("6.24.0")
+val junitVersion by extra("5.5.2")

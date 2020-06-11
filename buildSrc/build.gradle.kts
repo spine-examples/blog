@@ -18,13 +18,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * This package provides server-side classes for managing posts.
- */
-@CheckReturnValue
-@ParametersAreNonnullByDefault
-package io.spine.examples.blog.server.post;
+plugins {
+    `kotlin-dsl`
+}
 
-import com.google.errorprone.annotations.CheckReturnValue;
-
-import javax.annotation.ParametersAreNonnullByDefault;
+repositories {
+    mavenLocal()
+    jcenter()
+}

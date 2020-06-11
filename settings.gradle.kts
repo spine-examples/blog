@@ -1,5 +1,5 @@
 /*
- * Copyright 2019, TeamDev. All rights reserved.
+ * Copyright 2020, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -18,13 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-dependencies {
-    testImplementation "org.junit.jupiter:junit-jupiter-api:$deps.versions.junit"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$deps.versions.junit"
-}
+rootProject.name = "blog"
 
-test {
-    useJUnitPlatform {
-        includeEngines 'junit-jupiter'
-    }
-}
+include("server")
+include("model")

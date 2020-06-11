@@ -1,5 +1,5 @@
 /*
- * Copyright 2019, TeamDev. All rights reserved.
+ * Copyright 2020, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -18,19 +18,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+plugins {
+    application
+}
 
-final def versions = [
-        errorProne       : "2.3.4",
-        errorProneJavac  : "9+181-r4173-1", // taken from here: https://github.com/tbroyer/gradle-errorprone-plugin/blob/v0.8/build.gradle.kts
-        guava            : "28.2-jre",
-        checkerFramework : "3.2.0",
-        netty            : "1.28.0",
-        pmd              : "6.21.0",
-        junit            : "5.5.2"
-]
+spine.enableJava().server()
 
-ext {
-    deps = [
-            "versions"   : versions
-    ]
+dependencies {
+    implementation(project(":model"))
+}
+
+application {
+    mainClassName = "io.spine.examples.blog.server.BlogServer"
+}
+
+tasks.withType(JavaExec::class) {
+    // Assign Java System Properties from the command line to the JavaExec task.
+    @Suppress("UNCHECKED_CAST")
+    systemProperties(System.getProperties() as Map<String, *>)
 }
