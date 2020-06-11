@@ -25,15 +25,6 @@ plugins {
 
 apply(from = "$rootDir/version.gradle.kts")
 
-/*
- * Configure Gradle PMD plugin.
- *
- * Currently a warning on "use incremental analysis" is always emitted. 
- * But there is no way to enable it due to a Gradle issue.
- *
- * See https://github.com/gradle/gradle/issues/8277.
- */
-
 pmd {
     toolVersion = project.extra["pmdVersion"] as String
     isConsoleOutput = true
