@@ -18,17 +18,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+plugins {
+    application
+}
+
 spine.enableJava().server()
 
 dependencies {
-    implementation project(path: ':model')
+    implementation(project(":model"))
 }
 
-apply plugin: 'application'
+application {
+    mainClassName = "io.spine.examples.blog.server.BlogServer"
+}
 
-mainClassName = "io.spine.examples.blog.server.BlogServer"
-
-tasks.withType(JavaExec) {
+tasks.withType(JavaExec::class) {
     // Assign Java System Properties from the command line to the JavaExec task.
-    systemProperties System.properties
+    @Suppress("UNCHECKED_CAST")
+    systemProperties(System.getProperties() as Map<String, *>)
 }
