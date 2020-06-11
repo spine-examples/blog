@@ -62,6 +62,7 @@ afterEvaluate {
         //    https://github.com/tbroyer/gradle-errorprone-plugin/tree/master#usage
         //
         (options as ExtensionAware).extensions["errorprone"].withGroovyBuilder {
+            @Suppress("UNCHECKED_CAST")
             val args = getProperty("errorproneArgs") as ListProperty<String>
             args.addAll(listOf(
                     // 1. Exclude generated sources from being analyzed by Error Prone.
@@ -80,5 +81,3 @@ afterEvaluate {
         }
     }
 }
-
-

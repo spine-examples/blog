@@ -18,7 +18,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 val errorProneVersion by extra("2.3.4")
 val errorProneJavacVersion by extra("9+181-r4173-1") // taken from here: https://github.com/tbroyer/gradle-errorprone-plugin/blob/v0.8/build.gradle.kts
 val guavaVersion by extra("28.2-jre")
