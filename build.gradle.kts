@@ -25,7 +25,7 @@ plugins {
     `static-analysis`
     tests
 
-    id("io.spine.tools.gradle.bootstrap") version("1.5.27")
+    id("io.spine.tools.gradle.bootstrap") version("1.6.0")
     id("net.ltgt.errorprone") version("1.2.1")
 }
 
