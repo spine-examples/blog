@@ -18,8 +18,5 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-rootProject.name = "blog"
 
-include("server")
-include("model")
-include("client")
+
