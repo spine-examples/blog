@@ -18,25 +18,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-buildscript {
-
-    repositories {
-        jcenter()
-        maven {
-            url = java.net.URI("https://spine.mycloudrepo.io/public/repositories/releases")
-        }
-    }
-
-    dependencies {
-        classpath("io.spine.tools:spine-proto-dart-plugin:1.6.1")
-    }
-}
-
 plugins {
-    dart
-    codegen
+    base
 }
 
-spine.enableJava()
+val cleanProto by tasks.registering(Delete::class) {
+    delete("$projectDir/proto", "$projectDir/generated")
+}
 
-apply(plugin = "io.spine.tools.proto-dart-plugin")
+tasks.clean {
+    dependsOn(cleanProto)
+}
+
+tasks.withType(JavaCompile::class) {
+    enabled = false
+}
