@@ -82,6 +82,5 @@ afterEvaluate {
     tasks.withType(GenerateDart::class) {
         inputs.file(descriptor)
         commandLine(composeCommandLine(file(descriptor.get()), target, standardTypesPackage))
-        dependsOn(":codegen:activateLocally")
     }
 }

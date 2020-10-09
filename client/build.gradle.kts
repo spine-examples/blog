@@ -18,6 +18,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import com.google.protobuf.gradle.*
+
 buildscript {
 
     repositories {
@@ -40,3 +42,29 @@ plugins {
 spine.enableJava()
 
 apply(plugin = "io.spine.tools.proto-dart-plugin")
+
+tasks.assemble {
+    dependsOn("generateDart")
+}
+
+protobuf {
+    generateProtoTasks {
+        all().forEach { task ->
+            task.plugins {
+                id("dart")
+                remove("spineProtoc")
+            }
+            task.builtins {
+                remove("java")
+            }
+        }
+    }
+}
+
+dependencies {
+    protobuf(project(":model"))
+}
+
+tasks.withType(JavaCompile::class) {
+    enabled = false
+}
