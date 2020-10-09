@@ -1,3 +1,8 @@
 .dart_tool
 .packages
 *.lock
+lib/types.dart
+**/*.pb.dart
+**/*.pbenum.dart
+**/*.pbserver.dart
+**/*.pbjson.dart
