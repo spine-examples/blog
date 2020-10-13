@@ -1,6 +1,5 @@
 .dart_tool
 .packages
-*.lock
 lib/types.dart
 **/*.pb.dart
 **/*.pbenum.dart
