@@ -19,10 +19,12 @@
  */
 
 import com.google.protobuf.gradle.*
+import io.spine.generate.dart.Extension
 
 buildscript {
 
     repositories {
+        mavenLocal()
         jcenter()
         maven {
             url = java.net.URI("https://spine.mycloudrepo.io/public/repositories/releases")
@@ -30,7 +32,7 @@ buildscript {
     }
 
     dependencies {
-        classpath("io.spine.tools:spine-proto-dart-plugin:1.6.1")
+        classpath("io.spine.tools:spine-proto-dart-plugin:1.6.2")
     }
 }
 
@@ -67,4 +69,9 @@ dependencies {
 
 tasks.withType(JavaCompile::class) {
     enabled = false
+}
+
+extensions.getByType(Extension::class).apply {
+    modules["spine_client"] = listOf("spine/*", "google/*")
+    mainGeneratedDir.value(project.layout.projectDirectory.dir("lib"))
 }
