@@ -32,7 +32,7 @@ buildscript {
     }
 
     dependencies {
-        classpath("io.spine.tools:spine-proto-dart-plugin:1.6.2")
+        classpath("io.spine.tools:spine-proto-dart-plugin:1.6.4")
     }
 }
 
