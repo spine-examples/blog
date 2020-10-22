@@ -18,13 +18,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import 'package:blog_client/client.dart';
 import 'package:flutter/material.dart';
 
+import 'blog/blog.pb.dart';
+import 'blog/identifiers.pb.dart';
+
 void main() {
-    runApp(BlogApp());
+    var client = FakeClient(); //NetworkClient('localhost:4242', 'localhost:4242');
+    runApp(BlogApp(client));
 }
 
 class BlogApp extends StatelessWidget {
+
+    final Client _client;
+
+    BlogApp(this._client);
 
     @override
     Widget build(BuildContext context) {
@@ -34,25 +43,58 @@ class BlogApp extends StatelessWidget {
                 primarySwatch: Colors.red,
                 visualDensity: VisualDensity.adaptivePlatformDensity,
             ),
-            home: BlogHomePage(title: 'Flutter Demo Home Page'),
+            home: BlogHomePage('Spine example: Blog', _client),
         );
     }
 }
 
 class BlogHomePage extends StatefulWidget {
 
-    BlogHomePage({Key key, this.title}) : super(key: key);
+    BlogHomePage(this.title, this._client);
 
     final String title;
+    final Client _client;
 
     @override
-    _BlogPageState createState() => _BlogPageState();
+    _BlogPageState createState() => _BlogPageState(_client);
 }
 
 class _BlogPageState extends State<BlogHomePage> {
 
-    void _incrementCounter() {
-        setState(() {});
+    final Client _client;
+
+    Map<BlogId, Blog> blogs = {};
+    BlogView displayedBlog;
+
+    _BlogPageState(this._client);
+
+    void addBlogs(List<Blog> moreBlogs) {
+        Map<BlogId, Blog> newBlogs = Map.fromIterable(moreBlogs,
+                                                      key: (blog) => blog.id,
+                                                      value: (blog) => blog);
+        setState(() {
+            blogs.addAll(newBlogs);
+        });
+    }
+
+    void display(BlogView blog) {
+        setState(() {
+            displayedBlog = blog;
+        });
+    }
+
+    @override
+    void initState() {
+        super.initState();
+        _fetchBlogs();
+    }
+
+    void _fetchBlogs() {
+        _client.fetchBlogs().toList().then(addBlogs, onError: () => _fetchBlogs());
+    }
+
+    void _fetchBlogWithPosts(BlogId id) {
+        _client.fetchBlogWithPosts(id).then(display);
     }
 
     @override
@@ -61,17 +103,82 @@ class _BlogPageState extends State<BlogHomePage> {
             appBar: AppBar(
                 title: Text(widget.title),
             ),
-            body: Center(
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[],
-                ),
-            ),
-            floatingActionButton: FloatingActionButton(
-                  onPressed: _incrementCounter,
-                  tooltip: 'Increment',
-                  child: Icon(Icons.add)
+            body: Row(
+                children: [
+                    Expanded(
+                        child: _blogList(),
+                        flex: 1
+                    ),
+                    Expanded(
+                        child: Column(key: _blogKey(), children: _postList()),
+                        flex: 3
+                    )
+                ],
             )
         );
     }
+
+    Key _blogKey() {
+        return displayedBlog != null ? _BlogKey(displayedBlog.id) : Key('No data');
+    }
+
+    List<Widget> _postList() {
+        return displayedBlog != null ? _bakePosts() : [_empty('Nothing to see here')];
+    }
+
+    Widget _blogList() {
+        var listView = blogs.isNotEmpty ? ListView(children: _bakeBlogs()) : _empty('No blogs yet');
+        var container = Container(
+            child: listView,
+            color: Colors.white
+        );
+        return container;
+    }
+
+    List<Widget> _bakeBlogs() => blogs.entries.map((blog) => GestureDetector(
+        onTap: () => _fetchBlogWithPosts(blog.key),
+        child: Padding(
+            child: Row(
+                key: _BlogKey(blog.key),
+                children: _displayBlog(blog.value)
+            ),
+            padding: EdgeInsets.only(bottom: 8),
+    ))).toList(growable: false);
+
+    List<Widget> _displayBlog(Blog blog) => [
+        Text(blog.title, textScaleFactor: 1.5),
+        Text('${blog.post.length} posts', textScaleFactor: 0.75)
+    ];
+
+    List<Widget> _bakePosts() => displayedBlog
+        .post
+        .expand(_displayPost)
+        .toList(growable: false);
+
+    List<Widget> _displayPost(PostItem post) => [
+        Text(post.title, textScaleFactor: 1.5, softWrap: true),
+        Text(post.body, softWrap: true)
+    ];
+
+    Widget _empty(String text) => Center(
+        child: Text(text, style: TextStyle(
+            color: Colors.blueGrey,
+            fontSize: 30
+        ))
+    );
+}
+
+class _BlogKey extends Key {
+
+    final BlogId id;
+
+    _BlogKey(this.id) : super.empty();
+
+    @override
+    bool operator ==(Object other) =>
+        identical(this, other) ||
+        other is _BlogKey && runtimeType == other.runtimeType && id == other.id;
+
+    @override
+    int get hashCode => id.hashCode;
 }

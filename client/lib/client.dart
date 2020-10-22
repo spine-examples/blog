@@ -18,17 +18,122 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import 'dart:math';
+
 import 'package:firebase/firebase_io.dart' as fb;
+import 'package:spine_client/google/protobuf/any.pb.dart';
 import 'package:spine_client/rest_firebase_client.dart';
 import 'package:spine_client/spine_client.dart';
 
-import './types.dart' as blogTypes;
+import 'blog/blog.pb.dart';
+import 'blog/identifiers.pb.dart';
+import 'types.dart' as blogTypes;
 
-const _serverUrl = 'localhost:4242';
-const _firebaseUrl = 'localhost:4242';
+abstract class Client {
 
-final instance = BackendClient(
-    _serverUrl,
-    RestClient(fb.FirebaseClient.anonymous(), _firebaseUrl),
-    typeRegistries: [blogTypes.types()]
-);
+    Stream<Blog> fetchBlogs();
+
+    Future<BlogView> fetchBlogWithPosts(BlogId id);
+}
+
+class NetworkClient extends Client {
+
+    static final _actor = UserId()
+        ..value = 'Example Dart client'
+        ..freeze();
+
+    final BackendClient _backend;
+    final ActorRequestFactory _factory;
+
+    NetworkClient(String serverUrl, String firebaseUrl)
+        : _backend = BackendClient(serverUrl,
+                                   RestClient(fb.FirebaseClient.anonymous(), firebaseUrl),
+                                   typeRegistries: [blogTypes.types()]),
+          _factory = ActorRequestFactory(_actor);
+
+    @override
+    Stream<Blog> fetchBlogs() {
+        var query = _factory.query().all(Blog.getDefault());
+        return _backend.fetch(query);
+    }
+
+    @override
+    Future<BlogView> fetchBlogWithPosts(BlogId id) {
+        var query = _factory.query().byIds(BlogView.getDefault(),
+            [Any.pack(id, typeUrlPrefix: 'type.spine.io')]);
+        return _backend.fetch(query).first;
+    }
+}
+
+class FakeClient extends Client {
+
+    final Random _rand = Random();
+
+    @override
+    Future<BlogView> fetchBlogWithPosts(BlogId id) async {
+        return BlogView()
+            ..id = id
+            ..title = 'Blog ${id.uuid}'
+            ..post.addAll([
+                PostItem()
+                    ..id = (PostId()..uuid = '${id.uuid}-1')
+                    ..title = 'Blog entry ${_rand.nextInt(10)}'
+                    ..body = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean ut '
+                        'mollis dui. Pellentesque ac vehicula eros. Mauris eu pulvinar nibh, ut '
+                        'mollis elit. Pellentesque blandit tristique magna at volutpat. Quisque '
+                        'velit lectus, auctor in rutrum sit amet, rutrum posuere enim. Aenean '
+                        'faucibus, nisl eget iaculis mattis, metus enim efficitur nibh, posuere '
+                        'maximus dui augue a lectus. Sed sagittis eu lacus a pulvinar. Aenean '
+                        'felis neque, venenatis a maximus sed, tempus in sem. Vestibulum facilisis '
+                        'orci quis nulla vulputate venenatis vulputate ut tellus. Ut aliquam '
+                        'a ipsum tempor, et dapibus justo consequat. Nullam nec tempus felis. Orci '
+                        'varius natoque penatibus et magnis dis parturient montes, nascetur '
+                        'ridiculus mus.',
+                PostItem()
+                    ..id = (PostId()..uuid = '${id.uuid}-2')
+                    ..title = 'Blog entry ${_rand.nextInt(10)}'
+                    ..body = 'Phasellus sapien augue, sagittis ac lectus vitae, venenatis tempus '
+                        'dui. Donec et libero sed eros vulputate facilisis in quis nulla. Quisque '
+                        'eget nisi mollis, rutrum nisl sit amet, sollicitudin eros. Pellentesque '
+                        'pellentesque rutrum dui vel scelerisque. Suspendisse nisl eros, placerat '
+                        'sit amet nisl sit amet, efficitur mollis arcu. Nunc metus arcu, imperdiet '
+                        'ut viverra eu, iaculis id orci. Donec fringilla at justo sed luctus. '
+                        'Donec maximus ullamcorper vestibulum. Maecenas condimentum nibh orci, '
+                        'quis cursus enim maximus id. Proin volutpat lectus non tellus malesuada '
+                        'maximus. Morbi nisl magna, aliquet sed sollicitudin vel, consequat a mi. '
+                        'Phasellus id dolor enim. Class aptent taciti sociosqu ad litora torquent '
+                        'per conubia nostra, per inceptos himenaeos.',
+            ]);
+    }
+
+    @override
+    Stream<Blog> fetchBlogs() {
+        var blogIdA = BlogId()..uuid = _rand.nextInt(314).toString();
+        var blogIdB = BlogId()..uuid = _rand.nextInt(314).toString();
+        var blogIdC = BlogId()..uuid = _rand.nextInt(314).toString();
+        return Stream.fromIterable([
+            Blog()
+                ..id = blogIdA
+                ..title = 'Blog ${blogIdA.uuid}'
+                ..post.addAll([
+                    PostId()..uuid = '${blogIdA.uuid}-1',
+                    PostId()..uuid = '${blogIdA.uuid}-2'
+                ]),
+            Blog()
+                ..id = blogIdB
+                ..title = 'Blog ${blogIdB.uuid}'
+                ..post.addAll([
+                    PostId()..uuid = '${blogIdB.uuid}-1',
+                    PostId()..uuid = '${blogIdB.uuid}-2'
+                ]),
+            Blog()
+                ..id = blogIdC
+                ..title = 'Blog ${blogIdC.uuid}'
+                ..post.addAll([
+                    PostId()..uuid = '${blogIdC.uuid}-1',
+                    PostId()..uuid = '${blogIdC.uuid}-2'
+                ]),
+        ]);
+    }
+}
+

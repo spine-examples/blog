@@ -27,7 +27,7 @@ buildscript {
         mavenLocal()
         jcenter()
         maven {
-            url = java.net.URI("https://spine.mycloudrepo.io/public/repositories/releases")
+            setUrl("https://spine.mycloudrepo.io/public/repositories/releases")
         }
     }
 
