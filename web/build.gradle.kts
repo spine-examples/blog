@@ -18,9 +18,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-rootProject.name = "blog"
+spine.enableJava().firebaseWebServer()
 
-include("server")
-include("model")
-include("client")
-include("web")
+dependencies {
+    implementation(project(":server"))
+}
