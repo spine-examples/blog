@@ -18,14 +18,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import 'package:blog_client/blog/commands.pb.dart';
 import 'package:blog_client/client.dart';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 
 import 'blog/blog.pb.dart';
 import 'blog/identifiers.pb.dart';
 
 void main() {
-    var client = FakeClient(); //NetworkClient('localhost:4242', 'localhost:4242');
+    var client = NetworkClient('localhost:4242', 'localhost:4242');
     runApp(BlogApp(client));
 }
 
@@ -97,16 +99,46 @@ class _BlogPageState extends State<BlogHomePage> {
         _client.fetchBlogWithPosts(id).then(display);
     }
 
+    void _newBlog(String title) {
+        var id = BlogId()
+            ..uuid = Uuid().v4();
+        var command = CreateBlog()
+            ..id = id
+            ..title = title;
+        _client.post(command).then((value) => _fetchBlogs());
+    }
+
+    void _newPost(String title, String content) {
+        var id = PostId()
+            ..uuid = Uuid().v4();
+        var command = CreatePost()
+            ..id = id
+            ..blog = displayedBlog.id
+            ..title = title
+            ..body = content;
+        _client.post(command).then((value) => _fetchBlogWithPosts(displayedBlog.id));
+    }
+
     @override
     Widget build(BuildContext context) {
         return Scaffold(
             appBar: AppBar(
                 title: Text(widget.title),
             ),
+            floatingActionButton: Visibility(
+                child: FloatingActionButton(
+                    child: Icon(Icons.add),
+                    onPressed: () => showDialog(
+                        context: context,
+                        builder: _newPostDialog
+                    ),
+                ),
+                visible: displayedBlog != null,
+            ),
             body: Row(
                 children: [
                     Expanded(
-                        child: _blogList(),
+                        child: _blogList(context),
                         flex: 1
                     ),
                     Expanded(
@@ -126,14 +158,93 @@ class _BlogPageState extends State<BlogHomePage> {
         return displayedBlog != null ? _bakePosts() : [_empty('Nothing to see here')];
     }
 
-    Widget _blogList() {
-        var listView = blogs.isNotEmpty ? ListView(children: _bakeBlogs()) : _empty('No blogs yet');
+    Widget _blogList(BuildContext context) {
+        var newBlogButton = Container(
+            color: Colors.redAccent,
+            child: TextButton(
+                child: Text(
+                    "NEW BLOG",
+                    style: TextStyle(color: Colors.white)
+                ),
+                onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: _newBlogDialog
+                    );
+                },
+        ));
+        Widget content;
+        if (blogs.isNotEmpty) {
+            var blogs = _bakeBlogs();
+            List<Widget> items = [];
+            items.add(newBlogButton);
+            items.addAll(blogs);
+            content = ListView(children: items);
+        } else {
+            content = newBlogButton;
+        }
         var container = Container(
-            child: listView,
+            child: content,
             color: Colors.white
         );
         return container;
     }
+
+    Widget _newBlogDialog(BuildContext context) {
+        var titleController = TextEditingController();
+        return SimpleDialog(
+            title: Text("Create new blog..."),
+            children: [
+                Padding(
+                    child: TextField(
+                        decoration: InputDecoration(hintText: "My cool blog"),
+                        controller: titleController
+                    ),
+                    padding: EdgeInsets.all(8),
+                ),
+                TextButton(
+                    child: Text("CREATE"),
+                    onPressed: () {
+                        _newBlog(titleController.text);
+                        _closeDialog(context);
+                    },
+                )
+            ]
+        );
+    }
+
+    Widget _newPostDialog(BuildContext context) {
+        var titleController = TextEditingController();
+        var bodyController = TextEditingController();
+        return SimpleDialog(
+            children: [
+                TextField(
+                    decoration: InputDecoration(hintText: "New post"),
+                    controller: titleController,
+                ),
+                TextField(
+                    decoration: InputDecoration(hintText: "Write something"),
+                    controller: bodyController
+                ),
+                Row(children: [
+                    Expanded(child: TextButton(
+                        child: Text("CANCEL", textAlign: TextAlign.end),
+                        onPressed: () => _closeDialog(context),
+                    )),
+                    TextButton(
+                        child: Text("POST"),
+                        onPressed: () {
+                            _newPost(titleController.text, bodyController.text);
+                            _closeDialog(context);
+                        },
+                    )
+                ])
+            ]
+        );
+    }
+
+    _closeDialog(BuildContext context) =>
+        Navigator.of(context, rootNavigator: true).pop();
 
     List<Widget> _bakeBlogs() => blogs.entries.map((blog) => GestureDetector(
         onTap: () => _fetchBlogWithPosts(blog.key),
@@ -143,7 +254,7 @@ class _BlogPageState extends State<BlogHomePage> {
                 children: _displayBlog(blog.value)
             ),
             padding: EdgeInsets.only(bottom: 8),
-    ))).toList(growable: false);
+    ))).toList(growable: true);
 
     List<Widget> _displayBlog(Blog blog) => [
         Text(blog.title, textScaleFactor: 1.5),
