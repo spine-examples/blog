@@ -27,7 +27,7 @@ import 'blog/blog.pb.dart';
 import 'blog/identifiers.pb.dart';
 
 void main() {
-    var client = NetworkClient('localhost:4242', 'localhost:4242');
+    var client = NetworkClient('localhost:4242', 'https://spine-dev.firebaseio.com/');
     runApp(BlogApp(client));
 }
 
