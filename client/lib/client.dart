@@ -21,21 +21,32 @@
 import 'dart:math';
 
 import 'package:firebase/firebase_io.dart' as fb;
+import 'package:protobuf/protobuf.dart';
 import 'package:spine_client/google/protobuf/any.pb.dart';
+import 'package:spine_client/google/protobuf/empty.pb.dart';
 import 'package:spine_client/rest_firebase_client.dart';
+import 'package:spine_client/spine/core/ack.pb.dart';
+import 'package:spine_client/spine/core/response.pb.dart';
 import 'package:spine_client/spine_client.dart';
 
 import 'blog/blog.pb.dart';
 import 'blog/identifiers.pb.dart';
 import 'types.dart' as blogTypes;
 
+/// A client which executes queries and sends commands.
 abstract class Client {
 
+    /// Fetches all the `Blog`s.
     Stream<Blog> fetchBlogs();
 
+    /// Fetches a single `Blog` with all of its `Post`s.
     Future<BlogView> fetchBlogWithPosts(BlogId id);
+
+    /// Posts the given command message.
+    Future<Ack> post(GeneratedMessage command);
 }
 
+/// A backend client which sends queries and commands over the network to a real server.
 class NetworkClient extends Client {
 
     static final _actor = UserId()
@@ -63,8 +74,17 @@ class NetworkClient extends Client {
             [Any.pack(id, typeUrlPrefix: 'type.spine.io')]);
         return _backend.fetch(query).first;
     }
+
+    @override
+    Future<Ack> post(GeneratedMessage command) {
+        var cmd = _factory.command().create(command);
+        return _backend.post(cmd);
+    }
 }
 
+/// A backend client which generates pre-set data in response to queries and silently
+/// "swallows" commands.
+///
 class FakeClient extends Client {
 
     final Random _rand = Random();
@@ -134,5 +154,11 @@ class FakeClient extends Client {
                     PostId()..uuid = '${blogIdC.uuid}-2'
                 ]),
         ]);
+    }
+
+    @override
+    Future<Ack> post(GeneratedMessage command) async {
+        var ok = Status()..ok = Empty.getDefault();
+        return Ack()..status = ok;
     }
 }
