@@ -70,8 +70,7 @@ class NetworkClient extends Client {
 
     @override
     Future<BlogView> fetchBlogWithPosts(BlogId id) {
-        var query = _factory.query().byIds(BlogView.getDefault(),
-            [Any.pack(id, typeUrlPrefix: 'type.spine.io')]);
+        var query = _factory.query().byIds(BlogView.getDefault(), [id]);
         return _backend.fetch(query).first;
     }
 
