@@ -27,7 +27,7 @@ import 'blog/blog.pb.dart';
 import 'blog/identifiers.pb.dart';
 
 void main() {
-    var client = NetworkClient('localhost:4242', 'https://spine-dev.firebaseio.com/');
+    var client = NetworkClient('http://localhost:4242', 'https://spine-dev.firebaseio.com/');
     runApp(BlogApp(client));
 }
 
@@ -70,12 +70,9 @@ class _BlogPageState extends State<BlogHomePage> {
 
     _BlogPageState(this._client);
 
-    void addBlogs(List<Blog> moreBlogs) {
-        Map<BlogId, Blog> newBlogs = Map.fromIterable(moreBlogs,
-                                                      key: (blog) => blog.id,
-                                                      value: (blog) => blog);
+    void addBlog(Blog blog) {
         setState(() {
-            blogs.addAll(newBlogs);
+            blogs[blog.id] = blog;
         });
     }
 
@@ -92,7 +89,7 @@ class _BlogPageState extends State<BlogHomePage> {
     }
 
     void _fetchBlogs() {
-        _client.fetchBlogs().toList().then(addBlogs, onError: () => _fetchBlogs());
+        _client.fetchBlogs().forEach(addBlog);
     }
 
     void _fetchBlogWithPosts(BlogId id) {
@@ -111,12 +108,20 @@ class _BlogPageState extends State<BlogHomePage> {
     void _newPost(String title, String content) {
         var id = PostId()
             ..uuid = Uuid().v4();
+        var blogId = displayedBlog.id;
         var command = CreatePost()
             ..id = id
-            ..blog = displayedBlog.id
+            ..blog = blogId
             ..title = title
             ..body = content;
-        _client.post(command).then((value) => _fetchBlogWithPosts(displayedBlog.id));
+        _client.post(command).then((value) => _publishPost(id, blogId));
+    }
+
+    void _publishPost(PostId post, BlogId blog) {
+        var command = PublishPost()
+            ..post = post
+            ..blog = blog;
+        _client.post(command).then((value) => _fetchBlogWithPosts(blog));
     }
 
     @override
@@ -155,7 +160,9 @@ class _BlogPageState extends State<BlogHomePage> {
     }
 
     List<Widget> _postList() {
-        return displayedBlog != null ? _bakePosts() : [_empty('Nothing to see here')];
+        return displayedBlog != null && displayedBlog.post.isNotEmpty
+            ? _bakePosts()
+            : [_empty('Nothing to see here')];
     }
 
     Widget _blogList(BuildContext context) {

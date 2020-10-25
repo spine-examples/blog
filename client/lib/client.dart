@@ -22,7 +22,6 @@ import 'dart:math';
 
 import 'package:firebase/firebase_io.dart' as fb;
 import 'package:protobuf/protobuf.dart';
-import 'package:spine_client/google/protobuf/any.pb.dart';
 import 'package:spine_client/google/protobuf/empty.pb.dart';
 import 'package:spine_client/rest_firebase_client.dart';
 import 'package:spine_client/spine/core/ack.pb.dart';
@@ -56,6 +55,12 @@ class NetworkClient extends Client {
     final BackendClient _backend;
     final ActorRequestFactory _factory;
 
+    /// Creates a new `NetworkClient` with the given server and Firebase.
+    ///
+    /// Note that `NetworkClient` uses Spine's Firebase `RestClient` which works on all platforms
+    /// but does not support subscriptions. Change it to `WebClient` to support subscriptions (only
+    /// in browser).
+    ///
     NetworkClient(String serverUrl, String firebaseUrl)
         : _backend = BackendClient(serverUrl,
                                    RestClient(fb.FirebaseClient.anonymous(), firebaseUrl),
@@ -65,13 +70,13 @@ class NetworkClient extends Client {
     @override
     Stream<Blog> fetchBlogs() {
         var query = _factory.query().all(Blog.getDefault());
-        return _backend.fetch(query);
+        return _backend.fetch<Blog>(query);
     }
 
     @override
     Future<BlogView> fetchBlogWithPosts(BlogId id) {
         var query = _factory.query().byIds(BlogView.getDefault(), [id]);
-        return _backend.fetch(query).first;
+        return _backend.fetch<BlogView>(query).first;
     }
 
     @override
