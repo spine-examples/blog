@@ -5,5 +5,7 @@ jdk:
 
 before_install:
   - chmod +x gradlew
+  - pub global activate protoc_plugin
+  - pub global activate dart_code_gen
 
 script: ./gradlew check --stacktrace

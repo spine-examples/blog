@@ -8,8 +8,9 @@ Dart [library](https://github.com/SpineEventEngine/dart).
 Dart and the `pub` tool must be installed in order for to build the project. Refer to the official
 Dart documentation for the instructions. 
 
-The Spine `codegen` package must be installed globally, as follows:
+The `protoc_plugin` and the Spine `dart_code_gen` packages must be installed globally, as follows:
 ```
+pub global activate protoc_plugin
 pub global activate dart_code_gen
 ```
 
