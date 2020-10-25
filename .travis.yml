@@ -5,6 +5,8 @@ jdk:
 
 before_install:
   - chmod +x gradlew
+  - chmod +x ./config/install-pub.sh
+  - ./config/install-pub.sh
   - pub global activate protoc_plugin
   - pub global activate dart_code_gen
 
