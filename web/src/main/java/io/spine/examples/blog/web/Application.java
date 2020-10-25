@@ -20,8 +20,6 @@
 
 package io.spine.examples.blog.web;
 
-import com.google.api.client.http.HttpRequestFactory;
-import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
@@ -32,24 +30,27 @@ import io.spine.server.BoundedContext;
 import io.spine.server.CommandService;
 import io.spine.server.QueryService;
 import io.spine.web.firebase.FirebaseClient;
-import io.spine.web.firebase.rest.RemoteDatabaseClient;
+import io.spine.web.firebase.FirebaseCredentials;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 import static io.spine.util.Exceptions.illegalStateWithCauseOf;
+import static io.spine.web.firebase.FirebaseClientFactory.remoteClient;
+import static io.spine.web.firebase.FirebaseCredentials.fromGoogleCredentials;
 
 public final class Application {
 
     private static final String FIREBASE_RDB = "https://spine-dev.firebaseio.com/";
 
     private static final BoundedContext context = BlogContext.builder().build();
+    private static final GoogleCredentials credentials = credentials();
 
     static {
         FirebaseOptions firebaseOptions = FirebaseOptions
                 .builder()
                 .setDatabaseUrl(FIREBASE_RDB)
-                .setCredentials(credentials())
+                .setCredentials(credentials)
                 .build();
         FirebaseApp.initializeApp(firebaseOptions);
     }
@@ -69,13 +70,9 @@ public final class Application {
     }
 
     public static FirebaseClient firebase() {
-        HttpRequestFactory requestFactory = new NetHttpTransport().createRequestFactory();
-        FirebaseDatabase instance = FirebaseDatabase.getInstance();
-        return RemoteDatabaseClient
-                .newBuilder()
-                .setRequestFactory(requestFactory)
-                .setDatabase(instance)
-                .build();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        FirebaseCredentials creds = fromGoogleCredentials(credentials);
+        return remoteClient(database, creds);
     }
 
     private static GoogleCredentials credentials() {

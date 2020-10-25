@@ -18,18 +18,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-plugins {
-    id("org.gretty") version "3.0.3"
-}
+package io.spine.examples.blog.web;
 
-spine.enableJava().firebaseWebServer()
+import io.spine.web.AllowAnyOriginFilter;
 
-dependencies {
-    implementation(project(":server"))
-}
+import javax.servlet.annotation.WebFilter;
 
-gretty {
-    httpPort = 4242
-    contextPath = "/"
-    loggingLevel = "trace"
+import static io.spine.web.AllowAnyOriginFilter.ANY_URL;
+
+@WebFilter(urlPatterns = ANY_URL)
+public final class CorsAllFilter extends AllowAnyOriginFilter {
 }

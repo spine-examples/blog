@@ -27,7 +27,7 @@ import io.spine.web.query.QueryServlet;
 import javax.servlet.annotation.WebServlet;
 
 @WebServlet("/query")
-public class BlogQueryServlet extends QueryServlet<FirebaseQueryResponse> {
+public final class BlogQueryServlet extends QueryServlet<FirebaseQueryResponse> {
 
     public BlogQueryServlet() {
         super(FirebaseQueryBridge
