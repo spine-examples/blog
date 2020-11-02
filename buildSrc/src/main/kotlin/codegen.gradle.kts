@@ -39,15 +39,18 @@ if (windows) {
     scriptExtension = ""
 }
 
-val command = "$pubCache/dart_code_gen$scriptExtension"
+val codeGenExecutable = "$pubCache/dart_code_gen$scriptExtension"
 
-if (!file(command).exists()) {
-    logger.warn("Cannot locate `dart_code_gen` under `$command`.")
+if (!file(codeGenExecutable).exists()) {
+    logger.warn("Cannot locate `dart_code_gen` under `$codeGenExecutable`.")
 }
 
+/**
+ * Constructs a command line command for generating a Dart type registry.
+ */
 fun composeCommandLine(descriptor: File, targetDir: String, standardTypesPackage: String) =
         listOf(
-                command,
+                codeGenExecutable,
                 "--descriptor", "${file(descriptor)}",
                 "--destination", "$targetDir/types.dart",
                 "--standard-types", standardTypesPackage,
