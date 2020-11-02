@@ -159,16 +159,13 @@ class _BlogPageState extends State<BlogHomePage> {
                              builder: (context) => newBlogDialog(context, _newBlog));
               },
             ));
-        Widget content;
+        List<Widget> items = [];
+        items.add(newBlogButton);
         if (blogs.isNotEmpty) {
             var blogs = _bakeBlogs();
-            List<Widget> items = [];
-            items.add(newBlogButton);
             items.addAll(blogs);
-            content = ListView(children: items);
-        } else {
-           content = newBlogButton;
         }
+        Widget content = ListView(children: items);
         var container = Container(child: content, color: Colors.white);
         return container;
     }
