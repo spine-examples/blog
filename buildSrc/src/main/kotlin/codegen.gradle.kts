@@ -60,9 +60,9 @@ open class GenerateDart : Exec() {
     var standardTypesPackage: String = ""
 }
 
-val generateDartName = "generateDart"
+val generateDartTask = "generateDart"
 
-tasks.register(generateDartName, GenerateDart::class) {
+tasks.register(generateDartTask, GenerateDart::class) {
     @Suppress("UNCHECKED_CAST")
     descriptor = project.extensions["protoDart"].withGroovyBuilder { getProperty("mainDescriptorSet") } as Property<File>
     target = "$projectDir/lib"
@@ -75,7 +75,7 @@ tasks.register("generateTestDart", GenerateDart::class) {
     target = "$projectDir/test"
     standardTypesPackage = "spine_client"
 
-    shouldRunAfter("${project.path}:$generateDartName")
+    shouldRunAfter("${project.path}:$generateDartTask")
 }
 
 afterEvaluate {
