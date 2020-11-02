@@ -18,9 +18,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-rootProject.name = "blog"
+package io.spine.examples.blog.web;
 
-include("server")
-include("model")
-include("client")
-include("web")
+import io.spine.web.command.CommandServlet;
+
+import javax.servlet.annotation.WebServlet;
+
+import static io.spine.examples.blog.web.Application.app;
+
+@WebServlet("/command")
+public final class BlogCommandServlet extends CommandServlet {
+
+    public BlogCommandServlet() {
+        super(app().commandService());
+    }
+}

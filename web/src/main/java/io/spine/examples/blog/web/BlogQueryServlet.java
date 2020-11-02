@@ -18,9 +18,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-rootProject.name = "blog"
+package io.spine.examples.blog.web;
 
-include("server")
-include("model")
-include("client")
-include("web")
+import io.spine.web.firebase.query.FirebaseQueryBridge;
+import io.spine.web.firebase.query.FirebaseQueryResponse;
+import io.spine.web.query.QueryServlet;
+
+import javax.servlet.annotation.WebServlet;
+
+import static io.spine.examples.blog.web.Application.app;
+
+@WebServlet("/query")
+public final class BlogQueryServlet extends QueryServlet<FirebaseQueryResponse> {
+
+    public BlogQueryServlet() {
+        super(FirebaseQueryBridge
+                .newBuilder()
+                .setFirebaseClient(app().firebase())
+                .setQueryService(app().queryService())
+                .build());
+    }
+}

@@ -1,0 +1,7 @@
+.dart_tool
+.packages
+lib/types.dart
+**/*.pb.dart
+**/*.pbenum.dart
+**/*.pbserver.dart
+**/*.pbjson.dart

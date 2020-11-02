@@ -25,7 +25,7 @@ plugins {
     `static-analysis`
     tests
 
-    id("io.spine.tools.gradle.bootstrap") version("1.6.0")
+    id("io.spine.tools.gradle.bootstrap") version("1.6.4")
     id("net.ltgt.errorprone") version("1.2.1")
 }
 
@@ -58,9 +58,5 @@ subprojects {
         implementation("org.checkerframework:checker-qual:${checkerFrameworkVersion}")
         runtimeOnly("io.grpc:grpc-netty:${nettyVersion}")
         testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
-    }
-
-    spine {
-        forceDependencies = true
     }
 }

@@ -20,17 +20,9 @@
 
 package io.spine.examples.blog.server;
 
-import io.spine.base.Environment;
-import io.spine.base.EnvironmentType;
-import io.spine.examples.blog.server.blog.BlogRepository;
-import io.spine.examples.blog.server.blog.BlogViewRepository;
-import io.spine.examples.blog.server.post.PostAggregate;
-import io.spine.server.BoundedContext;
+import io.spine.examples.blog.BlogContext;
 import io.spine.server.BoundedContextBuilder;
 import io.spine.server.Server;
-import io.spine.server.ServerEnvironment;
-import io.spine.server.storage.memory.InMemoryStorageFactory;
-import io.spine.server.transport.memory.InMemoryTransportFactory;
 
 import java.io.IOException;
 
@@ -46,17 +38,7 @@ public class BlogServer {
     }
 
     static Server create() {
-        ServerEnvironment serverEnvironment = ServerEnvironment.instance();
-        Environment env = Environment.instance();
-        Class<? extends EnvironmentType> envType = env.type();
-        serverEnvironment.use(InMemoryStorageFactory.newInstance(), envType);
-        serverEnvironment.use(InMemoryTransportFactory.newInstance(), envType);
-
-        BoundedContextBuilder context = BoundedContext
-                .singleTenant("Blog")
-                .add(new BlogRepository())
-                .add(PostAggregate.class)
-                .add(new BlogViewRepository());
+        BoundedContextBuilder context = BlogContext.builder();
         return Server
                 .atPort(DEFAULT_CLIENT_SERVICE_PORT)
                 .add(context)

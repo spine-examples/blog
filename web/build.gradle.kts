@@ -18,9 +18,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-rootProject.name = "blog"
+plugins {
+    id("org.gretty") version "3.0.3"
+}
 
-include("server")
-include("model")
-include("client")
-include("web")
+spine.enableJava().firebaseWebServer()
+
+dependencies {
+    implementation(project(":server"))
+}
+
+gretty {
+    httpPort = 4242
+    contextPath = "/"
+    loggingLevel = "trace"
+}

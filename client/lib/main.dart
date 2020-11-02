@@ -18,9 +18,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-rootProject.name = "blog"
+import 'package:blog_client/client.dart';
+import 'package:flutter/material.dart';
 
-include("server")
-include("model")
-include("client")
-include("web")
+import 'home_page.dart';
+
+void main() {
+    var client = NetworkClient('http://localhost:4242', 'https://spine-dev.firebaseio.com/');
+    runApp(BlogApp(client));
+}
+
+class BlogApp extends StatelessWidget {
+
+    final Client _client;
+
+    BlogApp(this._client);
+
+    @override
+    Widget build(BuildContext context) {
+        return MaterialApp(
+            title: 'Blog',
+            theme: ThemeData(
+                primarySwatch: Colors.red,
+                visualDensity: VisualDensity.adaptivePlatformDensity,
+            ),
+            home: BlogHomePage('Spine example: Blog', _client),
+        );
+    }
+}
+
