@@ -45,12 +45,8 @@ abstract class Client {
     Future<Ack> post(GeneratedMessage command);
 }
 
-/// A backend client which sends queries and commands over the network to a real server.
+/// A client which sends queries and commands over the network to a real server.
 class NetworkClient extends Client {
-
-    static final _actor = UserId()
-        ..value = 'Example Dart client'
-        ..freeze();
 
     final BackendClient _backend;
     final ActorRequestFactory _factory;
@@ -65,7 +61,7 @@ class NetworkClient extends Client {
         : _backend = BackendClient(serverUrl,
                                    RestClient(fb.FirebaseClient.anonymous(), firebaseUrl),
                                    typeRegistries: [blogTypes.types()]),
-          _factory = ActorRequestFactory(_actor);
+          _factory = ActorRequestFactory(UserId()..value = 'Example Dart client');
 
     @override
     Stream<Blog> fetchBlogs() {
@@ -86,7 +82,7 @@ class NetworkClient extends Client {
     }
 }
 
-/// A backend client which generates pre-set data in response to queries and silently
+/// A client which generates pre-set data in response to queries and silently
 /// "swallows" commands.
 ///
 class FakeClient extends Client {
