@@ -21,7 +21,7 @@
 import 'package:flutter/material.dart';
 
 /// Constructs a dialog for creating a new [Blog].
-Widget newBlogDialog(BuildContext context, Function createBlog(String title)) {
+Widget newBlogDialog(BuildContext context, void createBlog(String title)) {
   var titleController = TextEditingController();
   return SimpleDialog(title: Text("Create new blog..."), children: [
     Padding(
@@ -40,7 +40,7 @@ Widget newBlogDialog(BuildContext context, Function createBlog(String title)) {
 }
 
 /// Constructs a dialog for creating a new [Post].
-Widget newPostDialog(BuildContext context, Function createPost(String title, String body)) {
+Widget newPostDialog(BuildContext context, void createPost(String title, String body)) {
   var titleController = TextEditingController();
   var bodyController = TextEditingController();
   return SimpleDialog(children: [
