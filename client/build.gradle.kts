@@ -42,6 +42,8 @@ plugins {
 
 spine.enableJava()
 
+// For now, as Proto Dart plugin is not published to the Gradle plugin registry, apply it via
+// an `apply` statement instead of in the `plugins` section.
 apply(plugin = "io.spine.tools.proto-dart-plugin")
 
 tasks.assemble {
