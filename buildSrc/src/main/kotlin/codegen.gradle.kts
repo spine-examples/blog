@@ -18,6 +18,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * `codegen` plugin adds tasks which enhance generated Protobuf Dart types.
+ *
+ * Tasks `generateDart` and `generateTestDart` process the Protobuf types and generate `types.dart`
+ * files, which contain registries of known types.
+ */
+
 import org.apache.tools.ant.taskdefs.condition.Os
 import java.io.File
 
@@ -48,7 +55,9 @@ fun composeCommandLine(descriptor: File, targetDir: String, standardTypesPackage
         )
 
 /**
- * Task which launches Dart code generation from Protobuf.
+ * Gradle task which generates the type registry Dart file.
+ *
+ * See the `spine_client.BackendClient` for more details on type registries.
  */
 open class GenerateDart : Exec() {
 

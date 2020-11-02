@@ -37,7 +37,6 @@ buildscript {
 }
 
 plugins {
-    dart
     codegen
 }
 
@@ -74,4 +73,16 @@ tasks.withType(JavaCompile::class) {
 extensions.getByType(Extension::class).apply {
     modules["spine_client"] = listOf("spine/*", "google/*")
     mainGeneratedDir.value(project.layout.projectDirectory.dir("lib"))
+}
+
+val cleanProto by tasks.registering(Delete::class) {
+    delete("$projectDir/proto", "$projectDir/generated")
+}
+
+tasks.clean {
+    dependsOn(cleanProto)
+}
+
+tasks.withType(JavaCompile::class) {
+    enabled = false
 }
