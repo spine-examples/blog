@@ -26,14 +26,16 @@ import io.spine.web.query.QueryServlet;
 
 import javax.servlet.annotation.WebServlet;
 
+import static io.spine.examples.blog.web.Application.app;
+
 @WebServlet("/query")
 public final class BlogQueryServlet extends QueryServlet<FirebaseQueryResponse> {
 
     public BlogQueryServlet() {
         super(FirebaseQueryBridge
                 .newBuilder()
-                .setFirebaseClient(Application.firebase())
-                .setQueryService(Application.queryService())
+                .setFirebaseClient(app().firebase())
+                .setQueryService(app().queryService())
                 .build());
     }
 }

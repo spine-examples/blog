@@ -39,14 +39,21 @@ import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 import static io.spine.web.firebase.FirebaseClientFactory.remoteClient;
 import static io.spine.web.firebase.FirebaseCredentials.fromGoogleCredentials;
 
-public final class Application {
+/**
+ * The Blog application services.
+ */
+final class Application {
 
     private static final String FIREBASE_RDB = "https://spine-dev.firebaseio.com/";
 
-    private static final BoundedContext context = BlogContext.builder().build();
-    private static final GoogleCredentials credentials = credentials();
+    private static final Application instance = new Application();
 
-    static {
+    private final BoundedContext context;
+    private final GoogleCredentials credentials;
+
+    private Application() {
+        context = BlogContext.builder().build();
+        credentials = credentials();
         FirebaseOptions firebaseOptions = FirebaseOptions
                 .builder()
                 .setDatabaseUrl(FIREBASE_RDB)
@@ -55,27 +62,51 @@ public final class Application {
         FirebaseApp.initializeApp(firebaseOptions);
     }
 
-    public static QueryService queryService() {
+    /**
+     * Obtains the singleton instance of {@code Application}.
+     *
+     * @apiNote This method is designed for static imports.
+     */
+    static Application app() {
+        return instance;
+    }
+
+    /**
+     * Constructs the {@link QueryService} for the Blog application.
+     *
+     * <p>The service contains the only context of the app — {@link BlogContext}.
+     */
+    QueryService queryService() {
         return QueryService
                 .newBuilder()
                 .add(context)
                 .build();
     }
 
-    public static CommandService commandService() {
+    /**
+     * Constructs the {@link CommandService} for the Blog application.
+     *
+     * <p>The service contains the only context of the app — {@link BlogContext}.
+     */
+    CommandService commandService() {
         return CommandService
                 .newBuilder()
                 .add(context)
                 .build();
     }
 
-    public static FirebaseClient firebase() {
+    /**
+     * Constructs a {@link FirebaseClient} for client-server communication for the Blog application.
+     *
+     * <p>The {@link FirebaseClient} points to the {@code spine-dev} Firebase project.
+     */
+    FirebaseClient firebase() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         FirebaseCredentials creds = fromGoogleCredentials(credentials);
         return remoteClient(database, creds);
     }
 
-    private static GoogleCredentials credentials() {
+    private GoogleCredentials credentials() {
         Resource credentialFile = Resource.file(
                 "spine-dev-firebase.json",
                 Application.class.getClassLoader()

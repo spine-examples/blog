@@ -24,10 +24,12 @@ import io.spine.web.command.CommandServlet;
 
 import javax.servlet.annotation.WebServlet;
 
+import static io.spine.examples.blog.web.Application.app;
+
 @WebServlet("/command")
 public final class BlogCommandServlet extends CommandServlet {
 
     public BlogCommandServlet() {
-        super(Application.commandService());
+        super(app().commandService());
     }
 }
