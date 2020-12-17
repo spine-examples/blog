@@ -25,8 +25,8 @@
  * files, which contain registries of known types.
  */
 
-import org.apache.tools.ant.taskdefs.condition.Os
 import java.io.File
+import org.apache.tools.ant.taskdefs.condition.Os
 
 val windows = Os.isFamily(Os.FAMILY_WINDOWS)
 var pubCache: String
@@ -49,13 +49,13 @@ if (!file(codeGenExecutable).exists()) {
  * Constructs a command line command for generating a Dart type registry.
  */
 fun composeCommandLine(descriptor: File, targetDir: String, standardTypesPackage: String) =
-        listOf(
-                codeGenExecutable,
-                "--descriptor", "${file(descriptor)}",
-                "--destination", "$targetDir/types.dart",
-                "--standard-types", standardTypesPackage,
-                "--import-prefix", "."
-        )
+    listOf(
+        codeGenExecutable,
+        "--descriptor", "${file(descriptor)}",
+        "--destination", "$targetDir/types.dart",
+        "--standard-types", standardTypesPackage,
+        "--import-prefix", "."
+    )
 
 /**
  * Gradle task which generates the type registry Dart file.
@@ -66,8 +66,10 @@ open class GenerateDart : Exec() {
 
     @Internal
     var descriptor: Provider<out Any> = project.objects.property(File::class.java)
+
     @Internal
     var target: String = ""
+
     @Internal
     var standardTypesPackage: String = ""
 }
@@ -76,14 +78,18 @@ val generateDartTask = "generateDart"
 
 tasks.register(generateDartTask, GenerateDart::class) {
     @Suppress("UNCHECKED_CAST")
-    descriptor = project.extensions["protoDart"].withGroovyBuilder { getProperty("mainDescriptorSet") } as Property<File>
+    descriptor =
+        project.extensions["protoDart"]
+            .withGroovyBuilder { getProperty("mainDescriptorSet") } as Property<File>
     target = "$projectDir/lib"
     standardTypesPackage = "spine_client"
 }
 
 tasks.register("generateTestDart", GenerateDart::class) {
     @Suppress("UNCHECKED_CAST")
-    descriptor = project.extensions["protoDart"].withGroovyBuilder { getProperty("testDescriptorSet") } as Property<File>
+    descriptor =
+        project.extensions["protoDart"]
+            .withGroovyBuilder { getProperty("testDescriptorSet") } as Property<File>
     target = "$projectDir/test"
     standardTypesPackage = "spine_client"
 

@@ -55,7 +55,8 @@ afterEvaluate {
         (options as ExtensionAware).extensions["errorprone"].withGroovyBuilder {
             @Suppress("UNCHECKED_CAST")
             val args = getProperty("errorproneArgs") as ListProperty<String>
-            args.addAll(listOf(
+            args.addAll(
+                listOf(
                     // 1. Exclude generated sources from being analyzed by Error Prone.
                     "-XepExcludedPaths:.*/generated/.*",
 
@@ -68,7 +69,8 @@ afterEvaluate {
                     "-Xep:UnusedMethod:OFF",
                     "-Xep:UnusedVariable:OFF",
                     "-Xep:CheckReturnValue:OFF"
-            ))
+                )
+            )
         }
     }
 }

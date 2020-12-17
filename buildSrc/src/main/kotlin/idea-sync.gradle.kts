@@ -32,16 +32,20 @@ val generatedTestSpineDir = "$generatedRootDir/test/spine"
 
 idea {
     module {
-        generatedSourceDirs.addAll(files(
+        generatedSourceDirs.addAll(
+            files(
                 generatedJavaDir,
                 generatedSpineDir,
                 generatedGrpcDir
-        ))
-        testSourceDirs.addAll(files(
+            )
+        )
+        testSourceDirs.addAll(
+            files(
                 generatedTestJavaDir,
                 generatedTestSpineDir,
                 generatedTestGrpcDir
-        ))
+            )
+        )
         isDownloadJavadoc = true
         isDownloadSources = true
     }
