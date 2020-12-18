@@ -21,7 +21,6 @@
 package io.spine.examples.blog;
 
 import io.spine.base.Environment;
-import io.spine.base.EnvironmentType;
 import io.spine.examples.blog.server.blog.BlogRepository;
 import io.spine.examples.blog.server.blog.BlogViewRepository;
 import io.spine.examples.blog.server.post.PostAggregate;
@@ -40,11 +39,11 @@ public final class BlogContext {
     }
 
     public static BoundedContextBuilder builder() {
-        ServerEnvironment serverEnvironment = ServerEnvironment.instance();
         Environment env = Environment.instance();
-        Class<? extends EnvironmentType> envType = env.type();
-        serverEnvironment.use(InMemoryStorageFactory.newInstance(), envType);
-        serverEnvironment.use(InMemoryTransportFactory.newInstance(), envType);
+        ServerEnvironment
+                .when(env.type())
+                .use(InMemoryStorageFactory.newInstance())
+                .use(InMemoryTransportFactory.newInstance());
 
         return BoundedContext
                 .singleTenant("Blog")
