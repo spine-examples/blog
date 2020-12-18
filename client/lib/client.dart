@@ -59,7 +59,7 @@ class NetworkClient extends Client {
     ///
     NetworkClient(String serverUrl, String firebaseUrl)
         : _backend = BackendClient(serverUrl,
-                                   RestClient(fb.FirebaseClient.anonymous(), firebaseUrl),
+                                   firebase: RestClient(fb.FirebaseClient.anonymous(), firebaseUrl),
                                    typeRegistries: [blogTypes.types()]),
           _factory = ActorRequestFactory(UserId()..value = 'Example Dart client');
 

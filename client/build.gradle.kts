@@ -18,76 +18,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.google.protobuf.gradle.*
-import io.spine.generate.dart.Extension
+import com.google.protobuf.gradle.protobuf
 
-buildscript {
-
-    repositories {
-        mavenLocal()
-        jcenter()
-        maven {
-            setUrl("https://spine.mycloudrepo.io/public/repositories/releases")
-        }
-    }
-
-    dependencies {
-        classpath("io.spine.tools:spine-proto-dart-plugin:1.6.4")
-    }
-}
-
-plugins {
-    codegen
-}
-
-spine.enableJava()
-
-// For now, as Proto Dart plugin is not published to the Gradle plugin registry, apply it via
-// an `apply` statement instead of in the `plugins` section.
-apply(plugin = "io.spine.tools.proto-dart-plugin")
-
-tasks.assemble {
-    dependsOn("generateDart")
-}
-
-protobuf {
-    generateProtoTasks {
-        all().forEach { task ->
-            task.plugins {
-                id("dart")
-                remove("spineProtoc")
-            }
-            task.builtins {
-                remove("java")
-            }
-        }
-    }
-}
+spine.enableDart()
 
 dependencies {
     protobuf(project(":model"))
-}
-
-tasks.withType(JavaCompile::class) {
-    enabled = false
-}
-
-// Since Proto Dart plugin is not applied in the `plugins` section, Gradle does not generate kotlin DSL for it.
-// This will be fixed in future by allowing to configure Dart subprojects via Bootstrap. Meanwhile, we configure
-// the `protoDart` extension like this.
-extensions.getByType(Extension::class).apply {
-    modules["spine_client"] = listOf("spine/*", "google/*")
-    mainGeneratedDir.value(project.layout.projectDirectory.dir("lib"))
-}
-
-val cleanProto by tasks.registering(Delete::class) {
-    delete("$projectDir/proto", "$projectDir/generated")
-}
-
-tasks.clean {
-    dependsOn(cleanProto)
-}
-
-tasks.withType(JavaCompile::class) {
-    enabled = false
 }
