@@ -19,9 +19,26 @@
  */
 
 import com.google.protobuf.gradle.protobuf
+import io.spine.dart.gradle.Extension
 
 spine.enableDart()
 
 dependencies {
     protobuf(project(":model"))
+}
+
+// Since Proto Dart plugin is not applied in the `plugins` section, Gradle does not generate kotlin DSL for it.
+// This will be fixed in future by allowing to configure Dart subprojects via Bootstrap. Meanwhile, we configure
+// the `protoDart` extension like this.
+extensions.getByType(Extension::class).apply {
+    modules["spine_client"] = listOf("spine/*", "google/*")
+    mainGeneratedDir.value(project.layout.projectDirectory.dir("lib"))
+}
+
+val cleanProto by tasks.registering(Delete::class) {
+    delete("$projectDir/proto", "$projectDir/generated")
+}
+
+tasks.clean {
+    dependsOn(cleanProto)
 }
