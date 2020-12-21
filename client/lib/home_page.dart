@@ -25,6 +25,7 @@
  */
 
 import 'package:blog_client/blog/commands.pb.dart';
+import 'package:blog_client/blog/events.pb.dart';
 import 'package:blog_client/client.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
@@ -96,7 +97,8 @@ class _BlogPageState extends State<BlogHomePage> {
         var command = CreateBlog()
             ..id = id
             ..title = title;
-        _client.post(command).then((value) => _fetchBlogs());
+        _client.observeAfterCommand<BlogCreated>(command)
+               .then((_) => _fetchBlogs());
     }
 
     /// Posts a command to create a new [Post] with the given title and body.
@@ -111,14 +113,16 @@ class _BlogPageState extends State<BlogHomePage> {
             ..blog = blogId
             ..title = title
             ..body = body;
-        _client.post(command).then((value) => _publishPost(id, blogId));
+        _client.observeAfterCommand<PostCreated>(command)
+               .then((_) => _publishPost(id, blogId));
     }
 
     void _publishPost(PostId post, BlogId blog) {
         var command = PublishPost()
             ..post = post
             ..blog = blog;
-        _client.post(command).then((value) => _fetchBlogWithPosts(blog));
+        _client.observeAfterCommand<PostPublished>(command)
+               .then((_) => _fetchBlogWithPosts(blog));
     }
 
     @override
