@@ -16,7 +16,12 @@ pub global activate dart_code_gen
 
 ## Browsing the client
 
-In order to use the client, start the `web` server first by running:
+In order to use the client, build the project:
+```
+./gradlew build
+```
+
+Then, start the `web` server by running:
 ```
 ./gradlew :web:appStart
 ```
@@ -27,6 +32,7 @@ cd ./client
 flutter run
 ```
 
-This command might request you to choose the "device" to open the app on.
+This command might request you to choose the "device" to open the app on. Choose the appropriate
+web browser.
 
 Now the client is up and running.
