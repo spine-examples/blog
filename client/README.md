@@ -9,7 +9,8 @@ Dart and the `pub` tool must be installed in order for to build the project. Ref
 Dart documentation for the instructions. 
 
 The `protoc_plugin` and the Spine `dart_code_gen` packages must be installed globally, as follows:
-```
+
+```bash
 pub global activate protoc_plugin
 pub global activate dart_code_gen
 ```
@@ -17,17 +18,20 @@ pub global activate dart_code_gen
 ## Browsing the client
 
 In order to use the client, build the project:
-```
+
+```bash
 ./gradlew build
 ```
 
 Then, start the `web` server by running:
-```
+
+```bash
 ./gradlew :web:appStart
 ```
 
 Then, in a separate terminal window, start the Flutter web server:
-```
+
+```bash
 cd ./client
 flutter run
 ```
