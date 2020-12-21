@@ -33,9 +33,10 @@ dependencies {
     protobuf(project(":model"))
 }
 
-// Since Proto Dart plugin is not applied in the `plugins` section, Gradle does not generate kotlin DSL for it.
-// This will be fixed in future by allowing to configure Dart subprojects via Bootstrap. Meanwhile, we configure
-// the `protoDart` extension like this.
+// Since Proto Dart plugin is not applied in the `plugins` section, Gradle does not generate kotlin
+// DSL for it. This will be fixed in future Bootstrap version by allowing to configure
+// Dart projects in the appropriate section of the plugin.
+// Meanwhile, we configure the `protoDart` extension like this.
 extensions.getByType(Extension::class).apply {
     modules["spine_client"] = listOf("spine/*", "google/*")
     mainGeneratedDir.value(project.layout.projectDirectory.dir("lib"))
