@@ -1,4 +1,4 @@
-![Build Status][actions-badge] &nbsp;
+[![Build Status][actions-badge]](https://github.com/spine-examples/blog/actions) &nbsp;
 [![license][license-badge]](http://www.apache.org/licenses/LICENSE-2.0)
 
 
