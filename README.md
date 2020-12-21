@@ -1,6 +1,9 @@
-[![Build Status](https://travis-ci.com/spine-examples/blog.svg?branch=master)](https://travis-ci.com/spine-examples/examples-java) &nbsp;
-[![license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0)
+[![Build Status][actions-badge]](https://github.com/spine-examples/blog/actions) &nbsp;
+[![license][license-badge]](http://www.apache.org/licenses/LICENSE-2.0)
 
+
+[actions-badge]: https://github.com/spine-examples/blog/workflows/CI/badge.svg?branch=master
+[license-badge]: https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat
 
 # Blog Example
 

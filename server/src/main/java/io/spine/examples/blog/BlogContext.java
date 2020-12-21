@@ -1,6 +1,12 @@
 /*
  * Copyright 2020, TeamDev. All rights reserved.
  *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
  * disclaimer.
@@ -21,7 +27,6 @@
 package io.spine.examples.blog;
 
 import io.spine.base.Environment;
-import io.spine.base.EnvironmentType;
 import io.spine.examples.blog.server.blog.BlogRepository;
 import io.spine.examples.blog.server.blog.BlogViewRepository;
 import io.spine.examples.blog.server.post.PostAggregate;
@@ -40,11 +45,11 @@ public final class BlogContext {
     }
 
     public static BoundedContextBuilder builder() {
-        ServerEnvironment serverEnvironment = ServerEnvironment.instance();
         Environment env = Environment.instance();
-        Class<? extends EnvironmentType> envType = env.type();
-        serverEnvironment.use(InMemoryStorageFactory.newInstance(), envType);
-        serverEnvironment.use(InMemoryTransportFactory.newInstance(), envType);
+        ServerEnvironment
+                .when(env.type())
+                .use(InMemoryStorageFactory.newInstance())
+                .use(InMemoryTransportFactory.newInstance());
 
         return BoundedContext
                 .singleTenant("Blog")

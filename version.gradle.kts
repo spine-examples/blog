@@ -1,6 +1,12 @@
 /*
  * Copyright 2020, TeamDev. All rights reserved.
  *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
  * disclaimer.
@@ -18,10 +24,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-val errorProneVersion by extra("2.3.4")
+val errorProneVersion by extra("2.4.0")
 val errorProneJavacVersion by extra("9+181-r4173-1") // taken from here: https://github.com/tbroyer/gradle-errorprone-plugin/blob/v0.8/build.gradle.kts
-val guavaVersion by extra("29.0-jre")
-val checkerFrameworkVersion by extra("3.3.0")
+val guavaVersion by extra("30.0-jre")
+val checkerFrameworkVersion by extra("3.7.1")
 val nettyVersion by extra("1.28.1")
 val pmdVersion by extra("6.24.0")
-val junitVersion by extra("5.6.2")
+val junitVersion by extra("5.7.0")

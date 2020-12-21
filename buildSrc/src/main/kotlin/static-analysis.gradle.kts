@@ -1,6 +1,12 @@
 /*
  * Copyright 2020, TeamDev. All rights reserved.
  *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
  * disclaimer.
@@ -55,7 +61,8 @@ afterEvaluate {
         (options as ExtensionAware).extensions["errorprone"].withGroovyBuilder {
             @Suppress("UNCHECKED_CAST")
             val args = getProperty("errorproneArgs") as ListProperty<String>
-            args.addAll(listOf(
+            args.addAll(
+                listOf(
                     // 1. Exclude generated sources from being analyzed by Error Prone.
                     "-XepExcludedPaths:.*/generated/.*",
 
@@ -68,7 +75,8 @@ afterEvaluate {
                     "-Xep:UnusedMethod:OFF",
                     "-Xep:UnusedVariable:OFF",
                     "-Xep:CheckReturnValue:OFF"
-            ))
+                )
+            )
         }
     }
 }
