@@ -24,6 +24,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * The Web API of the Blog application.
+ */
+
 @CheckReturnValue
 @ParametersAreNonnullByDefault
 package io.spine.examples.blog.web;
