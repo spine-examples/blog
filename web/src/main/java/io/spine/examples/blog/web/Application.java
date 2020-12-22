@@ -132,6 +132,9 @@ final class Application {
         return remoteClient(database, creds);
     }
 
+    /**
+     * Obtains a {@link FirebaseSubscriptionBridge} for the Blog application.
+     */
     FirebaseSubscriptionBridge subscriptionBridge() {
         return bridge;
     }
