@@ -88,7 +88,7 @@ class NetworkClient extends Client {
     @override
     Future<E> observeAfterCommand<E extends GeneratedMessage>(GeneratedMessage command) {
         var request = _client.command(command);
-        var events = request.observeEvents<E>(E);
+        var events = request.observeEvents<E>();
         request.post();
         return events.first
                      .catchError((e) => _onError(e, command));
