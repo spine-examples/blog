@@ -26,21 +26,21 @@
 
 package io.spine.examples.blog.web;
 
-import io.spine.web.command.CommandServlet;
+import io.spine.web.firebase.subscription.FirebaseSubscription;
+import io.spine.web.subscription.servlet.SubscribeServlet;
 
 import javax.servlet.annotation.WebServlet;
 
 import static io.spine.examples.blog.web.Application.app;
 
 /**
- * The {@code /command} servlet.
- *
- * <p>Receives commands and posts them with the provided {@link io.spine.server.CommandService}.
+ * The endpoint for creating new subscriptions for state updates and events.
  */
-@WebServlet("/command")
-public final class BlogCommandServlet extends CommandServlet {
+@SuppressWarnings("serial")
+@WebServlet("/subscription/create")
+public final class BlogSubscribeServlet extends SubscribeServlet<FirebaseSubscription> {
 
-    public BlogCommandServlet() {
-        super(app().commandService());
+    public BlogSubscribeServlet() {
+        super(app().subscriptionBridge());
     }
 }

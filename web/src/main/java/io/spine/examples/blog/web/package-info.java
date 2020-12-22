@@ -24,23 +24,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * The Web API of the Blog application.
+ */
+
+@CheckReturnValue
+@ParametersAreNonnullByDefault
 package io.spine.examples.blog.web;
 
-import io.spine.web.command.CommandServlet;
+import com.google.errorprone.annotations.CheckReturnValue;
 
-import javax.servlet.annotation.WebServlet;
-
-import static io.spine.examples.blog.web.Application.app;
-
-/**
- * The {@code /command} servlet.
- *
- * <p>Receives commands and posts them with the provided {@link io.spine.server.CommandService}.
- */
-@WebServlet("/command")
-public final class BlogCommandServlet extends CommandServlet {
-
-    public BlogCommandServlet() {
-        super(app().commandService());
-    }
-}
+import javax.annotation.ParametersAreNonnullByDefault;

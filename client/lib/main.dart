@@ -30,7 +30,7 @@ import 'package:flutter/material.dart';
 import 'home_page.dart';
 
 void main() {
-    var client = NetworkClient('http://localhost:4242', 'https://spine-dev.firebaseio.com/');
+    var client = NetworkClient('http://localhost:4242');
     runApp(BlogApp(client));
 }
 

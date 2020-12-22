@@ -26,21 +26,21 @@
 
 package io.spine.examples.blog.web;
 
-import io.spine.web.command.CommandServlet;
+import io.spine.core.Response;
+import io.spine.web.subscription.servlet.SubscriptionKeepUpServlet;
 
 import javax.servlet.annotation.WebServlet;
 
 import static io.spine.examples.blog.web.Application.app;
 
 /**
- * The {@code /command} servlet.
- *
- * <p>Receives commands and posts them with the provided {@link io.spine.server.CommandService}.
+ * The endpoint for keeping-up subscriptions.
  */
-@WebServlet("/command")
-public final class BlogCommandServlet extends CommandServlet {
+@SuppressWarnings("serial")
+@WebServlet("/subscription/keep-up")
+public final class BlogKeepUpServlet extends SubscriptionKeepUpServlet<Response> {
 
-    public BlogCommandServlet() {
-        super(app().commandService());
+    public BlogKeepUpServlet() {
+        super(app().subscriptionBridge());
     }
 }

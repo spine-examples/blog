@@ -26,13 +26,10 @@
 
 import 'dart:math';
 
-import 'package:firebase/firebase_io.dart' as fb;
+import 'package:firebase/firebase.dart' as fb;
 import 'package:protobuf/protobuf.dart';
-import 'package:spine_client/google/protobuf/empty.pb.dart';
-import 'package:spine_client/rest_firebase_client.dart';
-import 'package:spine_client/spine/core/ack.pb.dart';
-import 'package:spine_client/spine/core/response.pb.dart';
-import 'package:spine_client/spine_client.dart';
+import 'package:spine_client/spine_client.dart' as spine;
+import 'package:spine_client/web_firebase_client.dart';
 
 import 'blog/blog.pb.dart';
 import 'blog/identifiers.pb.dart';
@@ -48,43 +45,57 @@ abstract class Client {
     Future<BlogView> fetchBlogWithPosts(BlogId id);
 
     /// Posts the given command message.
-    Future<Ack> post(GeneratedMessage command);
+    Future<void> post(GeneratedMessage command);
+
+    /// Posts the given command message and subscribes to the first event of type `E` which is
+    /// emitted as the result of the command.
+    Future<E> observeAfterCommand<E extends GeneratedMessage>(GeneratedMessage command);
 }
 
 /// A client which sends queries and commands over the network to a real server.
 class NetworkClient extends Client {
 
-    final BackendClient _backend;
-    final ActorRequestFactory _factory;
+    static final fb.App _firebaseApp = fb.initializeApp(
+        apiKey: "AIzaSyD8Nr2zrW9QFLbNS5Kg-Ank-QIZP_jo5pU",
+        authDomain: "spine-dev.firebaseapp.com",
+        databaseURL: "https://spine-dev.firebaseio.com",
+        projectId: "spine-dev",
+        storageBucket: "",
+        messagingSenderId: "165066236051"
+    );
+
+    final spine.Client _client;
 
     /// Creates a new `NetworkClient` with the given server and Firebase.
     ///
-    /// Note that `NetworkClient` uses Spine's Firebase `RestClient` which works on all platforms
-    /// but does not support subscriptions. Change it to `WebClient` to support subscriptions (only
-    /// in browser).
-    ///
-    NetworkClient(String serverUrl, String firebaseUrl)
-        : _backend = BackendClient(serverUrl,
-                                   firebase: RestClient(fb.FirebaseClient.anonymous(), firebaseUrl),
-                                   typeRegistries: [blogTypes.types()]),
-          _factory = ActorRequestFactory(UserId()..value = 'Example Dart client');
+    NetworkClient(String serverUrl)
+        : _client = spine.Clients(serverUrl,
+                                  firebase: WebFirebaseClient(_firebaseApp.database()),
+                                  guestId: spine.UserId()..value = 'Example Dart client',
+                                  typeRegistries: [blogTypes.types()])
+                         .asGuest();
 
     @override
-    Stream<Blog> fetchBlogs() {
-        var query = _factory.query().all(Blog.getDefault());
-        return _backend.fetch<Blog>(query);
+    Stream<Blog> fetchBlogs() => _client.select<Blog>().post();
+
+    @override
+    Future<BlogView> fetchBlogWithPosts(BlogId id) =>
+        _client.select<BlogView>().whereIds([id]).post().first;
+
+    @override
+    Future<void> post(GeneratedMessage command) => _client.command(command).postAndForget();
+
+    @override
+    Future<E> observeAfterCommand<E extends GeneratedMessage>(GeneratedMessage command) {
+        var request = _client.command(command);
+        var events = request.observeEvents<E>();
+        request.post();
+        return events.first
+                     .catchError((e) => _onError(e, command));
     }
 
-    @override
-    Future<BlogView> fetchBlogWithPosts(BlogId id) {
-        var query = _factory.query().byIds(BlogView.getDefault(), [id]);
-        return _backend.fetch<BlogView>(query).first;
-    }
-
-    @override
-    Future<Ack> post(GeneratedMessage command) {
-        var cmd = _factory.command().create(command);
-        return _backend.post(cmd);
+    void _onError(dynamic error, GeneratedMessage command) {
+        print('Error when posting command `${command.runtimeType}`: $error');
     }
 }
 
@@ -163,8 +174,9 @@ class FakeClient extends Client {
     }
 
     @override
-    Future<Ack> post(GeneratedMessage command) async {
-        var ok = Status()..ok = Empty.getDefault();
-        return Ack()..status = ok;
-    }
+    Future<void> post(GeneratedMessage command) => Future.value();
+
+    @override
+    Future<E> observeAfterCommand<E extends GeneratedMessage>(GeneratedMessage command) =>
+        Future.value();
 }

@@ -26,21 +26,21 @@
 
 package io.spine.examples.blog.web;
 
-import io.spine.web.command.CommandServlet;
+import io.spine.core.Response;
+import io.spine.web.subscription.servlet.SubscriptionCancelServlet;
 
 import javax.servlet.annotation.WebServlet;
 
 import static io.spine.examples.blog.web.Application.app;
 
 /**
- * The {@code /command} servlet.
- *
- * <p>Receives commands and posts them with the provided {@link io.spine.server.CommandService}.
+ * The endpoint for cancelling subscriptions.
  */
-@WebServlet("/command")
-public final class BlogCommandServlet extends CommandServlet {
+@SuppressWarnings("serial")
+@WebServlet("/subscription/cancel")
+public final class BlogCancelServlet extends SubscriptionCancelServlet<Response> {
 
-    public BlogCommandServlet() {
-        super(app().commandService());
+    public BlogCancelServlet() {
+        super(app().subscriptionBridge());
     }
 }

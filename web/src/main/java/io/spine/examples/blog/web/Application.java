@@ -35,8 +35,10 @@ import io.spine.io.Resource;
 import io.spine.server.BoundedContext;
 import io.spine.server.CommandService;
 import io.spine.server.QueryService;
+import io.spine.server.SubscriptionService;
 import io.spine.web.firebase.FirebaseClient;
 import io.spine.web.firebase.FirebaseCredentials;
+import io.spine.web.firebase.subscription.FirebaseSubscriptionBridge;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,6 +58,7 @@ final class Application {
 
     private final BoundedContext context;
     private final GoogleCredentials credentials;
+    private final FirebaseSubscriptionBridge bridge;
 
     private Application() {
         context = BlogContext.builder().build();
@@ -66,6 +69,11 @@ final class Application {
                 .setCredentials(credentials)
                 .build();
         FirebaseApp.initializeApp(firebaseOptions);
+        this.bridge = FirebaseSubscriptionBridge
+                .newBuilder()
+                .setFirebaseClient(firebase())
+                .setSubscriptionService(subscriptionService())
+                .build();
     }
 
     /**
@@ -102,6 +110,18 @@ final class Application {
     }
 
     /**
+     * Constructs the {@link SubscriptionService} for the Blog application.
+     *
+     * <p>The service contains the only context of the app — {@link BlogContext}.
+     */
+    SubscriptionService subscriptionService() {
+        return SubscriptionService
+                .newBuilder()
+                .add(context)
+                .build();
+    }
+
+    /**
      * Constructs a {@link FirebaseClient} for client-server communication for the Blog application.
      *
      * <p>The {@link FirebaseClient} points to the {@code spine-dev} Firebase project.
@@ -112,7 +132,14 @@ final class Application {
         return remoteClient(database, creds);
     }
 
-    private GoogleCredentials credentials() {
+    /**
+     * Obtains a {@link FirebaseSubscriptionBridge} for the Blog application.
+     */
+    FirebaseSubscriptionBridge subscriptionBridge() {
+        return bridge;
+    }
+
+    private static GoogleCredentials credentials() {
         Resource credentialFile = Resource.file(
                 "spine-dev-firebase.json",
                 Application.class.getClassLoader()

@@ -34,6 +34,12 @@ import javax.servlet.annotation.WebServlet;
 
 import static io.spine.examples.blog.web.Application.app;
 
+/**
+ * The {@code /query} servlet.
+ *
+ * <p>Accepts {@link io.spine.client.Query}-s, writes query responses into a Firebase RDB and sends
+ * a {@link FirebaseQueryResponse} in the HTTP response.
+ */
 @WebServlet("/query")
 public final class BlogQueryServlet extends QueryServlet<FirebaseQueryResponse> {
 
