@@ -33,6 +33,9 @@ import javax.servlet.annotation.WebServlet;
 
 import static io.spine.examples.blog.web.Application.app;
 
+/**
+ * The endpoint for cancelling subscriptions.
+ */
 @SuppressWarnings("serial")
 @WebServlet("/subscription/cancel")
 public final class BlogCancelServlet extends SubscriptionCancelServlet<Response> {

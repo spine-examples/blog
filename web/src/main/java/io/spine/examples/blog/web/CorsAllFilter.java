@@ -32,6 +32,9 @@ import javax.servlet.annotation.WebFilter;
 
 import static io.spine.web.AllowAnyOriginFilter.ANY_URL;
 
+/**
+ * A web servlet which allows all CORS origins.
+ */
 @WebFilter(urlPatterns = ANY_URL)
 public final class CorsAllFilter extends AllowAnyOriginFilter {
 }

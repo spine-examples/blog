@@ -33,6 +33,9 @@ import javax.servlet.annotation.WebServlet;
 
 import static io.spine.examples.blog.web.Application.app;
 
+/**
+ * The endpoint for keeping-up subscriptions.
+ */
 @SuppressWarnings("serial")
 @WebServlet("/subscription/keep-up")
 public final class BlogKeepUpServlet extends SubscriptionKeepUpServlet<Response> {

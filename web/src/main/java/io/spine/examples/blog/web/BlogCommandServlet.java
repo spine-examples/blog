@@ -32,6 +32,11 @@ import javax.servlet.annotation.WebServlet;
 
 import static io.spine.examples.blog.web.Application.app;
 
+/**
+ * The {@code /command} servlet.
+ *
+ * <p>Receives commands and posts them with the provided {@link io.spine.server.CommandService}.
+ */
 @WebServlet("/command")
 public final class BlogCommandServlet extends CommandServlet {
 

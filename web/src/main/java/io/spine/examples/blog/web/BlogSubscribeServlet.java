@@ -33,6 +33,9 @@ import javax.servlet.annotation.WebServlet;
 
 import static io.spine.examples.blog.web.Application.app;
 
+/**
+ * The endpoint for creating new subscriptions for state updates and events.
+ */
 @SuppressWarnings("serial")
 @WebServlet("/subscription/create")
 public final class BlogSubscribeServlet extends SubscribeServlet<FirebaseSubscription> {
