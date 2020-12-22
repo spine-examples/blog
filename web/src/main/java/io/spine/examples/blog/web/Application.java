@@ -136,7 +136,7 @@ final class Application {
         return bridge;
     }
 
-    private GoogleCredentials credentials() {
+    private static GoogleCredentials credentials() {
         Resource credentialFile = Resource.file(
                 "spine-dev-firebase.json",
                 Application.class.getClassLoader()
