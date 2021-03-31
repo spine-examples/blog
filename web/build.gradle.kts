@@ -25,7 +25,7 @@
  */
 
 plugins {
-    id("org.gretty") version "3.0.3"
+    id("org.gretty") version "3.0.4"
 }
 
 spine.enableJava().firebaseWebServer()
