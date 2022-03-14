@@ -26,8 +26,9 @@
 
 val errorProneVersion by extra("2.4.0")
 val errorProneJavacVersion by extra("9+181-r4173-1") // taken from here: https://github.com/tbroyer/gradle-errorprone-plugin/blob/v0.8/build.gradle.kts
-val guavaVersion by extra("30.0-jre")
-val checkerFrameworkVersion by extra("3.7.1")
+val guavaVersion by extra("31.0.1-jre")
+val checkerFrameworkVersion by extra("3.21.0")
 val nettyVersion by extra("1.28.1")
-val pmdVersion by extra("6.24.0")
-val junitVersion by extra("5.7.0")
+val javaxAnnotations by extra("1.3.2")
+val pmdVersion by extra("6.41.0")
+val junitVersion by extra("5.8.1")

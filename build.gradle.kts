@@ -31,8 +31,8 @@ plugins {
     `static-analysis`
     tests
 
-    id("io.spine.tools.gradle.bootstrap") version("1.7.0")
-    id("net.ltgt.errorprone") version("1.3.0")
+    id("io.spine.tools.gradle.bootstrap") version("1.8.0")
+    id("net.ltgt.errorprone") version("2.0.2")
 }
 
 subprojects {
@@ -55,11 +55,13 @@ subprojects {
     val guavaVersion: String by extra
     val checkerFrameworkVersion: String by extra
     val nettyVersion: String by extra
+    val javaxAnnotations: String by extra
     val junitVersion: String by extra
 
     dependencies {
         errorprone("com.google.errorprone:error_prone_core:${errorProneVersion}")
         errorproneJavac("com.google.errorprone:javac:${errorProneJavacVersion}")
+        implementation("javax.annotation:javax.annotation-api:${javaxAnnotations}")
         implementation("com.google.guava:guava:${guavaVersion}")
         implementation("org.checkerframework:checker-qual:${checkerFrameworkVersion}")
         runtimeOnly("io.grpc:grpc-netty:${nettyVersion}")
