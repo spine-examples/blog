@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    name: Test on Java ${{ matrix.java }} and ${{ matrix.os }}
+    name: Test on ${{ matrix.os }}
 
     strategy:
       fail-fast: false
