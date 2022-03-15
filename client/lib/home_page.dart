@@ -54,7 +54,7 @@ class _BlogPageState extends State<BlogHomePage> {
     final Client _client;
 
     Map<BlogId, Blog> blogs = {};
-    BlogView displayedBlog;
+    BlogView? displayedBlog;
 
     _BlogPageState(this._client);
 
@@ -107,7 +107,7 @@ class _BlogPageState extends State<BlogHomePage> {
     ///
     void _newPost(String title, String body) {
         var id = PostId()..uuid = Uuid().v4();
-        var blogId = displayedBlog.id;
+        var blogId = displayedBlog!.id;
         var command = CreatePost()
             ..id = id
             ..blog = blogId
@@ -150,11 +150,11 @@ class _BlogPageState extends State<BlogHomePage> {
     }
 
     Key _blogKey() {
-        return displayedBlog != null ? _BlogKey(displayedBlog.id) : Key('No data');
+        return displayedBlog != null ? _BlogKey(displayedBlog!.id) : Key('No data');
     }
 
     List<Widget> _postList() {
-        return displayedBlog != null && displayedBlog.post.isNotEmpty
+        return displayedBlog != null && displayedBlog!.post.isNotEmpty
             ? _bakePosts()
             : [_empty('Nothing to see here')];
     }
@@ -194,7 +194,7 @@ class _BlogPageState extends State<BlogHomePage> {
           Text('${blog.post.length} posts', textScaleFactor: 0.75)
     ];
 
-    List<Widget> _bakePosts() => displayedBlog.post.expand(_displayPost).toList(growable: false);
+    List<Widget> _bakePosts() => displayedBlog!.post.expand(_displayPost).toList(growable: false);
 
     List<Widget> _displayPost(PostItem post) =>
         [Text(post.title, textScaleFactor: 1.5, softWrap: true), Text(post.body, softWrap: true)];

@@ -90,12 +90,13 @@ class NetworkClient extends Client {
         var request = _client.command(command);
         var events = request.observeEvents<E>();
         request.post();
-        return events.first
-                     .catchError((e) => _onError(e, command));
+        return events.then((subscription) => subscription.eventMessages.first)
+                     .catchError((e) => _onError(e, command) as E);
     }
 
-    void _onError(dynamic error, GeneratedMessage command) {
+    dynamic _onError(dynamic error, GeneratedMessage command) {
         print('Error when posting command `${command.runtimeType}`: $error');
+        return null;
     }
 }
 
